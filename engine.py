@@ -46,7 +46,7 @@ class Scene:
 
 
 class Engine:
-    def __init__(self, headless=False):
+    def __init__(self, headless=False, preload=True):
         pygame.init()
         pygame.display.set_caption("SCI-MON - The Scientific Monster RPG (Python)")
         flags = pygame.SCALED | pygame.RESIZABLE
@@ -57,7 +57,8 @@ class Engine:
         except pygame.error:
             self.screen = pygame.display.set_mode((W, H))
         self.clock = pygame.time.Clock()
-        assets.preload()
+        if preload:
+            assets.preload()
         audio.init()
         self.state = GameState()          # global data singleton: party, storage, bag, credits
         self.toast = Toast()

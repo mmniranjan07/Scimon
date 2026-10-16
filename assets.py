@@ -73,13 +73,24 @@ def font(kind, size):
     return f
 
 
-def preload():
-    """Touch every asset once so the first time anything appears there is no disk hit."""
+def preload_steps():
+    """Yield (done, total) after each asset, so a caller can draw a progress bar between loads
+    (the browser build needs that: one long blocking call would leave the canvas blank)."""
+    jobs = []
     for folder in ("buildings", "scimon", "tiles/nature", "tiles/hitech", "tiles/res", "interiors", "characters", "town"):
         full = _path(folder)
         for name in sorted(os.listdir(full)):
             if name.lower().endswith(".png"):
-                image(f"{folder}/{name}")
+                jobs.append((False, f"{folder}/{name}"))
     for kind, sizes in (("display", (8, 16, 24, 32, 48, 64)), ("body", (16, 20, 24, 28, 32, 40, 48))):
         for s in sizes:
-            font(kind, s)
+            jobs.append((True, (kind, s)))
+    for n, (is_font, ref) in enumerate(jobs, 1):
+        font(*ref) if is_font else image(ref)
+        yield n, len(jobs)
+
+
+def preload():
+    """Touch every asset once so the first time anything appears there is no disk hit."""
+    for _ in preload_steps():
+        pass
