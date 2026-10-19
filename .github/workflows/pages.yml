@@ -36,8 +36,10 @@ jobs:
         run: python -m pygbag --build --archive stage
       - name: Prepare Pages artifact
         run: |
-          mkdir -p site
-          cp -r stage/build/web/* site/
+          mkdir -p site/play site/img
+          cp -r stage/build/web/* site/play/          # the game itself lives at /play/
+          cp web/index.html site/index.html           # the landing page
+          cp assets/scimon/*-front.png site/img/      # monster art for the landing page
           touch site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:

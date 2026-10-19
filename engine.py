@@ -12,6 +12,7 @@ import pygame
 
 import assets
 import audio
+import savegame
 from settings import FADE_TIME, FPS, W, H
 from state import GameState
 from ui import Toast, fade
@@ -67,6 +68,9 @@ class Engine:
         self.running = True
         self.time = 0.0
         self._transition = None           # dict(phase, t, apply)
+        self._save_t = 0.0
+        self.autosave = not headless      # tests/headless runs never touch the save file
+        self._saved = None                # last string written by the autosave
 
     # ---- state machine -----------------------------------------------------------------
     @property
@@ -106,6 +110,11 @@ class Engine:
     def step(self, dt):
         """Advance the whole game by dt seconds (used by run() and by the headless tests)."""
         self.time += dt
+        self._save_t += dt
+        if self._save_t >= 3.0:           # autosave (only writes when something changed)
+            self._save_t = 0.0
+            if getattr(self, "autosave", True):
+                self._saved = savegame.save(self.state, self._saved)
         tr = self._transition
         if tr:
             tr["t"] += dt

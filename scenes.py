@@ -8,11 +8,12 @@ import pygame
 
 import assets
 import audio
+import savegame
 from data import SPECIES, STARTER_IDS
 from engine import Scene, StateId
 from monsters import create_scimon
 from settings import CREAM, H, INK, ORANGE, TEAL, TEAL_DARK, W
-from ui import (Button, DialogueBox, circuit_backdrop, draw_button, is_back, is_click, is_confirm, label_chip, nav_dir,
+from ui import (ButtonGrid, Button, DialogueBox, circuit_backdrop, draw_button, is_back, is_click, is_confirm, label_chip, nav_dir,
                 panel, text, type_chip, wrap_text)
 
 RIVAL_NAME = "Kael"
@@ -126,17 +127,40 @@ class TitleScene(Scene):
 
     def __init__(self):
         self.t = 0.0
+        self.grid = None
 
     def on_enter(self):
         self.t = 0.0
+        if savegame.has_save():
+            self.grid = ButtonGrid([Button("CONTINUE", (W // 2 - 190, 420, 380, 58), accent=True, tag="continue"),
+                                    Button("NEW GAME", (W // 2 - 190, 486, 380, 50), tag="new")], allow_back=False)
+        else:
+            self.grid = None
 
     def handle_event(self, e):
-        if is_confirm(e) or is_click(e):
+        if self.grid:
+            r = self.grid.handle(e)
+            if r and r[0] == "activate":
+                audio.play("select")
+                if r[1].tag == "continue":
+                    self.engine.state.reset()
+                    if savegame.load(self.engine.state):
+                        from overworld import OverworldScene
+                        self.engine.fade_to(lambda: self.engine.replace(OverworldScene()))
+                        self.engine.toast.show("Welcome back! Progress loaded.", 2.5)
+                        return
+                savegame.delete()                     # NEW GAME (or a broken save) starts fresh
+                self.engine.state.reset()
+                self.engine._saved = None
+                start_game_flow(self.engine)
+        elif is_confirm(e) or is_click(e):
             audio.play("select")
             start_game_flow(self.engine)
 
     def update(self, dt):
         self.t += dt
+        if self.grid:
+            self.grid.update(dt)
 
     def draw(self, surf):
         circuit_backdrop(surf, self.t)
@@ -154,7 +178,9 @@ class TitleScene(Scene):
             cx = W // 2 + (i - 1) * 210
             pygame.draw.ellipse(surf, (20, 50, 48), (cx - 55, 378, 110, 20))
             surf.blit(img, (cx - img.get_width() // 2, 390 - img.get_height() + bob))
-        if int(self.t * 2) % 2 == 0:
+        if self.grid:
+            self.grid.draw(surf)
+        elif int(self.t * 2) % 2 == 0:
             b = Button("PRESS START", (W // 2 - 190, 440, 380, 62), accent=True)
             draw_button(surf, b, selected=True, size=24)
         text(surf, "A world of autonomous machines awaits.", (W // 2, 540), "body", 36, (190, 214, 204), anchor="center")

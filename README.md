@@ -17,6 +17,10 @@ The `scimon_py` look (transparent, game-ready sprites and building art) merged w
 | M | mute SFX | F3 | collision/hitbox overlay | F11 | fullscreen |
 Mouse works on every menu (hover, click). The window is resizable; the game renders at 960x640 and scales.
 
+## Saving
+Progress autosaves every few seconds (party, Sci-Database, bag, credits, Sci-Dex, chests, story flags). In the browser it lives in
+localStorage; on desktop in `~/.scimon/save.json`. The title screen offers CONTINUE / NEW GAME when a save exists. Code: `savegame.py`.
+
 ## Architecture
 | File | Role |
 |---|---|

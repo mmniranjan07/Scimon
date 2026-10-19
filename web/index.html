@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCI-MON – The Scientific Monster RPG</title>
+<meta name="description" content="SCI-MON is a monster-collecting RPG about autonomous machines. Play it free in your browser.">
+<meta property="og:title" content="SCI-MON – The Scientific Monster RPG">
+<meta property="og:description" content="Pick a starter, battle your rival Kael and explore Riven Town. Play free in your browser.">
+<meta property="og:image" content="img/pyrodrive-front.png">
+<link rel="icon" href="img/sparkit-front.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#101420;--panel:#171d30;--line:#2a3452;--text:#e6ebff;--dim:#9aa6c8;--accent:#78c8ff;--accent2:#7dffb0;--hot:#ff8a5c;
+--px:"Press Start 2P",ui-monospace,Menlo,Consolas,monospace;--body:"VT323",ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0}
+html{color-scheme:dark;scroll-behavior:smooth}
+body{background:radial-gradient(1000px 500px at 50% -10%,#24325a 0,transparent 70%),var(--bg);color:var(--text);font:22px/1.35 var(--body);min-height:100vh}
+a{color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.hero{text-align:center;padding:56px 0 28px}
+.logo{font:clamp(28px,7vw,60px)/1.1 var(--px);letter-spacing:2px;color:var(--accent);text-shadow:4px 4px 0 #0a0d18,0 0 28px rgba(120,200,255,.35)}
+.logo span{color:var(--accent2)}
+.tag{margin:18px auto 0;max-width:620px;color:var(--dim);font-size:clamp(20px,3vw,26px)}
+.btn{display:inline-block;margin-top:26px;padding:16px 26px;font:14px var(--px);color:#0a0d18;background:var(--accent2);border:0;border-radius:6px;cursor:pointer;box-shadow:0 5px 0 #3aa86a;text-decoration:none;transition:transform .1s,box-shadow .1s}
+.btn:hover{transform:translateY(2px);box-shadow:0 3px 0 #3aa86a}
+.btn:active{transform:translateY(5px);box-shadow:0 0 0 #3aa86a}
+.btn.alt{background:var(--panel);color:var(--text);box-shadow:0 5px 0 var(--line);border:1px solid var(--line);margin:0}
+.party{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;margin-top:34px}
+.party img{width:72px;height:72px;object-fit:contain;image-rendering:pixelated;animation:bob 2.4s ease-in-out infinite}
+.party img:nth-child(2n){animation-delay:-.8s}.party img:nth-child(3n){animation-delay:-1.5s}
+@keyframes bob{50%{transform:translateY(-9px)}}
+@media (prefers-reduced-motion:reduce){.party img{animation:none}html{scroll-behavior:auto}}
+#play{padding:36px 0}
+.console{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.screen{position:relative;aspect-ratio:3/2;background:#05070d;border-radius:6px;overflow:hidden}
+.screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.poster{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px;
+background:linear-gradient(160deg,#16203a,#0a0d18)}
+.poster p{color:var(--dim)}
+.poster .btn{margin-top:8px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;color:var(--dim)}
+.bar .btn{padding:10px 14px;font-size:10px}
+h2{font:16px var(--px);color:var(--accent);margin:48px 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.card h3{font:12px/1.5 var(--px);color:var(--accent2);margin-bottom:8px}
+.card p{color:var(--dim)}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+td{padding:10px 16px;border-bottom:1px solid var(--line)}
+tr:last-child td{border:0}
+td:first-child{white-space:nowrap;width:1%}
+kbd{font:11px var(--px);background:#0a0d18;border:1px solid var(--line);border-bottom-width:3px;border-radius:5px;padding:5px 7px;margin-right:4px;display:inline-block}
+.scroll{overflow-x:auto}
+footer{margin-top:60px;padding:28px 0 40px;border-top:1px solid var(--line);text-align:center;color:var(--dim);font-size:19px}
+@media (max-width:600px){body{font-size:20px}.btn{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1 class="logo">SCI<span>-</span>MON</h1>
+    <p class="tag">The Scientific Monster RPG. A world of autonomous machines awaits. Pick a starter, face your rival Kael and explore Riven Town.</p>
+    <a class="btn" href="#play">▶ PLAY NOW</a>
+    <div class="party" aria-hidden="true">
+      <img src="img/aquabit-front.png" alt=""><img src="img/cindermite-front.png" alt=""><img src="img/florabot-front.png" alt="">
+      <img src="img/pyrodrive-front.png" alt=""><img src="img/sparkit-front.png" alt=""><img src="img/nanolyte-front.png" alt="">
+    </div>
+  </header>
+
+  <section id="play">
+    <div class="console">
+      <div class="screen" id="screen">
+        <div class="poster" id="poster">
+          <h2 style="margin:0">READY?</h2>
+          <p>Runs in your browser. First load downloads about a minute of game data, so hang tight.</p>
+          <button class="btn" id="start" type="button">▶ START GAME</button>
+        </div>
+      </div>
+      <div class="bar">
+        <span>Progress saves automatically in this browser. Click the game once, then use the keyboard.</span>
+        <button class="btn alt" id="fs" type="button">⛶ FULLSCREEN</button>
+      </div>
+    </div>
+  </section>
+
+  <h2>HOW TO PLAY</h2>
+  <div class="scroll"><table>
+    <tr><td><kbd>←↑↓→</kbd><kbd>WASD</kbd></td><td>Move and navigate menus</td></tr>
+    <tr><td><kbd>Enter</kbd><kbd>Space</kbd><kbd>Z</kbd></td><td>Confirm, talk, advance dialogue</td></tr>
+    <tr><td><kbd>Esc</kbd><kbd>X</kbd></td><td>Go back or close</td></tr>
+    <tr><td><kbd>I</kbd><kbd>Tab</kbd></td><td>Open the Pack</td></tr>
+    <tr><td><kbd>M</kbd></td><td>Mute sound effects</td></tr>
+  </table></div>
+  <p style="margin-top:10px;color:var(--dim)">Every menu also works with the mouse (hover and click).</p>
+
+  <h2>FEATURES</h2>
+  <div class="grid">
+    <div class="card"><h3>COLLECT &amp; BATTLE</h3><p>Turn-based fights with techniques, types, capture and XP growth.</p></div>
+    <div class="card"><h3>SCI-DATABASE</h3><p>Log every machine you meet, manage your party, bag and held items.</p></div>
+    <div class="card"><h3>EXPLORE RIVEN TOWN</h3><p>Shops, eight interiors, beaches and a cast of characters to meet.</p></div>
+  </div>
+
+  <footer>SCI-MON · Python &amp; Pygame, running in your browser via WebAssembly (pygbag)</footer>
+</div>
+<script>
+(function(){
+  var screen=document.getElementById('screen'),poster=document.getElementById('poster'),frame=null;
+  function start(){
+    if(frame)return;
+    frame=document.createElement('iframe');
+    frame.src='play/';
+    frame.title='SCI-MON game';
+    frame.allow='autoplay; fullscreen; gamepad';
+    frame.setAttribute('allowfullscreen','');
+    screen.appendChild(frame);
+    poster.style.display='none';
+    frame.addEventListener('load',function(){frame.focus()});
+  }
+  document.getElementById('start').addEventListener('click',start);
+  document.getElementById('fs').addEventListener('click',function(){
+    start();
+    var el=screen.requestFullscreen?screen:null;
+    if(el)el.requestFullscreen().catch(function(){});
+  });
+  if(location.hash==='#autostart')start();
+})();
+</script>
+</body>
+</html>
