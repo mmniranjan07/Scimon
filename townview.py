@@ -83,7 +83,7 @@ def draw_ground(s, rows, draw_old_tile):
             elif t == "w":
                 s.blit(tile("pond_0"), (sx, sy))
             elif t in "hk":
-                s.blit(tile(f"seawall_{x % 4}"), (sx, sy))
+                s.blit(_wall_tile(x, _at(rows, x, y - 1) in "hk", _at(rows, x, y + 1) in "hk"), (sx, sy))
             elif t == "c":
                 s.blit(tile(f"crop_{_crop_kind(x, y)}_{(x + y) % 2}"), (sx, sy))
             else:
@@ -126,6 +126,31 @@ def draw_ground(s, rows, draw_old_tile):
                     s.blit(tile(f"coping_{key}"), (nx, ny))
 
 
+_wall_cache = {}
+
+
+def _wall_tile(x, wall_above, wall_below):
+    """Sea wall / stone ledge piece.  The sprite is a grass cap over a stone face; where another wall tile sits above, only
+    the face is drawn (its brick rows repeated), so vertical ledges read as one continuous stone wall instead of stacked
+    caps.  The bottom row of the sprite is the wall's dark foot and is kept only where the wall ends."""
+    key = (x % 4, wall_above, wall_below)
+    img = _wall_cache.get(key)
+    if img is None:
+        base = tile(f"seawall_{x % 4}")
+        if not wall_above:
+            img = base
+        else:
+            face = pygame.Surface((TILE, TILE), pygame.SRCALPHA)
+            body_top, body_rows = 6 * PX, 9 * PX                     # sprite rows 6..14: brick body without the foot
+            for y in range(0, TILE, body_rows):
+                face.blit(base, (0, y), pygame.Rect(0, body_top, TILE, min(body_rows, TILE - y)))
+            if not wall_below:
+                face.blit(base, (0, TILE - PX), pygame.Rect(0, TILE - PX, TILE, PX))
+            img = face
+        _wall_cache[key] = img
+    return img
+
+
 def _draw_tide_pools(s, rows):
     """Each rectangle of 'v' tiles is one pool: 2x2 -> small sand pool (4 variants), 3x3 -> the rock-ringed pool."""
     seen = set()
@@ -150,8 +175,11 @@ PROP_SPRITE = {"L": "lamp_post", "b": "bench_0", "N": "notice_board", "x": "crat
                "S": "signpost", "m": "mailbox", "a": "scarecrow", "q": "well", "u": "bush_0", "r": "rock_small"}
 
 
-def _tree_name(x, y, rows):
+def _tree_name(x, y, rows, green_only=False):
     h = hash2(x + 3, y + 11)
+    if green_only:                                             # forest routes: ordinary oaks and pines only
+        return "tree_pine_0" if h < 0.2 else "tree_pine_1" if h < 0.36 else "tree_oak_1" if h < 0.62 else \
+            "tree_oak_2" if h < 0.82 else "tree_oak_0"
     border = x <= 1 or x >= 42 or y == 0 or y >= 15
     if border:
         return ("tree_pine_0" if h < 0.22 else "tree_pine_1" if h < 0.36 else "tree_glow" if h < 0.44 else
@@ -166,7 +194,7 @@ def make_prop(name, tx, ty, w_tiles=1, dy=0):
     return Prop(img, x, bottom - img.get_height() + dy, bottom)
 
 
-def build_props(rows):
+def build_props(rows, green_only=False):
     props = []
     h_, w_ = len(rows), len(rows[0])
     for y in range(h_):
@@ -174,7 +202,7 @@ def build_props(rows):
         while x < w_:
             t = rows[y][x]
             if t == "T":
-                props.append(make_prop(_tree_name(x, y, rows), x, y, dy=6))
+                props.append(make_prop(_tree_name(x, y, rows, green_only), x, y, dy=6))
             elif t in PROP_SPRITE:
                 props.append(make_prop(PROP_SPRITE[t], x, y, dy=2 if t != "L" else 3))
             elif t == "O":
@@ -282,9 +310,10 @@ def _glow_surface(r, color):
 
 
 class Fx:
-    def __init__(self, rows, buildings, rects, origins, ponds, lamps, smoke):
+    def __init__(self, rows, buildings, rects, origins, ponds, lamps, smoke, studs=True):
         self.rows, self.buildings, self.rects, self.origins = rows, buildings, rects, origins
         self.ponds, self.lamps, self.smoke = ponds, lamps, smoke
+        self.studs = studs                                      # pulsing studs in the cobbles (town roads only)
 
 
 def smoke_points(origins):
@@ -336,7 +365,7 @@ def draw_fx(surf, cam, t, fx, focus, font_render, rows):
         for mx in range(max(0, c0), min(len(rows[0]), c0 + cols)):
             if rows[my][mx] == "P" and (mx + my) % 2 == 0 and _at(rows, mx, my - 1) in ROAD_LIKE | set("T") or False:
                 pass
-            if rows[my][mx] == "P" and (mx * 3 + my * 5) % 4 == 0:
+            if fx.studs and rows[my][mx] == "P" and (mx * 3 + my * 5) % 4 == 0:
                 a = int(120 + 120 * math.sin(t * 2.4 + (mx + my) * 0.8))
                 pygame.draw.rect(surf, (110, 235, 245), (mx * TILE - cam.x + 22, my * TILE - cam.y + 22, 4, 4))
                 pygame.draw.rect(surf, (210, 255, 255), (mx * TILE - cam.x + 23, my * TILE - cam.y + 23, 2, 2))

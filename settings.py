@@ -15,6 +15,61 @@ ENCOUNTER_CHANCE = 0.12    # per step in tall grass (V34)
 FADE_TIME = 0.18           # seconds per half of a map/scene transition
 
 
+# --- SPRITE PACKS: every raw sprite path lives here (paths are relative to ASSETS) ------------------------------
+# To swap art, change a path or a grid size here -- no game logic references a file name directly.
+# Packs are used in this order for every tile (see tileset_map.py): PRIMARY -> SECONDARY -> project art (legacy).
+INTERIOR_DIR = "sprites/interiors"
+
+# PRIMARY: SuperRetroWorld interior pack. All three atlases share one cell layout, so the (col, row) mapping in
+# tileset_map.py is valid for any of them; PRIMARY_GRID only decides which file is cut and at what scale.
+#   16 -> drawn 3.0x (integer, same pixel size as the characters and props)   <- recommended
+#   32 -> drawn 1.5x (non-integer: uneven pixels)       48 -> drawn 1.0x (finer pixels than the rest of the game)
+PRIMARY_GRID = 16
+PRIMARY_ATLASES = {
+    16: f"{INTERIOR_DIR}/atlas_16x.png",
+    32: f"{INTERIOR_DIR}/atlas_32x.png",
+    48: f"{INTERIOR_DIR}/atlas_48x.png",
+}
+PRIMARY_ANIM_DIR = f"{INTERIOR_DIR}/animation"      # chest_00N.png / fire.png / fire2.png: 6 frames of 16x32
+
+# SECONDARY: Cute RPG Interiors (DEMO) -- generic, non-tech decor only. Its props are not cell aligned, so
+# tileset_map.py addresses them by pixel rectangle. CREDIT REQUIRED by its licence: Heather Wait (RPGCookie).
+SECONDARY_ATLAS = f"{INTERIOR_DIR}/global.png"
+SECONDARY_GRID = 16
+
+# TERTIARY: Modern Interiors (free) by LimeZu -- furniture sheet (addressed by exact pixel rect) and Room Builder sheet
+# (walls / floors, addressed by cell).  Used for the town's houses, shops, hall, library and farm market.
+MODERN_INTERIORS = f"{INTERIOR_DIR}/modern/Interiors_free_16x16.png"
+MODERN_ROOM_BUILDER = f"{INTERIOR_DIR}/modern/Room_Builder_free_16x16.png"
+MODERN_GRID = 16
+
+# Characters: 16x32 frames, 24 columns x 7 rows per sheet (Adam/Alex/Amelia/Bob layout). Set PLAYER_SHEET to any sheet
+# with this layout (e.g. a scientist re-skin, or LimeZu's Adam_16x16.png) to replace the default player look.
+CHARACTERS_DIR = "characters"
+# Use the 16x24 "RPG DB" characters (assets/characters/rpgdb0_0.png .. rpgdb11_0.png, made by
+# tools/import_rpgdb_sheet.py) for the whole cast.  False restores the original Adam/Alex/Amelia/Bob look.
+# Who plays whom is the RPGDB_CAST table in sprites.py.
+USE_RPGDB_CAST = True
+PLAYER_SHEET = None                                   # e.g. "sprites/characters/researcher.png"
+SHEET_LAYOUT = dict(
+    frame=(16, 32),                                   # one frame, native px
+    frames_per_dir=6,
+    dir_col={"right": 0, "up": 6, "left": 12, "down": 18},   # first column of each facing
+    rows={"idle": 1, "walk": 2},                      # sheet row of each mode
+    fps={"idle": 4.0, "walk": 16.0},
+)
+
+# Overworld Sci-Mon: static species art + procedural hover. A species can instead name an idle sheet here:
+#   "sparkit": dict(sheet="sprites/creatures/sparkit_idle.png", frame=(96, 96), frames=4, fps=6)
+CREATURE_SHEETS = {}
+CREATURE_HOVER = dict(amplitude=0.07, period=2.4)     # amplitude in sprite heights, period in seconds
+
+# Asset safety limits (enforced in assets.py)
+MAX_IMAGE_BYTES = 32 * 1024 * 1024
+MAX_IMAGE_SIDE = 8192
+ASSET_EXTENSIONS = (".png", ".ttf")
+
+
 def hexc(s):
     s = s.lstrip("#")
     return tuple(int(s[i:i + 2], 16) for i in (0, 2, 4))

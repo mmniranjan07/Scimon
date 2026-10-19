@@ -12,11 +12,12 @@ from engine import Scene, StateId
 from map import Camera, TileMap
 from menus import DatabaseScene, InventoryScene, ServiceScene, ShopScene
 from monsters import create_scimon
+from routes import LINKS, TOWN
 from scenes import DialogueScene
 from settings import ENCOUNTER_CHANCE, H, INK, TILE, W
 from sprites import DIRS, NPC, Player
 from ui import bar, hp_color, is_click, is_confirm, panel, render_text, text
-from worldmap import PLAYER_START, SIGN_LINES, building_at_door, BUILDINGS
+from worldmap import PLAYER_START, building_at_door, BUILDINGS
 
 
 def pick_encounter():
@@ -49,10 +50,14 @@ class OverworldScene(Scene):
         self.pack_rect = pygame.Rect(0, 0, 0, 0)
 
     # ---- maps ------------------------------------------------------------------------
-    def _get_map(self, b):
-        key = b.id if b else "overworld"
+    def _get_map(self, b, area=TOWN):
+        """The town (default), a route (`area`), or a building's interior (`b`); each is built once and cached."""
+        key = b.id if b else area
         if key not in self.maps:
-            self.maps[key] = TileMap.interior(b) if b else TileMap.overworld()
+            if b:
+                self.maps[key] = TileMap.interior(b)
+            else:
+                self.maps[key] = TileMap.overworld() if area == TOWN else TileMap.route(area)
         return self.maps[key]
 
     def _load_npcs(self):
@@ -72,6 +77,7 @@ class OverworldScene(Scene):
             self.map = self._get_map(b)
             self._load_npcs()
             self.player.place(*b.interior.spawn, "up")
+            self.map.sync_state(self.engine.state)
         audio.play("door")
         self.engine.fade_to(apply)
 
@@ -86,6 +92,16 @@ class OverworldScene(Scene):
         audio.play("door")
         self.engine.fade_to(apply)
 
+    def travel(self, link):
+        """Walk from one outdoor area to another (town <-> Route 1) through a link tile (routes.LINKS)."""
+        area, (tx, ty), facing = link
+
+        def apply():
+            self.map = self._get_map(None, area)
+            self._load_npcs()
+            self.player.place(tx, ty, facing)
+        self.engine.fade_to(apply)
+
     # ---- interaction -------------------------------------------------------------------
     def interact(self):
         p, m = self.player, self.map
@@ -94,10 +110,18 @@ class OverworldScene(Scene):
         if m.is_terminal(fx, fy) and self.building:
             self.engine.push(DatabaseScene())
             return
-        if not self.building and m.tile_at(fx, fy) == "S":           # the plaza signpost: four directions
+        sign = m.sign_at(fx, fy) if not self.building else None      # signposts (the plaza's, Route 1's)
+        if sign:
             audio.play("select")
-            self.engine.push(DialogueScene(list(SIGN_LINES)))
+            self.engine.push(DialogueScene(list(sign)))
             return
+        obj = m.interactable_at(fx, fy)                              # loot chests etc.
+        if obj:
+            lines = obj.interact(self.engine.state)
+            if lines:
+                audio.play("select")
+                self.engine.push(DialogueScene(lines))
+                return
         npc = self.npc_at(fx, fy)
         if not npc and m.is_counter(fx, fy):
             bx, by = fx + dx, fy + dy
@@ -179,6 +203,7 @@ class OverworldScene(Scene):
     def update(self, dt):
         self.t += dt
         self.npcs.update(dt)
+        self.map.update(dt)
         eng = self.engine
         if eng.top is self and not eng.transitioning:
             self._move(dt)
@@ -211,6 +236,10 @@ class OverworldScene(Scene):
         m, (x, y) = self.map, self.player.tile
         t = m.tile_at(x, y)
         if m.kind == "overworld":
+            link = LINKS.get(m.area, {}).get((x, y))
+            if link:
+                self.travel(link)
+                return
             if t == "D":
                 b = building_at_door(x, y)
                 if b:
@@ -264,7 +293,7 @@ class OverworldScene(Scene):
             ratio = mon.hp / mon.max_hp
             bar(surf, (r.x + 40, r.y + 26, 94, 8), ratio, hp_color(ratio))
             x += 148
-        loc = self.building.name if self.building else "Riven Town"
+        loc = self.building.name if self.building else self.map.name
         locr = render_text(loc, "display", 8, INK)
         w = max(150, locr.get_width() + 28)
         lr = pygame.Rect(W - 10 - w, 10, w, 28)

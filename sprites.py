@@ -8,8 +8,9 @@ import random
 
 import pygame
 
+import animation
 import assets
-from settings import PX, TILE, WALK_TILES_PER_SEC, hexc
+from settings import (CREATURE_HOVER, CREATURE_SHEETS, PLAYER_SHEET, PX, USE_RPGDB_CAST, SHEET_LAYOUT, TILE, WALK_TILES_PER_SEC, hexc)
 
 DIRS = {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)}
 
@@ -22,10 +23,8 @@ def _r(surf, color, x, y, w, h, scale=PX):
 # Characters are 16x32-px frames (assets/characters/<body>_<hue>.png, 24 columns x 7 rows) drawn at 48x96.
 # The *hitbox* is the single 48x48 tile the character stands on; the sprite is anchored so its feet are on the
 # bottom edge of that tile and the head overhangs the tile above (see Character.draw_pos).
-FRAME_W, FRAME_H = 16, 32
-DIR_COL = {"right": 0, "up": 6, "left": 12, "down": 18}       # first of 6 frames per facing
-IDLE_ROW, WALK_ROW = 1, 2
-WALK_FPS, IDLE_FPS = 16.0, 4.0
+FRAME_W, FRAME_H = SHEET_LAYOUT["frame"]
+WALK_FPS, IDLE_FPS = SHEET_LAYOUT["fps"]["walk"], SHEET_LAYOUT["fps"]["idle"]
 
 # who looks like whom: body sheet + hue variant (4 bodies, recoloured, for the whole cast)
 LOOKS = {
@@ -34,23 +33,39 @@ LOOKS = {
     "archivist": ("amelia", 230), "shopkeeper": ("alex", 50), "farmer-wren": ("adam", 170), "grower": ("bob", 50),
     "player-mom": ("amelia", 0), "toma": ("alex", 0), "reya": ("amelia", 110),
 }
-_frame_cache = {}
+
+
+# Cast -> RPG DB character number (0-11, left to right on the source sheet; 0-3 old style, 4-11 new style).
+# Edit freely; a number whose sheet file is missing is skipped and that person keeps the original look.
+RPGDB_CAST = {
+    "player": 5, "venn": 3, "kael": 10, "ilo": 0, "jori": 4, "sella": 11, "lab-aide": 1, "mayor": 2, "cush": 6,
+    "archivist": 9, "shopkeeper": 7, "farmer-wren": 8, "grower": 0, "player-mom": 11, "toma": 10, "reya": 1,
+    "ranger": 4,
+}
+DEFAULT_LOOK = ("bob", 0)                      # anyone not listed in LOOKS
+if USE_RPGDB_CAST:
+    for _who, _n in RPGDB_CAST.items():
+        if assets.has(f"characters/rpgdb{_n}_0.png"):
+            LOOKS[_who] = (f"rpgdb{_n}", 0)
+    if assets.has("characters/rpgdb8_0.png"):
+        DEFAULT_LOOK = ("rpgdb8", 0)
+
+
+def look_animator(look):
+    """SheetAnimator for a (body, hue) look.  The player's look can be replaced by settings.PLAYER_SHEET (any sheet
+    following settings.SHEET_LAYOUT); a missing file silently falls back to the default body."""
+    body, hue = look
+    rel = f"characters/{body}_{hue}.png"
+    if look == LOOKS["player"] and PLAYER_SHEET and assets.has(PLAYER_SHEET):
+        rel = PLAYER_SHEET
+    elif not assets.has(rel):                    # a look whose sheet is missing falls back to the default body
+        rel = "characters/adam_0.png"
+    return animation.sheet_animator(rel)
 
 
 def character_frame(look, facing, mode, index):
-    """48x96 surface for one frame. `look` = (body, hue); mode = 'walk' | 'idle'; index = animation frame 0-5."""
-    key = (look, facing, mode, index % 6)
-    f = _frame_cache.get(key)
-    if f is None:
-        body, hue = look
-        rel = f"characters/{body}_{hue}.png"
-        sheet = assets.image(rel)
-        row = WALK_ROW if mode == "walk" else IDLE_ROW
-        x = (DIR_COL[facing] + index % 6) * FRAME_W
-        sub = sheet.subsurface((x, row * FRAME_H, FRAME_W, FRAME_H))
-        f = pygame.transform.scale(sub, (FRAME_W * PX, FRAME_H * PX))
-        _frame_cache[key] = f
-    return f
+    """48x96 surface for one frame by index (0-5); kept for callers that pick frames themselves."""
+    return look_animator(look).frame_index(mode, facing, index)
 
 
 class Character(pygame.sprite.Sprite):
@@ -64,7 +79,8 @@ class Character(pygame.sprite.Sprite):
         self.look, self.facing = look, facing
         self.mode, self.anim_t = "idle", random.random() * 3
         self.rect = pygame.Rect(self.pos.x, self.pos.y, TILE, TILE)
-        self.image = character_frame(look, facing, "idle", 0)
+        self.anim = look_animator(look)
+        self.image = self.anim.frame("idle", facing, 0)
 
     @property
     def sort_y(self):
@@ -76,8 +92,7 @@ class Character(pygame.sprite.Sprite):
         return self.rect.x + (TILE - self.image.get_width()) // 2, self.rect.bottom - self.image.get_height()
 
     def refresh(self):
-        fps = WALK_FPS if self.mode == "walk" else IDLE_FPS
-        self.image = character_frame(self.look, self.facing, self.mode, int(self.anim_t * fps))
+        self.image = self.anim.frame(self.mode, self.facing, self.anim_t)       # Animation.frame_at(t): fps per mode
         self.rect.topleft = (round(self.pos.x), round(self.pos.y))
 
 
@@ -135,7 +150,7 @@ class Player(Character):
 
 class NPC(Character):
     def __init__(self, d):
-        super().__init__(d["x"], d["y"], LOOKS.get(d["id"], ("bob", 0)))
+        super().__init__(d["x"], d["y"], LOOKS.get(d["id"], DEFAULT_LOOK))
         self.id, self.name, self.lines = d["id"], d["name"], d["lines"]
         self.heals, self.service = d.get("heals", False), d.get("service")
 
@@ -146,6 +161,72 @@ class NPC(Character):
     def update(self, dt):
         self.anim_t += dt                              # idle animation (breathing / blink) from the sheet
         self.refresh()
+
+
+# --------------------------------------------------------------------------- overworld Sci-Mon
+_hover_cache = {}
+
+
+def _hover_animation(species_id, size=54):
+    """Hover cycle for an overworld Sci-Mon: the creature bobs up and down while its ground shadow shrinks as it
+    rises.  All frames are pre-rendered once (same canvas size), so per-frame cost is a single blit.
+    If settings.CREATURE_SHEETS names an idle sheet for the species, its frames are used instead of one still."""
+    got = _hover_cache.get(species_id)
+    if got:
+        return got
+    cfg = CREATURE_SHEETS.get(species_id)
+    sheet = assets.image_or_none(cfg["sheet"]) if cfg else None
+    if sheet is not None:
+        fw, fh = cfg["frame"]
+        src = animation.strip_frames(sheet, fw, fh, cfg.get("frames"))
+        k = min(size / fw, size / fh)
+        src = [pygame.transform.scale(f, (max(1, int(fw * k)), max(1, int(fh * k)))) for f in src]
+        n, fps = len(src), cfg.get("fps", 6)
+    else:
+        src = [assets.mon_image(species_id, size, size)]
+        n = 24
+        fps = n / CREATURE_HOVER["period"]
+    h = max(f.get_height() for f in src)
+    w = max(f.get_width() for f in src)
+    amp = max(3, round(h * CREATURE_HOVER["amplitude"]))
+    hover = animation.Hover(amp, period=1.0, phase=-math.pi / 2)       # phase 0 at frame 0 (on the ground)
+    shadow_h = 8
+    canvas_h = h + amp + shadow_h
+    frames = []
+    for i in range(n):
+        t = i / n
+        lift = hover.lift(t)
+        f = pygame.Surface((w, canvas_h), pygame.SRCALPHA)
+        sw = int(w * 0.7 * (1 - 0.3 * lift))
+        shadow = pygame.Surface((sw, shadow_h), pygame.SRCALPHA)
+        pygame.draw.ellipse(shadow, (10, 10, 14, int(110 - 40 * lift)), shadow.get_rect())
+        f.blit(shadow, ((w - sw) // 2, canvas_h - shadow_h))
+        img = src[i % len(src)]
+        f.blit(img, ((w - img.get_width()) // 2, canvas_h - shadow_h - img.get_height() + round(hover.offset(t)) - 2))
+        frames.append(f)
+    got = _hover_cache[species_id] = animation.Animation(frames, fps=fps)
+    return got
+
+
+class CreatureSprite:
+    """A Sci-Mon floating on a tile of the overworld / a room.  Depth-sorted like any prop (`image`, `x`, `y`,
+    `sort_y`), animated through update(dt), solid on its own tile (rooms mark that in their collision grid)."""
+
+    def __init__(self, species_id, tx, ty):
+        self.species_id, self.tile = species_id, (tx, ty)
+        self.anim = _hover_animation(species_id)
+        self.t = random.random() * self.anim.duration
+        img = self.anim.frames[0]
+        bottom = (ty + 1) * TILE
+        self.x, self.y = tx * TILE + (TILE - img.get_width()) // 2, bottom - img.get_height()
+        self.sort_y = bottom
+
+    @property
+    def image(self):
+        return self.anim.frame_at(self.t)
+
+    def update(self, dt):
+        self.t += dt
 
 
 # --------------------------------------------------------------------------- battle sprites

@@ -11,8 +11,10 @@ import pygame
 
 import assets
 import interiors
+import layered_room
 import townview
 import worldmap as wm
+from routes import AREAS
 from settings import PX, TILE, VOID, W, H, hexc
 
 
@@ -239,6 +241,12 @@ class TileMap:
         self.surface = None
         self.floor_texture = False
         self.props = []                    # depth-sorted furniture (interiors only)
+        self.foreground = None             # overlay layer drawn above characters (layered rooms)
+        self.fx = []                       # animated light halos (layered rooms)
+        self.animated = []                 # props with update(dt)
+        self.interactables = {}            # (tx, ty) -> object with interact(state)
+        self.area, self.name = "overworld", "Riven Town"     # which outdoor area this is (routes.py) and its HUD name
+        self.signs = {}                    # (tx, ty) of an S tile -> dialogue lines
 
     # ---- collision ----------------------------------------------------------------
     def _build_solid_rects(self):
@@ -279,7 +287,17 @@ class TileMap:
     @classmethod
     def overworld(cls):
         m = cls("overworld", wm.MAP_ROWS, wm.NPCS)
+        m.signs = {(x, y): list(wm.SIGN_LINES) for y, row in enumerate(wm.MAP_ROWS) for x, c in enumerate(row) if c == "S"}
         m._render_overworld()
+        return m
+
+    @classmethod
+    def route(cls, area_id):
+        """An outdoor area beyond the town (routes.py): same tiles, collision and encounters as the town, no buildings."""
+        a = AREAS[area_id]
+        m = cls("overworld", a.rows, a.npcs)
+        m.area, m.name, m.signs = a.id, a.name, dict(a.signs)
+        m._render_route()
         return m
 
     @classmethod
@@ -303,15 +321,50 @@ class TileMap:
                               townview.lamp_points(self.rows), townview.smoke_points(origins))
         self._tag_cache = {}
 
+    def _render_route(self):
+        """Same ground and scenery renderer as the town, minus buildings, ponds, lamps and beacon."""
+        s = pygame.Surface((self.px_w, self.px_h))
+        s.fill(VOID)
+        townview.draw_ground(s, self.rows, draw_overworld_tile)
+        self.building_rects = {}
+        self.props = townview.build_props(self.rows, green_only=True)
+        self.surface = s
+        self.fx = townview.Fx(self.rows, [], {}, {}, [], [], [], studs=False)
+        self._tag_cache = {}
+
+    def sign_at(self, x, y):
+        return self.signs.get((x, y))
+
+    def update(self, dt):
+        """Advance animated props (chests, glowing cores / screens, hovering Sci-Mon)."""
+        for a in self.animated:
+            a.update(dt)
+
+    def interactable_at(self, x, y):
+        return self.interactables.get((x, y))
+
+    def sync_state(self, state):
+        """Re-apply saved state (opened chests) to the room's objects."""
+        for o in self.interactables.values():
+            o.sync(state)
+
     def draw_top(self, surf, cam, t):
-        """Overlays that must sit above the depth-sorted props (the lab beacon glow)."""
+        """Overlays that must sit above the depth-sorted props (the lab beacon glow / a room's foreground layer)."""
         if self.kind == "overworld":
             townview.draw_beacon(surf, cam, t, self.fx)
+            return
+        if self.foreground is not None:
+            surf.blit(self.foreground, (-cam.x, -cam.y))
+        for f in self.fx:
+            f.draw(surf, cam, t)
 
     def _render_interior(self):
         b = self.building
-        if self.baked:                      # sprite-built room (interiors.py)
-            self.surface, self.props = interiors.render(interiors.SPECS[self.baked])
+        if self.baked in interiors.LAYERED:   # layer-based room: background / midground / foreground
+            room = layered_room.build(interiors.LAYERED[self.baked])
+            self.surface = room.static_surface()
+            self.props, self.foreground, self.fx = room.props, room.foreground, room.fx
+            self.animated, self.interactables = room.animated, room.interactables
             assert self.surface.get_size() == (self.px_w, self.px_h), (self.baked, self.surface.get_size())
             return
         pal = b.interior.palette

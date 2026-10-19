@@ -7,7 +7,7 @@ import os
 
 import pygame
 
-from settings import ASSETS, TILE
+from settings import ASSET_EXTENSIONS, ASSETS, MAX_IMAGE_BYTES, MAX_IMAGE_SIDE, TILE
 from data import SPECIES
 
 _raw = {}        # path -> source Surface
@@ -20,18 +20,58 @@ FONT_FILES = {
 }
 
 
-def _path(rel):
-    return os.path.join(ASSETS, rel)
+def safe_path(rel, directory=False):
+    """Resolve `rel` (relative to assets/) to a real file path, refusing anything that could escape the assets
+    folder: absolute paths, '..' traversal, symlinks pointing outside, NUL bytes and unlisted extensions.
+    Sprite paths come from settings.py (and could one day come from a mod/config file), so they are validated
+    here, in the one place every load goes through."""
+    if not isinstance(rel, str) or not rel or "\x00" in rel or os.path.isabs(rel):
+        raise ValueError(f"bad asset path: {rel!r}")
+    root = os.path.realpath(ASSETS)
+    full = os.path.realpath(os.path.join(root, rel))
+    try:
+        inside = os.path.commonpath([root, full]) == root
+    except ValueError:                                   # different drive on Windows
+        inside = False
+    if not inside:
+        raise ValueError(f"asset path escapes the assets folder: {rel!r}")
+    if not directory and os.path.splitext(full)[1].lower() not in ASSET_EXTENSIONS:
+        raise ValueError(f"asset type not allowed: {rel!r}")
+    return full
+
+
+_path = safe_path        # historical name used by font() and preload()
+
+
+def has(rel):
+    """True if `rel` is a loadable asset (never raises) -- lets the tile resolver fall through to the next pack."""
+    try:
+        return os.path.isfile(safe_path(rel))
+    except ValueError:
+        return False
 
 
 def image(rel):
     """Source surface for an asset path relative to assets/ (cached)."""
     surf = _raw.get(rel)
     if surf is None:
-        surf = pygame.image.load(_path(rel))
+        full = safe_path(rel)
+        if os.path.getsize(full) > MAX_IMAGE_BYTES:
+            raise ValueError(f"asset too large: {rel!r}")
+        surf = pygame.image.load(full)
+        if max(surf.get_size()) > MAX_IMAGE_SIDE:
+            raise ValueError(f"asset dimensions too large: {rel!r} {surf.get_size()}")
         surf = surf.convert_alpha() if pygame.display.get_surface() else surf
         _raw[rel] = surf
     return surf
+
+
+def image_or_none(rel):
+    """Like image() but returns None when the file is missing or invalid, so optional packs never crash the game."""
+    try:
+        return image(rel) if has(rel) else None
+    except (ValueError, pygame.error, OSError):
+        return None
 
 
 def scaled(rel, w, h, smooth=True):
@@ -78,7 +118,7 @@ def preload_steps():
     (the browser build needs that: one long blocking call would leave the canvas blank)."""
     jobs = []
     for folder in ("buildings", "scimon", "tiles/nature", "tiles/hitech", "tiles/res", "interiors", "characters", "town"):
-        full = _path(folder)
+        full = safe_path(folder, directory=True)
         for name in sorted(os.listdir(full)):
             if name.lower().endswith(".png"):
                 jobs.append((False, f"{folder}/{name}"))

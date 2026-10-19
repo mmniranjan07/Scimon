@@ -28,6 +28,7 @@ class GameState:
         self.rival_species = None
         self.intro_done = False
         self.rival_beaten = False
+        self.opened_chests = set()           # keys of loot chests already opened (layered_room.Chest)
 
     # ---- bag ----------------------------------------------------------------------
     def qty(self, item_id):
