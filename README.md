@@ -15,7 +15,22 @@ The `scimon_py` look (transparent, game-ready sprites and building art) merged w
 | I / Tab / Esc (overworld) | open the Pack |
 | Pack: Tab, Q/E, T, U/J, Del | switch tab, category, take held item, reorder party, discard |
 | M | mute SFX | F3 | collision/hitbox overlay | F11 | fullscreen |
+**Phones / tablets:** an on-screen D-pad plus **A** (confirm), **B** (back) and **PACK** buttons appear automatically; every menu can also be tapped. See *Mobile / touch* below.
 Mouse works on every menu (hover, click). The window is resizable; the game renders at 960x640 and scales.
+
+## Mobile / touch
+On a touch device (browser reports a coarse pointer) the engine opens a larger canvas and places the 960x640 game inside it,
+so the controls never hide anything: **landscape phones** get the D-pad on the left and A/B/PACK on the right; **portrait phones**
+get the game on top and controls underneath; **tablets / squarish screens** get translucent controls over the corners. The layout
+follows rotation. Buttons become normal key events (A=Enter, B=X, PACK=I), the D-pad also auto-repeats in menus, and taps on the
+game area behave like mouse clicks. The landing page switches to a full-viewport play mode on phones (also on iOS, which lacks
+element fullscreen) and tries to lock landscape.
+
+Test on a desktop (any window size string, e.g. portrait `390x844`):
+
+    SCIMON_TOUCH=1 SCIMON_TOUCH_SIZE=844x390 python main.py
+
+Click the pads with the mouse is not simulated - use the browser's device emulation on the pygbag build for real multi-touch.
 
 ## Saving
 Progress autosaves every few seconds (party, Sci-Database, bag, credits, Sci-Dex, chests, story flags). In the browser it lives in
@@ -38,6 +53,7 @@ localStorage; on desktop in `~/.scimon/save.json`. The title screen offers CONTI
 | `scenes.py` | title, dialogue, wake-up, starter select, rival encounter, game flow |
 | `menus.py` | Pack, Shop, Sci-Database, repair service menu |
 | `ui.py` | glass panels, pixel text, typewriter dialogue box, bars, chips, button grid, toast |
+| `touch.py` | mobile support: layouts, on-screen D-pad / A / B / PACK, multi-touch finger tracking |
 | `assets.py` / `audio.py` | cached image/font loader; synthesized SFX (no audio files) |
 
 Design rules: nothing blocks - dialogue, battles, shops and transitions are all scene states advanced by
@@ -116,3 +132,4 @@ and `assets/scimon` (monster sprites) yourself or have the right to share them.
     python tests/smoke.py   # title -> wake -> starter -> rival battle
     python tests/play.py    # battle, collision, doors, shop, pack, database, capture
     python tests/fuzz.py 1  # random input + teleports, asserts invariants
+    python tests/touch.py   # touch layouts, D-pad / button events, tap routing

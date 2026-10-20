@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SCI-MON – The Scientific Monster RPG</title>
 <meta name="description" content="SCI-MON is a monster-collecting RPG about autonomous machines. Play it free in your browser.">
 <meta property="og:title" content="SCI-MON – The Scientific Monster RPG">
@@ -56,6 +56,16 @@ kbd{font:11px var(--px);background:#0a0d18;border:1px solid var(--line);border-b
 .scroll{overflow-x:auto}
 footer{margin-top:60px;padding:28px 0 40px;border-top:1px solid var(--line);text-align:center;color:var(--dim);font-size:19px}
 @media (max-width:600px){body{font-size:20px}.btn{font-size:12px}}
+.screen{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.touch-only{display:none}
+@media (pointer:coarse){.touch-only{display:table-row}.kbd-only{display:none}}
+body.playing{overflow:hidden;overscroll-behavior:none}
+body.playing .wrap>*:not(#play){display:none}
+body.playing .wrap,body.playing #play{padding:0;max-width:none}
+body.playing .console{position:fixed;inset:0;z-index:50;width:100%;height:100vh;height:100dvh;border-radius:0;border:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);background:#000;display:flex;flex-direction:column;box-shadow:none}
+body.playing .screen{aspect-ratio:auto;flex:1;border-radius:0}
+body.playing .bar{margin:0;padding:4px 8px calc(4px + env(safe-area-inset-bottom));justify-content:flex-end}
+body.playing .bar>span{display:none}
 </style>
 </head>
 <body>
@@ -80,8 +90,9 @@ footer{margin-top:60px;padding:28px 0 40px;border-top:1px solid var(--line);text
         </div>
       </div>
       <div class="bar">
-        <span>Progress saves automatically in this browser. Click the game once, then use the keyboard.</span>
+        <span class="kbd-only">Progress saves automatically in this browser. Click the game once, then use the keyboard.</span><span class="touch-only" style="display:none">Progress saves automatically. Rotate your phone sideways for the biggest screen.</span>
         <button class="btn alt" id="fs" type="button">⛶ FULLSCREEN</button>
+        <button class="btn alt" id="exit" type="button" hidden>✕ EXIT</button>
       </div>
     </div>
   </section>
@@ -93,8 +104,9 @@ footer{margin-top:60px;padding:28px 0 40px;border-top:1px solid var(--line);text
     <tr><td><kbd>Esc</kbd><kbd>X</kbd></td><td>Go back or close</td></tr>
     <tr><td><kbd>I</kbd><kbd>Tab</kbd></td><td>Open the Pack</td></tr>
     <tr><td><kbd>M</kbd></td><td>Mute sound effects</td></tr>
+    <tr class="touch-only"><td><kbd>TOUCH</kbd></td><td>On phones and tablets, an on-screen D-pad plus A (confirm), B (back) and PACK buttons appear. Tap any menu item directly.</td></tr>
   </table></div>
-  <p style="margin-top:10px;color:var(--dim)">Every menu also works with the mouse (hover and click).</p>
+  <p style="margin-top:10px;color:var(--dim)">Every menu also works with the mouse or by tapping. Touch controls appear automatically on mobile.</p>
 
   <h2>FEATURES</h2>
   <div class="grid">
@@ -108,6 +120,8 @@ footer{margin-top:60px;padding:28px 0 40px;border-top:1px solid var(--line);text
 <script>
 (function(){
   var screen=document.getElementById('screen'),poster=document.getElementById('poster'),frame=null;
+  var fsBtn=document.getElementById('fs'),exitBtn=document.getElementById('exit');
+  var touch=window.matchMedia&&matchMedia('(pointer:coarse)').matches;
   function start(){
     if(frame)return;
     frame=document.createElement('iframe');
@@ -119,13 +133,31 @@ footer{margin-top:60px;padding:28px 0 40px;border-top:1px solid var(--line);text
     poster.style.display='none';
     frame.addEventListener('load',function(){frame.focus()});
   }
-  document.getElementById('start').addEventListener('click',start);
-  document.getElementById('fs').addEventListener('click',function(){
+  /* "playing" = the game fills the whole viewport (works on iOS, which has no element fullscreen) */
+  function setPlaying(on){
+    document.body.classList.toggle('playing',on);
+    exitBtn.hidden=!on; fsBtn.hidden=on;
+    if(!on&&document.fullscreenElement)document.exitFullscreen().catch(function(){});
+  }
+  function nativeFs(){
+    var el=document.documentElement,rq=el.requestFullscreen||el.webkitRequestFullscreen;
+    if(!rq)return;
+    var p=rq.call(el);
+    var lock=function(){try{screen.orientation.lock('landscape').catch(function(){})}catch(e){}};
+    if(p&&p.then)p.then(lock).catch(function(){});
+  }
+  document.getElementById('start').addEventListener('click',function(){
     start();
-    var el=screen.requestFullscreen?screen:null;
-    if(el)el.requestFullscreen().catch(function(){});
+    if(touch){setPlaying(true);nativeFs();}
   });
-  if(location.hash==='#autostart')start();
+  fsBtn.addEventListener('click',function(){
+    start();setPlaying(true);nativeFs();
+  });
+  exitBtn.addEventListener('click',function(){setPlaying(false)});
+  document.addEventListener('fullscreenchange',function(){
+    if(!document.fullscreenElement&&document.body.classList.contains('playing')&&!touch)setPlaying(false);
+  });
+  if(location.hash==='#autostart'){start();if(touch)setPlaying(true);}
 })();
 </script>
 </body>

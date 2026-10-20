@@ -239,8 +239,10 @@ class InventoryScene(Scene):
         if self.tab == "party" and not self.pending:
             text(surf, "Swap Sci-Mons at a Sci-Database terminal (Astrion Lab or Cush's Nook).",
                  (left.x + 14, left.bottom - 28), "body", 22, (70, 74, 70))
-        text(surf, "Arrows move  Enter select  Tab switch  Q/E category  T take  U/J reorder  Del discard  Esc close",
-             (r.x + 28, r.bottom - 30), "body", 22, (70, 74, 70))
+        hint = ("Tap to select   Use the buttons above to switch, take, reorder or discard   B closes"
+                if getattr(self.engine, "touch_on", False) else
+                "Arrows move  Enter select  Tab switch  Q/E category  T take  U/J reorder  Del discard  Esc close")
+        text(surf, hint, (r.x + 28, r.bottom - 30), "body", 22, (70, 74, 70))
         if self.msg_t > 0:
             img = render_text(self.msg, "display", 8, (248, 246, 230))
             box = pygame.Rect(0, 0, img.get_width() + 40, 38)

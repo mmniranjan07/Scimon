@@ -16,6 +16,7 @@ from routes import LINKS, TOWN
 from scenes import DialogueScene
 from settings import ENCOUNTER_CHANCE, H, INK, TILE, W
 from sprites import DIRS, NPC, Player
+import touch
 from ui import bar, hp_color, is_click, is_confirm, panel, render_text, text
 from worldmap import PLAYER_START, building_at_door, BUILDINGS
 
@@ -190,6 +191,9 @@ class OverworldScene(Scene):
 
     def _held_dir(self):
         k = pygame.key.get_pressed()
+        if not (k[pygame.K_UP] or k[pygame.K_w] or k[pygame.K_DOWN] or k[pygame.K_s]
+                or k[pygame.K_LEFT] or k[pygame.K_a] or k[pygame.K_RIGHT] or k[pygame.K_d]):
+            return touch.held_dir()                 # on-screen D-pad (None when not touching)
         if k[pygame.K_UP] or k[pygame.K_w]:
             return "up"
         if k[pygame.K_DOWN] or k[pygame.K_s]:
