@@ -1,10 +1,2 @@
 __pycache__/
-*.py[cod]
-.venv/
-venv/
-build/
-*.apk
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/
+*.pyc
