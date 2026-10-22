@@ -1,7 +1,7 @@
 import faulthandler; faulthandler.dump_traceback_later(25, exit=True)
 """Fuzz + performance: random inputs and teleports for many simulated minutes; must never raise."""
 import os, sys, random, time
-os.environ.setdefault("SDL_VIDEODRIVER", "dummy"); os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
+os.environ.setdefault("SDL_VIDEODRIVER", "dummy"); os.environ.setdefault("SDL_AUDIODRIVER", "dummy"); os.environ.setdefault("SCIMON_NO_SAVE", "1")  # never touch the real save
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import pygame
 from engine import Engine, StateId

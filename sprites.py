@@ -284,6 +284,8 @@ class NPC(Character):
         self.requires = tuple(d.get("requires") or ())  # trainer ids to beat first (gym leader gating)
         self.locked_lines = d.get("locked") or []      # the refusal while `requires` isn't cleared
         self.aside = d.get("aside")                    # where a beaten gate guard steps out of the way
+        self.stamp = d.get("stamp")                    # gym stamp id this leader awards when first beaten
+        self.disc = d.get("disc")                      # move disc item id this leader also hands over
         self.speed = WALK_TILES_PER_SEC * TILE
         self.moving, self.target = False, (d["x"], d["y"])
         self.scan_t = random.uniform(0.8, 2.2)         # seconds until the next idle head turn

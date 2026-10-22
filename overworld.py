@@ -8,7 +8,7 @@ import pygame
 import assets
 import audio
 from battle import BG_FOR_AREA, BattleScene, new_battle
-from data import ROUTE_ENCOUNTERS
+from data import ROUTE_ENCOUNTERS, item_def
 from engine import Scene, StateId
 from map import Camera, TileMap
 from menus import DatabaseScene, InventoryScene, ServiceScene, ShopScene
@@ -72,7 +72,9 @@ class OverworldScene(Scene):
         """Keep GameState.location current so the autosave stores where the player stands."""
         where = {"building": self.building.id} if self.building else {"area": getattr(self.map, "area", TOWN)}
         where.update(tile=list(self.player.tile), facing=self.player.facing)
-        self.engine.state.location = where
+        st = self.engine.state
+        st.location = where
+        st.visited_areas.add(self.building.area if self.building else getattr(self.map, "area", TOWN))
 
     def _free(self, tx, ty):
         """A tile the player may be restored onto: inside the map, walkable, nobody standing there."""
@@ -246,7 +248,7 @@ class OverworldScene(Scene):
         if out == "lose":
             st.heal_party()
             healer = self._nearest_visited_healer()
-            if healer:                                    # a wipe sends you back to the last healer you used
+            if healer:                                    # a wipe sends you back to the last healer you used (or the nearest one behind you)
                 self._blackout_to(healer)
             else:
                 self.engine.toast.show("Your team was knocked offline... systems restored.", 3.0)
@@ -256,17 +258,23 @@ class OverworldScene(Scene):
                 self.engine.toast.show("You completed the Sci-Dex! Congratulations, Researcher!", 4.0)
 
     def _nearest_visited_healer(self):
-        """The healer the player has used that is closest to where they stand now (None if they never used one)."""
-        visited = [h for h in HEALERS if h["id"] in self.engine.state.visited_healers]
-        if not visited:
-            return None
+        """The healer the player has used that is closest to where they stand now.  Failsafes keep a wipe from
+        stranding the player or skipping them ahead: if they never used a healer, the nearest one in an area
+        they have already been through is returned (never one up ahead); a fresh save falls back to the start
+        town, which is always behind the player."""
+        st = self.engine.state
+        candidates = [h for h in HEALERS if h["id"] in st.visited_healers]
+        if not candidates:
+            candidates = [h for h in HEALERS if h["area"] in st.visited_areas]
+        if not candidates:
+            candidates = [h for h in HEALERS if h["area"] == TOWN] or HEALERS
         area = self.building.area if self.building else getattr(self.map, "area", TOWN)
         tile = self.player.tile
 
         def cost(h):
             c = travel_cost(area, tile, h["area"], h["tile"])
             return (math.inf if c is None else c, h["id"])
-        return min(visited, key=cost)
+        return min(candidates, key=cost)
 
     def _blackout_to(self, healer):
         """Set the player down by the healer.  Runs inside the battle-exit fade, so the swap is never seen."""
@@ -371,10 +379,20 @@ class OverworldScene(Scene):
             return
         if n:
             st.beaten_trainers.add(n.id)
+            post = list(n.post)
+            if n.stamp:
+                d = st.award_stamp(n.stamp)
+                if d:
+                    post = post + [f"You received the {d['name']} from {d['leader']}!", "It has been added to the stamp case in your Pack."]
+            if getattr(n, "disc", None):
+                dd = item_def(n.disc)
+                if dd:
+                    st.add_item(n.disc, 1)
+                    post.append(f"They also handed you the {dd.name} - play it on a compatible Sci-Mon to teach its move!")
             if n.aside and n.tile != tuple(n.aside):
                 n.place(*n.aside)                          # step out of the gate so the way opens
-            if n.post:
-                self.engine.push(DialogueScene(list(n.post)))
+            if post:
+                self.engine.push(DialogueScene(post))
 
     # ---- events / update --------------------------------------------------------------------
     def handle_event(self, e):

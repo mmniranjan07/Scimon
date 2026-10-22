@@ -27,6 +27,8 @@ def _read():
 
 
 def _write(raw):
+    if os.environ.get("SCIMON_NO_SAVE"):       # tests / previews must never touch the player's real save
+        return False
     try:
         if _WEB:
             import platform
@@ -50,7 +52,10 @@ def serialize(st):
         "intro_done": st.intro_done, "rival_beaten": st.rival_beaten,
         "opened_chests": sorted(str(k) for k in st.opened_chests),
         "visited_healers": sorted(str(k) for k in getattr(st, "visited_healers", ())),
+        "visited_areas": sorted(str(k) for k in getattr(st, "visited_areas", ())),
         "beaten_trainers": sorted(str(k) for k in getattr(st, "beaten_trainers", ())),
+        "stamps": sorted(str(k) for k in getattr(st, "stamps", ())),
+        "playtime": round(float(getattr(st, "playtime", 0.0)), 1),
         "location": getattr(st, "location", None) if isinstance(getattr(st, "location", None), dict) else {},
         "name": getattr(st, "name", "Robin"), "look": getattr(st, "look", None),
     }, sort_keys=True)
@@ -80,6 +85,7 @@ def load(st):
     """Fill `st` from the save. Returns True on success; on any problem `st` is left reset."""
     from data import SPECIES
     from monsters import Scimon
+    from state import stamp_by_id
     try:
         d = json.loads(_read())
         if d.get("v") != VERSION:
@@ -102,7 +108,10 @@ def load(st):
         st.rival_beaten = bool(d.get("rival_beaten"))
         st.opened_chests = set(d.get("opened_chests", []))
         st.visited_healers = set(d.get("visited_healers", []))
+        st.visited_areas = set(d.get("visited_areas", []))
         st.beaten_trainers = set(d.get("beaten_trainers", []))
+        st.stamps = {s for s in d.get("stamps", []) if stamp_by_id(s)}
+        st.playtime = float(d.get("playtime", 0.0) or 0.0)
         loc = d.get("location")
         st.location = loc if isinstance(loc, dict) else {}
         st.name = str(d.get("name") or "Robin")[:12]

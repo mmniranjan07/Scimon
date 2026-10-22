@@ -1,6 +1,6 @@
 """Headless test of the touch layer: layouts, D-pad, buttons, tap routing, rendering in every layout."""
 import os, sys
-os.environ.setdefault("SDL_VIDEODRIVER", "dummy"); os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
+os.environ.setdefault("SDL_VIDEODRIVER", "dummy"); os.environ.setdefault("SDL_AUDIODRIVER", "dummy"); os.environ.setdefault("SCIMON_NO_SAVE", "1")  # never touch the real save
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import pygame
 import touch

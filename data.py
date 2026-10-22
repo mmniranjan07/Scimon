@@ -136,6 +136,10 @@ _t("magshock", "Magnetic Shock", "Electric", "special", 35, 100, "A pulse of mag
 _t("rocktoss", "Rock Toss", "Geologic", "physical", 40, 95, "Hurls hardened mineral plating.")
 _t("naniteswarm", "Nanite Swarm", "Nano", "special", 40, 100, "Deploys microscopic machines that infest the target.",
    status="Nanite-Infected", status_chance=0.25)
+# Disc-only art (never appears in a learnset): each gym leader's secret technique, taught by their move disc.
+_t("verdantstorm", "Verdant Storm", "Botanic", "special", 75, 90,
+   "The Green Gym's secret art: a storm of razor leaves and choking pollen.",
+   status="Deoxygenated", status_chance=0.2)
 
 
 # --------------------------------------------------------------------------- species
@@ -271,7 +275,8 @@ def sell_price(item_id):
 
 
 # --------------------------------------------------------------------------- unified catalogue
-ITEM_CATEGORIES = [("consumable", "Supplies"), ("module", "Modules"), ("held", "Equipment"), ("key", "Key Items")]
+ITEM_CATEGORIES = [("consumable", "Supplies"), ("module", "Modules"), ("held", "Equipment"), ("disc", "Discs"),
+                   ("key", "Key Items")]
 
 
 @dataclass
@@ -289,6 +294,8 @@ class ItemDef:
     revive: float = 0.0
     power_boost: Optional[tuple] = None   # (type, multiplier) for the holder's techniques
     def_boost: float = 0.0                # multiplier on the holder's defense
+    move: Optional[str] = None            # move discs: the technique the disc teaches
+    compat_types: tuple = ()              # move discs: Sci-Mon types that can learn it
 
 
 _DESC = {
@@ -311,6 +318,18 @@ for _m in MODULES.values():
 
 def _held(id, name, short, color, desc, **kw):
     CATALOG[id] = ItemDef(id, name, short, desc, color, "held", **kw)
+
+
+def _disc(id, name, short, color, move, compat_types):
+    """A gym leader's move disc: teaches its technique once to a compatible Sci-Mon (state.teach_move)."""
+    t = TECHNIQUES[move]
+    types = " or ".join(compat_types)
+    CATALOG[id] = ItemDef(id, name, short, f"A move disc from a gym leader. Teaches {t.name} to a compatible "
+                                           f"Sci-Mon ({types}). This move can't be learned any other way.",
+                          color, "disc", permanent=True, move=move, compat_types=tuple(compat_types))
+
+
+_disc("verdantdisc", "Verdant Disc", "VS", "#5aa63f", "verdantstorm", ("Botanic", "Bio"))
 
 
 _held("thermalcore", "Thermal Core", "TC", "#e0592f",

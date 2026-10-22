@@ -1,7 +1,7 @@
 """Epidimy Town (headless): data checks, then a scripted player walks Route 1 -> Epidimy -> a house -> out -> Scimon Center -> Route 1.
 Usage: python tests/epidimy.py [screenshot_dir]"""
 import os, sys
-os.environ.setdefault("SDL_VIDEODRIVER", "dummy"); os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
+os.environ.setdefault("SDL_VIDEODRIVER", "dummy"); os.environ.setdefault("SDL_AUDIODRIVER", "dummy"); os.environ.setdefault("SCIMON_NO_SAVE", "1")  # never touch the real save
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import pygame
 from engine import Engine

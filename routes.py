@@ -109,8 +109,9 @@ ROUTE1_START = (11, 28)
 
 # ---------------------------------------------------------------------------
 # Healers: places that restore the party.  After a wipe the player is sent back to the nearest one they have
-# visited (OverworldScene.end_wild_battle): Prof. Venn by the town plaza, Cush's Repair Nook and the Epidimy
-# Scimon Center.  `tile` is where the player is set down, one step from the healer and facing them.
+# visited, or (failsafe, OverworldScene.end_wild_battle) the nearest one in an area they have already been
+# through, so dying can never strand them nor skip them ahead: Prof. Venn by the town plaza, Cush's Repair
+# Nook and the Epidimy Scimon Center.  `tile` is where the player is set down, one step from the healer.
 HEALERS = [
     dict(id="venn", name="Prof. Venn", area=TOWN, tile=(20, 8), facing="up"),
     dict(id="cush", name="Cush's Repair Nook", area=TOWN,

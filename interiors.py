@@ -92,7 +92,7 @@ MART = LayeredSpec(
         S("m_goods_shelf_a", 1, 3, 6), S("m_goods_shelf_b", 7, 3, 6),
         S("m_cooler", 9, 5, 4), S("m_cart", 1, 5),
         F("m_rug_red", 3, 9, 4, 2),
-        C("m_counter", 2, 7, 3), C("m_counter", 5, 7, 3), N("x_register", 6, 7, dy=-48),
+        C("m_table_long", 2, 7, 6), N("x_register", 6, 7, dy=-48),
         S("m_table", 9, 8, 2, 2), N("x_basket", 9, 8, dx=6, dy=-44), N("x_fruit_crate_a", 10, 8, dx=-4, dy=-44),
         S("m_crates", 10, 10, 3), S("m_plant_tree", 1, 10), S("m_palm", 12, 8), S("x_sale_sign", 8, 11),
         N("x_basket", 1, 8, dx=2),
@@ -105,7 +105,7 @@ CUSH = LayeredSpec(
         W("x_tool_wall", 4, 1, 3),
         S("x_parts_shelf", 1, 3, 3), S("x_workbench", 4, 3, 3), S("m_lamp_red", 7, 3),
         T("m_counter", 8, 3, 3), N("m_monitor", 8, 3, 3, dy=-50),
-        C("m_counter", 3, 5, 3), C("m_counter", 6, 5, 3), N("x_register", 4, 5, dy=-48), N("x_toolbox", 7, 5, dy=-48),
+        C("m_table_long", 3, 5, 6), N("x_register", 4, 5, dy=-48), N("x_toolbox", 7, 5, dy=-48),
         F("m_rug_red", 4, 7, 4, 2),
         S("m_bench", 8, 7, 3), S("m_plant_small", 1, 7), S("m_plant_tree", 10, 6), N("x_toolbox", 2, 8, dy=-2),
     ))
@@ -157,7 +157,7 @@ GYM_RING = LayeredSpec(
         W("x_banner_teal", 3, 0), W("m_window_grey", 6, 0, 2, dy=26), W("x_banner_teal", 12, 0),
         put("plasma_core", 4, 5), put("plasma_core_violet", 10, 5),          # the ring posts
         put("plasma_core_violet", 4, 9), put("plasma_core", 10, 9),
-        C("m_counter", 6, 6), C("m_counter", 6, 7), C("m_counter", 6, 8),    # the platform inside the ring
+        C("m_table_big", 6, 6, 3, 3),                                        # the platform inside the ring
         F("m_rug_red_v", 7, 4, 2, 2),                                        # the leader's spot
         # the island's flanks and the corridor hedges: the ring has exactly two single-file gates,
         # west at (4, 7) and east at (10, 7) -- each guarded by a gym coach (fight them in order)

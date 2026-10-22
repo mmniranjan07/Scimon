@@ -189,6 +189,8 @@ _t("m_dresser",        M(19, 949, 27, 23),  L("dresser_a"),    foot=(2, 1), coll
 _t("m_dresser_wide",   M(80, 949, 32, 21),  L("dresser_b"),    foot=(2, 1), collide="#")
 _t("m_dresser_small",  M(0, 949, 16, 20),   L("dresser_a"),    foot=(1, 1), collide="#")
 _t("m_counter",        M(0, 917, 48, 20),   L("desk_items"),   foot=(3, 1), collide="C")      # 3 small drawer units
+_t("m_table_long",     L("x_table_long"),   foot=(6, 1), collide="C")                            # one seamless 6-drawer table (tools/make_long_tables.py)
+_t("m_table_big",      L("x_table_big"),    foot=(3, 3), collide="C")                            # large platform table, 3 fused tiers
 _t("m_vanity",         M(34, 779, 28, 30),  L("vanity_a"),     foot=(2, 1), collide="#")
 _t("m_table",          M(13, 161, 38, 37),  L("table_round_brown"), foot=(2, 2), collide="#")
 _t("m_bench",          M(117, 216, 38, 21), L("bench_orange"), foot=(2, 1), collide="#")

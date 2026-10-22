@@ -211,6 +211,8 @@ class Engine:
             elif tr["phase"] == "in" and tr["t"] >= FADE_TIME:
                 self._transition = None
         top = self.top
+        if top and top.state_id not in (StateId.START_MENU, StateId.CUSTOMIZE):
+            self.state.playtime += dt       # the profile's time played: real play, not the title screen
         for s in list(self.scenes):
             if s is top or s.background_update:
                 s.update(dt)

@@ -81,15 +81,17 @@ def _npc(id, x, y, color, hair, name, lines, heals=False, service=None):
 
 
 def _trainer(id, x, y, name, lines, battle, post=(), facing="down", rematch=False, ask=(), requires=(), locked=(),
-             aside=None):
+             aside=None, stamp=None, disc=None):
     """A trainer NPC: scans for challengers, walks up when the player enters the 3-tile line of sight
     (overworld._trainers_think) and battles `battle` = (species id, level).  With `rematch` a beaten trainer
     offers another battle when talked to (choice: accept or deny).  With `requires`, the trainer refuses to
     battle (`locked` lines) until every listed trainer id is in GameState.beaten_trainers.  With `aside`, a
-    beaten trainer steps out of the way (gym gate guards stand in single-file corridors)."""
+    beaten trainer steps out of the way (gym gate guards stand in single-file corridors).  A gym leader with
+    `stamp` hands their GYM_STAMPS entry to the player the first time they are beaten, and with `disc` their
+    exclusive move disc (a technique no Sci-Mon can learn any other way)."""
     return dict(id=id, x=x, y=y, name=name, lines=list(lines), battle=tuple(battle), post=list(post),
                 facing=facing, rematch=rematch, ask=list(ask), requires=tuple(requires), locked=list(locked),
-                aside=tuple(aside) if aside else None)
+                aside=tuple(aside) if aside else None, stamp=stamp, disc=disc)
 
 
 NPCS = [
