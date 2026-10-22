@@ -29,6 +29,11 @@ class GameState:
         self.intro_done = False
         self.rival_beaten = False
         self.opened_chests = set()           # keys of loot chests already opened (layered_room.Chest)
+        self.visited_healers = set()         # healer ids the player has used: a wipe returns you to the nearest one
+        self.beaten_trainers = set()         # trainer npc ids already defeated (no rematch, no more line of sight)
+        self.location = {}                   # where the player stands: {"area"|"building", "tile": [x, y], "facing"}
+        self.name = "Robin"                  # chosen on the New Game character-customization screen
+        self.look = None                     # player look code (sprites.make_look); None = the default look
 
     # ---- bag ----------------------------------------------------------------------
     def qty(self, item_id):

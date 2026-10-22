@@ -300,9 +300,24 @@ class DialogueBox:
 
 # --------------------------------------------------------------------------- menu grid
 class Button:
-    def __init__(self, label, rect, enabled=True, accent=False, tag=None, sub=None, color=None, right=None):
+    def __init__(self, label, rect, enabled=True, accent=False, tag=None, sub=None, color=None, right=None, icon=None):
         self.label, self.rect, self.enabled, self.accent = label, pygame.Rect(rect), enabled, accent
         self.tag, self.sub, self.color, self.right = tag, sub, color, right
+        self.icon = icon                      # MPW UI icon name (assets/mpw/ui/<icon>.png), drawn at the left edge
+
+
+# MPW UI icons: options1-4 have a highlighted twin options5-8 (white outline) used while the button is selected
+ICON_SELECTED = {"options1": "options5", "options2": "options6", "options3": "options7", "options4": "options8"}
+
+
+def icon_chip(surf, icon, pos, bg, scale=2):
+    """Colour chip carrying an MPW bar icon (heart, spark ...), the pixel-art replacement for the HP / STB / EXP text chips."""
+    img = assets.ui_icon(icon, scale)
+    r = pygame.Rect(pos[0], pos[1], img.get_width() + 10, img.get_height() + 4)
+    pygame.draw.rect(surf, bg, r, border_radius=4)
+    pygame.draw.rect(surf, (0, 0, 0, 80), r, 1, border_radius=4)
+    surf.blit(img, (r.x + 5, r.y + 2))
+    return r
 
 
 class ButtonGrid:
@@ -369,6 +384,15 @@ def draw_button(surf, b, selected=False, size=24, kind="display", t=0.0):
     if not b.enabled:
         color = (120, 120, 112)
     img = render_text(b.label, kind, size, color)
+    if b.icon:                                                            # MPW icon at the left, label centred in the rest
+        name = ICON_SELECTED.get(b.icon, b.icon) if selected else b.icon
+        ic = assets.ui_icon(name, 2)
+        if not b.enabled:
+            ic = ic.copy()
+            ic.set_alpha(110)
+        surf.blit(ic, (b.rect.x + 12, b.rect.centery - ic.get_height() // 2))
+        surf.blit(img, img.get_rect(center=(b.rect.centerx + 14, b.rect.centery)))
+        return
     list_row = b.right is not None or b.sub is not None
     if b.sub:
         y = b.rect.y + max(6, (b.rect.h - img.get_height() - 16) // 2)

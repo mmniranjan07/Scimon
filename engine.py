@@ -22,6 +22,7 @@ from ui import Toast, fade
 
 class StateId(enum.Enum):
     START_MENU = "start_menu"
+    CUSTOMIZE = "customize"
     WAKE = "wake"
     STARTER_SELECT = "starter_select"
     RIVAL = "rival"

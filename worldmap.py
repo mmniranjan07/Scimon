@@ -14,18 +14,20 @@ Rooms are built from sprite props in interiors.py; their collision grids are gen
 from dataclasses import dataclass, field
 from typing import Optional
 
+from mpw_sizes import SIZES
+
 MAP_ROWS = [
-    "TTTTTTTTTBBBBBTBBBBBTPTTBBBBBTBBBBBTTTTTTTTT",
+    "TTTTTTTTTTTTTTTTTTTTTPTTTTTTTTTTTTTTTTTTTTTT",
     "TTGBBBBBTBBBBBFBBBBBFPFGBBBBBFBBBBBFGBBBFfTT",
     "TTGBBBBBFBBBBBFBBBBBFPFGBBBBBFBBBBBFGBBBFfTT",
     "TTGBBBBBFFBBBBFBBBBBLPLGBBBBBFBBBBBFGBBBFfTT",
     "TTGBBBBBGBBBBBFBBBBBGPGTBBBBBFBBBBBmGBDBFfTT",
     "TTGBBBBBYBBDBBFBBDBBGPOGBBDBBGBBDBBLPPPGGGTT",
-    "TTTBBDBBGGOPLGGGOPPpppppPPPPPPPPPPPPPBBBFfTT",
-    "TTGxFPFxFFLPHHHHHLNpppppggggggggggggPBBBFfTT",
+    "TTTBBDBBGGOPLGGLOPGNGpppPPPPPPPPPPPPPBBBFfTT",
+    "TTGxLPFxFFGPHHHHHPGpppppggggggggggggPBBBFfTT",
     "TTPPPPPPPPPPPPPPPPPpppppSGGGGGGGGGGGPBBBFfTT",
-    "TTGfffffffffBBBBBFGbGPGGwwwwwwwwwwwmPBDBFfTT",
-    "TTYfccaccccfBBBBBGTggPLFwwwwwwwwwwwLPPPGGGTT",
+    "TTGfffffffffBBBBBFGbGPGGwwwwwwwwwwwLPBDBFfTT",
+    "TTYfccaccccfBBBBBGTggPLFwwwwwwwwwwwGPPPGGGTT",
     "TTGfGGGGGGGfGBBBBFGggPGFwwwwwwwwwwwFPBBBFfTT",
     "TTyfcccGccafBBDBBGTggPGFwwwwwwwwwwwFPBBBFfTT",
     "TTGffffGffffGGPPPPPPPPGGGGGGGGGGGGGGPBBBFfTT",
@@ -41,7 +43,8 @@ MAP_ROWS = [
     "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
 ]
 MAP_W, MAP_H = len(MAP_ROWS[0]), len(MAP_ROWS)
-OVERWORLD_SOLID = set("TWwBhkHfcbNMOxyYSmauqrQijv")      # L (lamp post) is deliberately absent: poles never block a tile
+LEDGE_DOWN = "l"                                 # one-way ledge: hop DOWN over it (see TileMap.ledge_landing), solid from every other side
+OVERWORLD_SOLID = set("TWwBhkHfcbNMOxyYSmauqrQijvlL")
 INTERIOR_SOLID = set("#CSMKbp@ ")
 PLAYER_START = (38, 5)
 
@@ -77,30 +80,42 @@ def _npc(id, x, y, color, hair, name, lines, heals=False, service=None):
     return dict(id=id, x=x, y=y, color=color, hair=hair, name=name, lines=lines, heals=heals, service=service)
 
 
+def _trainer(id, x, y, name, lines, battle, post=(), facing="down", rematch=False, ask=(), requires=(), locked=(),
+             aside=None):
+    """A trainer NPC: scans for challengers, walks up when the player enters the 3-tile line of sight
+    (overworld._trainers_think) and battles `battle` = (species id, level).  With `rematch` a beaten trainer
+    offers another battle when talked to (choice: accept or deny).  With `requires`, the trainer refuses to
+    battle (`locked` lines) until every listed trainer id is in GameState.beaten_trainers.  With `aside`, a
+    beaten trainer steps out of the way (gym gate guards stand in single-file corridors)."""
+    return dict(id=id, x=x, y=y, name=name, lines=list(lines), battle=tuple(battle), post=list(post),
+                facing=facing, rematch=rematch, ask=list(ask), requires=tuple(requires), locked=list(locked),
+                aside=tuple(aside) if aside else None)
+
+
 NPCS = [
     _npc("venn", 20, 7, "#c9c4d6", "#b7b2c4", "Prof. Venn", [
-        "Prof. Venn: Welcome to Riven Town!",
+        "Prof. Venn: Welcome to Riven Town, {name}!",
         "Prof. Venn: Wild Scimons roam the tall grass by the Farms.",
         "Prof. Venn: Step into it to trigger an encounter.",
-        "Prof. Venn: Come see me anytime - I'll restore your Scimons to full.",
+        "Prof. Venn: Come see me anytime, {name} - I'll restore your Scimons to full.",
     ], heals=True),
     _npc("kael", 23, 9, "#c96a4a", "#5a3a2a", "Kael", [
-        "Kael: So the professor gave you a Scimon too?",
+        "Kael: So the professor gave you a Scimon too, {name}?",
         "Kael: Weaken a wild one, lower its Stability,",
         "Kael: then throw a Containment Module to catch it!",
-        "Kael: I'll surpass you as a Researcher. Just watch.",
+        "Kael: I'll surpass you as a Researcher, {name}. Just watch.",
     ]),
-    _npc("ilo", 33, 7, "#7f9ec9", "#3f4a5a", "Warden Ilo", [
-        "Warden Ilo: Welcome to Riven Town.",
-        "Warden Ilo: The Supply Mart stocks Containment Modules.",
-        "Warden Ilo: Cush's repair nook patches up your Scimons free of charge.",
+    _npc("ilo", 33, 7, "#7f9ec9", "#3f4a5a", "Warden Ila", [
+        "Warden Ila: Welcome to Riven Town, {name}.",
+        "Warden Ila: The Supply Mart stocks Containment Modules.",
+        "Warden Ila: Cush's repair nook patches up your Scimons free of charge.",
     ]),
-    _npc("jori", 41, 10, "#8fae6f", "#4a5a34", "Jori", [
-        "Jori: There's a couple more houses down this row.",
-        "Jori: Follow the main path south and you'll hit the beach.",
+    _npc("jori", 41, 10, "#8fae6f", "#4a5a34", "Jora", [
+        "Jora: There's a couple more houses down this row, {name}.",
+        "Jora: Follow the main path south and you'll hit the beach.",
     ]),
     _npc("sella", 25, 18, "#e0c48a", "#6a4a2a", "Sella", [
-        "Sella: The ocean stretches out forever from here.",
+        "Sella: The ocean stretches out forever from here, {name}.",
         "Sella: I come down to the beach whenever I need to think.",
     ]),
 ]
@@ -145,6 +160,7 @@ class Building:
     shop: Optional[list] = None          # [(item id, price)]
     repairs: bool = False
     has_database: bool = False
+    area: str = "overworld"             # which outdoor map the door is on ("overworld" = Riven Town; see routes.py)
 
 
 def _house_interior(id_, npc):
@@ -154,23 +170,23 @@ def _house_interior(id_, npc):
 BUILDINGS = [
     Building("lab", "Astrion Research Lab", "LAB", "lab", (17, 5), (17, 6), (15, 0, 5, 6), "town/bld_lab.png",
              Interior("lab-interior", ROOM_ROWS["lab"], (5, 9), (5, 8), [
-                 _npc("lab-aide", 5, 5, "#e4e4ee", "#6a6f7a", "Aide Miro", [
-                     "Aide Miro: Welcome to the Astrion Research Lab.",
-                     "Aide Miro: Every Scimon you capture is logged here automatically.",
-                     "Aide Miro: Prof. Venn is out by the plaza again - he usually is."])],
+                 _npc("lab-aide", 5, 5, "#e4e4ee", "#6a6f7a", "Aide Mira", [
+                     "Aide Mira: Welcome to the Astrion Research Lab, {name}.",
+                     "Aide Mira: Every Scimon you capture is logged here automatically.",
+                     "Aide Mira: Prof. Venn is out by the plaza again - he usually is."])],
                       PALETTES["lab"], spec="lab"), has_database=True),
     Building("hall", "Riven Town Hall", "Hall", "hall", (11, 5), (11, 6), (9, 0, 5, 6), "town/bld_hall.png",
              Interior("hall-interior", ROOM_ROWS["hall"], (5, 9), (5, 8), [
                  _npc("mayor", 6, 4, "#c9b06f", "#5a4a2a", "Mayor Rees", [
                      "Mayor Rees: Riven Town was founded on the old Astrion dig site.",
-                     "Mayor Rees: Researchers are always welcome here.",
+                     "Mayor Rees: Researchers are always welcome here, {name}.",
                      "Mayor Rees: Mind the tall grass out by the Farms."])],
                       PALETTES["hall"], spec="hall")),
     Building("cush", "Cush's Repair Nook", "Cush", "repair", (14, 12), (14, 13), (12, 9, 5, 4),
              "town/bld_cush.png",
              Interior("cush-interior", ROOM_ROWS["cush"], (5, 9), (5, 8), [
                  _npc("cush", 5, 4, "#e07a8a", "#8a3a4a", "Cush", [
-                     "Cush: Welcome to the nook.",
+                     "Cush: Welcome to the nook, {name}.",
                      "Cush: Hand me your Scimons and I'll patch up their systems - no charge."],
                       service="repair")], PALETTES["repair"], spec="cush"),
              shop=[("repaircell", 200), ("nanorepair", 600)], repairs=True, has_database=True),
@@ -179,13 +195,13 @@ BUILDINGS = [
              Interior("library-interior", ROOM_ROWS["library"], (5, 9), (5, 8), [
                  _npc("archivist", 5, 4, "#c9b06f", "#3a3a4a", "Archivist Yuna", [
                      "Archivist Yuna: Every Scimon species ever logged is catalogued here.",
-                     "Archivist Yuna: Feel free to browse, just mind the bindings - some are old."])],
+                     "Archivist Yuna: Feel free to browse, {name} - just mind the bindings, some are old."])],
                       PALETTES["library"], spec="library")),
     Building("mart", "Riven Supply Mart", "Supply Mart", "store", (32, 5), (32, 6), (30, 0, 5, 6),
              "town/bld_mart.png",
              Interior("mart-interior", ROOM_ROWS["mart"], (6, 12), (6, 11), [
                  _npc("shopkeeper", 4, 6, "#6fae86", "#3f5f4a", "Clerk Dax", [
-                     "Clerk Dax: Welcome to the Riven Supply Mart!",
+                     "Clerk Dax: Welcome to the Riven Supply Mart, {name}!",
                      "Clerk Dax: Containment Modules, repair kits - all in stock."], service="shop")],
                       PALETTES["store"], spec="mart"),
              shop=[("repaircell", 200), ("nanorepair", 600), ("stabilizer", 300), ("standard", 200),
@@ -193,26 +209,26 @@ BUILDINGS = [
     Building("farms-a", "Riven Farms Market", "Farms", "store", (5, 6), (5, 7), (3, 1, 5, 6),
              "town/bld_farm_a.png",
              Interior("farms-a-interior", ROOM_ROWS["farms-a"], (5, 9), (5, 8), [
-                 _npc("farmer-wren", 5, 4, "#8fae6f", "#4a5a2a", "Farmer Wren", [
-                     "Farmer Wren: This bio-dome keeps Riven Town fed year-round.",
-                     "Farmer Wren: The field out back grows the slower crops."])],
+                 _npc("farmer-wren", 5, 4, "#8fae6f", "#4a5a2a", "Farmer Wes", [
+                     "Farmer Wes: This bio-dome keeps Riven Town fed year-round.",
+                     "Farmer Wes: The field out back grows the slower crops."])],
                       PALETTES["farm"], spec="farms-a")),
     Building("player-house", "Your House", "House", "house", (38, 4), (38, 5), (37, 1, 3, 4),
              "town/bld_house_0.png",
              _house_interior("player-house-interior", _npc("player-mom", 6, 6, "#c96a8f", "#5a3a44", "Mom", [
-                 "Mom: Morning! Did you sleep well?",
-                 "Mom: Prof. Venn came by earlier looking for you.",
+                 "Mom: Morning, {name}! Did you sleep well?",
+                 "Mom: Prof. Venn came by earlier looking for you, {name}.",
                  "Mom: Don't forget your bag before you head out!"]))),
-    Building("cottage-toma", "Toma's Cottage", "House", "house", (38, 9), (38, 10), (37, 6, 3, 4),
+    Building("cottage-toma", "Tomi's Cottage", "House", "house", (38, 9), (38, 10), (37, 6, 3, 4),
              "town/bld_house_1.png",
-             _house_interior("cottage-toma-interior", _npc("toma", 6, 6, "#c98a4a", "#5a3a24", "Toma", [
-                 "Toma: Careful walking out on the sand at night.",
-                 "Toma: The beach is lovely this time of year, though."]))),
+             _house_interior("cottage-toma-interior", _npc("toma", 6, 6, "#c98a4a", "#5a3a24", "Tomi", [
+                 "Tomi: Careful walking out on the sand at night, {name}.",
+                 "Tomi: The beach is lovely this time of year, though."]))),
     Building("cottage-reya", "Reya's Cottage", "House", "house", (38, 14), (38, 15), (37, 11, 3, 4),
              "town/bld_house_2.png",
              _house_interior("cottage-reya-interior", _npc("reya", 6, 6, "#4f8fae", "#2a3a4a", "Reya", [
-                 "Reya: I moved down here for the sea air.",
-                 "Reya: Toma's place is just up the row."]))),
+                 "Reya: I moved down here for the sea air, {name}.",
+                 "Reya: Tomi's place is just up the row."]))),
 ]
 
 DOOR_INDEX = {b.door: b for b in BUILDINGS}
@@ -229,6 +245,46 @@ def building_at_door(x, y):
 BACK_ACCESS = ("hall", "lab", "library", "mart")
 BACK_ROWS = (1, 2, 3)                      # offsets from the footprint's top row; offset 0 stays solid (map edge)
 BACK_ZONES = {}                            # building id -> (x0, y0, x1, y1) in tiles, used to fade the building while you are behind it
+
+
+def native_size(sprite):
+    """Native (w, h) of a building sprite.  mpw_sizes.SIZES (generated) knows the MPW cut-outs; any other sprite (the Riven
+    Town art in assets/town/) is measured from its PNG header, so this module stays pygame-free."""
+    got = SIZES.get(sprite)
+    if got:
+        return got
+    import os
+    import struct
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", sprite), "rb") as fh:
+        head = fh.read(24)
+    if head[:8] != b"\x89PNG\r\n\x1a\n":
+        raise ValueError(f"not a PNG: {sprite!r}")
+    return struct.unpack(">II", head[16:24])
+
+
+def trim_footprints(rows, buildings, scale=3, tile=48):
+    """Pure-python twin of townview's building placement: a building sprite no longer fills its whole footprint, so every
+    'B' tile that the (bottom-anchored, centred) sprite covers by less than a quarter is returned to lawn.  What you see is
+    what blocks you; doors ('D') and everything that is not 'B' are untouched.  Returns new row strings."""
+    out = [list(r) for r in rows]
+    for b in buildings:
+        w, h = native_size(b.sprite)
+        sw, sh = w * scale, h * scale
+        fx, fy, fw, fh = (int(v) for v in b.footprint)
+        bx = fx * tile + (fw * tile - sw) / 2
+        by = (fy + fh) * tile - sh + 2 * scale
+        for y in range(fy, fy + fh):
+            for x in range(fx, fx + fw):
+                if out[y][x] != "B":
+                    continue
+                ox = max(0.0, min(x * tile + tile, bx + sw) - max(x * tile, bx)) / tile
+                oy = max(0.0, min(y * tile + tile, by + sh) - max(y * tile, by)) / tile
+                if ox < 0.25 or oy < 0.25:
+                    out[y][x] = "G"
+    return ["".join(r) for r in out]
+
+
+MAP_ROWS[:] = trim_footprints(MAP_ROWS, BUILDINGS)
 
 
 def _open_backs():

@@ -6,6 +6,30 @@ The `scimon_py` look (transparent, game-ready sprites and building art) merged w
     pip install -r requirements.txt     # pygame >= 2.5 (pygame-ce also works)
     python main.py
 
+
+## MPW art overhaul (this build)
+> **Sprite revert (py19 + py18 art).** Buildings and Scimon creatures use the original py18 art again; everything else in this
+> section (foliage, characters, battle backgrounds / effects, UI icons) is unchanged.
+> * Buildings: `assets/town/bld_*.png` (lab, hall, cush, library, mart, farm, house_0/1/2), including Epidimy's houses, Scimon Center
+>   and Supply Mart, plus the chimney smoke and lab beacon that belong to those sprites.  Only the Epidimy Green Gym keeps its MPW sprite
+>   (py18 had no gym); to use the old library sprite instead, set its sprite to `"town/bld_library.png"` in `epidimy.py`.
+> * Scimon: `assets/scimon/<species>-front|back.png` through `assets.mon_image`; they are single stills, so `assets.mon_anim` returns one
+>   frame and the sprite breathes / lunges in code.  The MPW monster sheets are no longer loaded.
+> * Characters are smaller: `settings.CHAR_PX = 2` (was 3), so a 32x32 frame is drawn at 64x64.  Set it to 3 for the previous size.
+>   The battle trainer is rescaled to stay the same size.
+> * `worldmap.native_size()` measures `town/` building PNGs so footprint trimming works for them.
+
+All art that people see in play now comes from three packs; run `python tools/build_mpw_assets.py` (needs `pillow numpy scipy`) to
+rebuild `assets/mpw/` and `mpw_sizes.py` from `source_art/`.
+* **Buildings**: cut from `Buildings.png` (`assets/mpw/buildings/`, drawn 3x). Every building's footprint is trimmed to its sprite
+  (`worldmap.trim_footprints`), so nothing invisible blocks you. Chimney smoke and the lab beacon belonged to the old sprites and are gone.
+* **Foliage**: only the green trees and green bushes of `Trees.png` (`assets/mpw/trees/`, `townview.GREEN_TREES`), native size with a soft ground shadow.
+* **Green Gym**: the green gym from `MPWSP01/tileset` replaces the Epidimy Library (`epi-gym`, footprint 7x7, Hall interior, Leader Fern). It is the only gym in the game.
+* **Characters**: the ten `MPWSP01` overworld sheets (`sprites.MPW_CAST`; unlisted NPCs get a stable sheet from their id), 4-frame walk, 4 facings.
+* **Monsters**: species map to MPW monsters in `assets.MPW_MON`; battle uses front idle / attack frames, back view, 32x32 menu icons in lists, the HUD and the overworld.
+* **Battle**: MPW backgrounds (`battle.BG_FOR_AREA`: Riven grass, Route 1 beach, Epidimy snow), MPW attack effects per technique type (`sprites.FX_FOR_TYPE`), lunge animation.
+* **UI**: MPW icons on the battle menu (sword / shield / swap / fist, highlighted twins when selected) and the HP / STB / EXP bars. The pack has no panel art, so panels and fonts stay procedural.
+
 ## Controls
 | Key | Action |
 |---|---|
@@ -17,6 +41,12 @@ The `scimon_py` look (transparent, game-ready sprites and building art) merged w
 | M | mute SFX | F3 | collision/hitbox overlay | F11 | fullscreen |
 **Phones / tablets:** an on-screen D-pad plus **A** (confirm), **B** (back) and **PACK** buttons appear automatically; every menu can also be tapped. See *Mobile / touch* below.
 Mouse works on every menu (hover, click). The window is resizable; the game renders at 960x640 and scales.
+
+## One-way ledges
+Tile `l` is a ledge you can hop **down** but never climb: walking south into it from the tile above makes the player hop over it
+onto the tile below (small arc + shadow); from the sides or from below it is a normal wall. Stacked `l` tiles form a vertical wall.
+It is drawn procedurally (`townview._draw_ledges`), the rule lives in `TileMap.ledge_landing`, the hop in `Player.begin_jump`, and
+`routes.validate()` understands the hop, so it also fails the build if a ledge could trap the player with no way back to the exit.
 
 ## Mobile / touch
 On a touch device (browser reports a coarse pointer) the engine opens a larger canvas and places the 960x640 game inside it,
@@ -98,6 +128,18 @@ Everything people see in Riven Town was redrawn; characters, dialogue, door posi
   depth-sorted props now, so you are hidden behind them, and they turn see-through while you stand in their back yard.
 * **Farms**: the south greenhouse ("Grow") is gone; its plot is now one big fenced crop field (merged with the old one beside it) with two scarecrows,
   a gate on the south side and a walkable lane through the middle. Farmer Wren's dialogue now says "field".
+
+## Epidimy Town (north of Route 1)
+Route 1's north road (row 0, x 6..9) leads to **Epidimy Town**, laid out after a reference screenshot: terraced plateau with the field
+station and a cottage, a cave mouth in the rock band (sealed, read its sign), a fountain pond, west lake, south-east and north-east
+ponds, seven cottages, the Library, the Scimon Center (free healing) and a supply mart. Peaceful: no tall grass.
+* `epidimy.py` - grid, buildings, NPCs, signs, `validate()` (everything reachable, NPCs never cut a road).
+* Drawn by `TileMap._render_epidimy` with **Riven Town's own renderer** (`townview.py`): same lawns, cobbled roads + kerbs, stone walls,
+  coping-rimmed animated ponds (only the middle one has the fountain jet), trees, lamps, benches, name tags and glowing road studs.
+  Buildings are Riven's sprites (`town/bld_house_0..2`, `bld_library`, `bld_cush`, `bld_mart`).
+* Doors are per area (`Building.area`, `routes.building_at`). Interiors reuse the house / library / cush / mart rooms.
+* Test: `python tests/epidimy.py [screenshot_dir]`. Note: `tests/play.py` and `tests/route1.py` were already failing before this change.
+  Delete `~/.scimon/save.json` before running `tests/smoke.py` (it expects a fresh game).
 
 ## Parity notes and deliberate differences
 * Ported 1:1 from V34: type chart, techniques, species, stat/damage/capture/XP formulas, held items,

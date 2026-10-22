@@ -18,8 +18,8 @@ from data import ITEMS, MODULES, SPECIES, STATUS_INFO, TECHNIQUES, type_rgb
 from engine import Scene, StateId
 from monsters import (Scimon, calc_damage, capture_chance, choose_enemy_move, eff_text, xp_for_level, xp_gain)
 from settings import (CREAM, EXP_BLUE, H, HP_GREEN, INK, OLIVE, OLIVE_DARK, ORANGE, STAB_BLUE, TEAL_DARK, W, hexc)
-from sprites import ImpactBurst, ScimonSprite, TrainerSprite
-from ui import (Button, ButtonGrid, DialogueBox, bar, hp_color, is_back, is_click, is_confirm, label_chip, panel,
+from sprites import AttackFx, ImpactBurst, ScimonSprite, TrainerSprite
+from ui import (Button, ButtonGrid, DialogueBox, bar, hp_color, icon_chip, is_back, is_click, is_confirm, label_chip, panel,
                 render_text, status_chip, text, type_chip, wrap_text)
 
 
@@ -50,6 +50,7 @@ class BattleEvent:
     hit_enemy: bool = False
     hit_player: bool = False
     sfx: Optional[str] = None
+    anim: Optional[tuple] = None        # (side, technique type): attacker plays its attack animation + MPW effect on the target
 
 
 def _active(s):
@@ -66,6 +67,16 @@ def new_battle(party, enemy, bag, modules, trainer=None):
     active = max(0, next((i for i, m in enumerate(party) if m.hp > 0), 0))
     return BattleState(party=party, active_index=active, enemy=enemy, bag=dict(bag), modules=dict(modules),
                        trainer=trainer)
+
+
+def trainer_credits(s, outcome, wallet):
+    """Credits won by beating a trainer (20 x the enemy's level) or dropped in a loss (10 x the enemy's
+    level, never more than the wallet holds).  Wild battles pay and cost nothing."""
+    if not s.trainer or outcome not in ("win", "lose"):
+        return 0
+    if outcome == "win":
+        return 20 * s.enemy.level
+    return -min(10 * s.enemy.level, wallet)
 
 
 def intro_events(s):
@@ -98,7 +109,7 @@ def _execute_move(sim, side, tech_id, events):
     label = att.name if side == "player" else enemy_label(sim)
     foe_side = "enemy" if side == "player" else "player"
     hit = dict(hit_enemy=(side == "player"), hit_player=(side == "enemy"))
-    events.append(BattleEvent(f"{label} used {tech.name}!", sfx="select"))
+    events.append(BattleEvent(f"{label} used {tech.name}!", sfx="select", anim=(side, tech.type)))
 
     fail = _status_fail(att)
     if fail:
@@ -224,8 +235,13 @@ def plan_turn(battle, action):
 
     if kind == "run":
         sim.run_attempts += 1
-        chance = min(0.9, 0.5 + sim.run_attempts * 0.15 + max(0, player.speed - sim.enemy.speed) * 0.01)
-        if random.random() < chance:
+        # Gen I escape: F = ((A*32) / (B/4)) + 30*C (mod 256); F > 255 escapes outright,
+        # else a roll of 0-255 below F escapes. A: player's current Speed (never stage-modified here);
+        # B: wild Speed / 4, 0 becomes 1; C: attempts this battle, reset whenever the player attacks.
+        b = max(1, sim.enemy.speed // 4)
+        f = player.speed * 32 // b + 30 * sim.run_attempts
+        ev.append(BattleEvent(effect=lambda s, n=sim.run_attempts: setattr(s, "run_attempts", n)))
+        if f > 255 or random.randrange(256) < f % 256:
             ev.append(BattleEvent("Got away safely!", sfx="select", effect=lambda s: setattr(s, "outcome", "run")))
             return ev
         ev.append(BattleEvent("Couldn't get away!"))
@@ -299,6 +315,8 @@ def plan_turn(battle, action):
         return ev
 
     tech = action[1]
+    sim.run_attempts = 0          # attacking resets the escape counter (C = 0 next time)
+    ev.append(BattleEvent(effect=lambda s: setattr(s, "run_attempts", 0)))
     if player.speed >= sim.enemy.speed:
         _execute_move(sim, "player", tech, ev)
         if sim.enemy.hp > 0:
@@ -319,14 +337,21 @@ CTRL = pygame.Rect(14, SCENE_H + 8, W - 28, H - SCENE_H - 22)
 ENEMY_MID = (722, 236)
 PLAYER_MID = (236, 452)
 
+# MPW battle backgrounds (assets/mpw/bg/bg1 grass, bg2 beach, bg3 snow), picked by the outdoor area the fight starts in
+BG_FOR_AREA = {"overworld": 1, "route1": 2, "epidimy": 3}
+BUTTON_ICONS = {"fight": "options1", "defend": "options2", "switch": "options3", "capture": "options4",
+                "item": "baricon4", "run": "baricon6"}
+
 
 class BattleScene(Scene):
     state_id = StateId.BATTLE
 
-    def __init__(self, battle, on_end, allow_capture=True, allow_run=True):
+    def __init__(self, battle, on_end, allow_capture=True, allow_run=True, bg=1):
         self.bs = copy.deepcopy(battle)
         self.on_end = on_end
         self.allow_capture, self.allow_run = allow_capture, allow_run
+        self.bg = bg if bg in (1, 2, 3) else 1
+        self.fx = []                     # running AttackFx
         self.queue, self.qi = [], 0
         self.waiting = False
         self.menu = "message"            # message | main | fight | capture | item | switch
@@ -347,12 +372,12 @@ class BattleScene(Scene):
     # ---- setup -----------------------------------------------------------------------
     def _make_sprites(self, appear=False):
         e = self.bs.enemy
-        self.enemy_sprite = ScimonSprite(e.species_id, (ENEMY_MID[0], ENEMY_MID[1] - 8), (230, 200), appear=appear)
+        self.enemy_sprite = ScimonSprite(e.species_id, (ENEMY_MID[0], ENEMY_MID[1] - 8), (250, 220), appear=appear)
         self._make_player_sprite(appear)
 
     def _make_player_sprite(self, appear=True):
         p = self.bs.player
-        self.player_sprite = ScimonSprite(p.species_id, (PLAYER_MID[0], PLAYER_MID[1] - 12), (270, 240), back=True,
+        self.player_sprite = ScimonSprite(p.species_id, (PLAYER_MID[0], PLAYER_MID[1] - 12), (300, 260), back=True,
                                           appear=appear)
         self.player_uid = p.uid
         self.shown["p"] = p.hp / p.max_hp
@@ -365,6 +390,11 @@ class BattleScene(Scene):
     def _apply(self, ev):
         if ev.effect:
             ev.effect(self.bs)
+        if ev.anim:
+            side, ttype = ev.anim
+            atk, tgt = (self.player_sprite, self.enemy_sprite) if side == "player" else (self.enemy_sprite, self.player_sprite)
+            atk.attack(1 if side == "player" else -1)
+            self.fx.append(AttackFx(ttype, tgt.rect.center))
         if ev.hit_enemy:
             self.enemy_sprite.hit()
             self.burst.trigger(self.enemy_sprite.rect.center)
@@ -419,10 +449,13 @@ class BattleScene(Scene):
             return
         self._finishing = True
         s = self.bs
+        credits = trainer_credits(s, s.outcome, self.engine.state.credits)   # trainer prize / loss, 0 for wild
         result = {"outcome": s.outcome, "party": s.party, "bag": s.bag, "modules": s.modules,
-                  "caught": s.enemy if s.outcome == "caught" else None}
+                  "caught": s.enemy if s.outcome == "caught" else None, "credits": credits}
 
         def apply():
+            if credits:
+                self.engine.state.add_credits(credits)
             self.engine.pop(self)
             self.on_end(result)
         self.engine.fade_to(apply)
@@ -442,7 +475,7 @@ class BattleScene(Scene):
                     ("RUN", "run", self.allow_run, False)]
             for i, (lab, tag, ok, accent) in enumerate(spec):
                 btns.append(Button(lab, (area.x + (i % 2) * (bw + 12), area.y + 4 + (i // 2) * (bh + 4), bw, bh),
-                                   enabled=ok, accent=accent, tag=tag))
+                                   enabled=ok, accent=accent, tag=tag, icon=BUTTON_ICONS.get(tag)))
         elif menu == "fight":
             cols = 2
             bw, bh = (area.w - 12) // 2, 54
@@ -540,15 +573,25 @@ class BattleScene(Scene):
         if self.trainer:
             self.trainer.update(dt)
         self.burst.update(dt)
+        for f in self.fx:
+            f.update(dt)
+        self.fx = [f for f in self.fx if f.alive]
         if self.grid:
             self.grid.update(dt)
         k = min(1.0, dt * 9)                        # smooth bars (V34: 0.5 s CSS transition)
+
+        def ease(cur, target):
+            # settle exactly on the target: exponential easing alone never reaches 0, which used to leave a
+            # red sliver on the bar of an offline Scimon
+            nxt = cur + (target - cur) * k
+            return target if abs(target - nxt) < 0.002 else nxt
+
         p, en = self.bs.player, self.bs.enemy
-        self.shown["p"] += (p.hp / p.max_hp - self.shown["p"]) * k
-        self.shown["e"] += (en.hp / en.max_hp - self.shown["e"]) * k
-        self.shown_stab["p"] += (p.stability / p.max_stability - self.shown_stab["p"]) * k
-        self.shown_stab["e"] += (en.stability / en.max_stability - self.shown_stab["e"]) * k
-        self.shown_xp += (p.xp / max(1, p.xp_to_next) - self.shown_xp) * k
+        self.shown["p"] = ease(self.shown["p"], p.hp / p.max_hp)
+        self.shown["e"] = ease(self.shown["e"], en.hp / en.max_hp)
+        self.shown_stab["p"] = ease(self.shown_stab["p"], p.stability / p.max_stability)
+        self.shown_stab["e"] = ease(self.shown_stab["e"], en.stability / en.max_stability)
+        self.shown_xp = ease(self.shown_xp, p.xp / max(1, p.xp_to_next))
         if self.end_timer is not None and self.msg.waiting and not self.waiting:
             self.end_timer -= dt
             if self.end_timer <= 0:
@@ -556,32 +599,16 @@ class BattleScene(Scene):
 
     # ---- drawing ------------------------------------------------------------------------------
     def _background(self, surf):
-        horizon = int(SCENE_H * 0.55)
-        surf.fill((207, 227, 198), (0, 0, W, horizon))
-        for y in range(horizon, SCENE_H):                       # ground gradient #b7cfa6 -> #a7c191
-            k = (y - horizon) / (SCENE_H - horizon)
-            c = (int(183 - 16 * k), int(207 - 14 * k), int(166 - 21 * k))
-            pygame.draw.line(surf, c, (0, y), (W, y))
-        # parallax: clouds and far bushes drifting with time (dt-driven)
-        for i in range(6):
-            x = (i * 190 - self.t * 14) % (W + 200) - 100
-            cl = pygame.Surface((120, 34), pygame.SRCALPHA)
-            pygame.draw.ellipse(cl, (255, 255, 255, 120), cl.get_rect())
-            surf.blit(cl, (x, 30 + (i * 37) % 90))
-        for i in range(7):
-            x = (i * 170 - self.t * 30) % (W + 260) - 130
-            bush = pygame.Surface((260, 70), pygame.SRCALPHA)
-            pygame.draw.ellipse(bush, (60, 90, 55, 70), bush.get_rect())
-            surf.blit(bush, (x, horizon - 38 + (i % 3) * 8))
+        """MPW battle background (640x320 art scaled 1.5x to the 960x480 stage)."""
+        surf.blit(assets.scaled(f"mpw/bg/bg{self.bg}.png", W, SCENE_H, smooth=False), (0, 0))
 
     def _platform(self, surf, center, wide=False):
+        """Soft ground shadow under a fighter (the MPW backgrounds have no platform art)."""
         w, h = (330, 76) if wide else (270, 62)
-        r = pygame.Rect(0, 0, w, h)
-        r.center = center
-        pygame.draw.ellipse(surf, (0, 0, 0, 40), r.move(0, 7))
-        pygame.draw.ellipse(surf, OLIVE_DARK, r)
-        pygame.draw.ellipse(surf, OLIVE, r.inflate(-18, -14).move(0, -3))
-        pygame.draw.ellipse(surf, (200, 198, 130), r.inflate(-80, -34).move(0, -6))
+        sh = pygame.Surface((w, h), pygame.SRCALPHA)
+        pygame.draw.ellipse(sh, (20, 40, 20, 46), sh.get_rect())
+        pygame.draw.ellipse(sh, (20, 40, 20, 40), sh.get_rect().inflate(-w // 3, -h // 3))
+        surf.blit(sh, sh.get_rect(center=center))
 
     def _info_panel(self, surf, rect, mon, shown, shown_stab, enemy):
         panel(surf, rect, "panel")
@@ -593,18 +620,18 @@ class BattleScene(Scene):
         bx = rect.x + 18
         if mon.status:
             by = y + 50
-        label_chip(surf, "HP", (bx, by - 3), ORANGE, 8)
+        icon_chip(surf, "baricon2", (bx, by - 5), ORANGE)
         bar(surf, (bx + 38, by, rect.w - 36 - 38 - 4, 14), shown, hp_color(shown))
-        by += 22
+        by += 27
         if not enemy:
             text(surf, f"{mon.hp}/{mon.max_hp}", (rect.right - 18, by - 2), "body", 24, INK, anchor="topright")
             by += 20
-        label_chip(surf, "STB", (bx, by - 3), TEAL_DARK, 8)
-        bar(surf, (bx + 44, by + 1, rect.w - 36 - 44 - 4, 9), shown_stab, STAB_BLUE)
+        icon_chip(surf, "baricon5", (bx, by - 8), TEAL_DARK)
+        bar(surf, (bx + 44, by - 3, rect.w - 36 - 44 - 4, 9), shown_stab, STAB_BLUE)
         if not enemy:
-            by += 22
-            label_chip(surf, "EXP", (bx, by - 3), (240, 192, 32), 8, fg=INK)
-            bar(surf, (bx + 44, by + 1, rect.w - 36 - 44 - 4, 9), min(1.0, self.shown_xp), EXP_BLUE, segmented=True)
+            by += 27
+            icon_chip(surf, "baricon3", (bx, by - 8), (240, 192, 32))
+            bar(surf, (bx + 44, by - 3, rect.w - 36 - 44 - 4, 9), min(1.0, self.shown_xp), EXP_BLUE, segmented=True)
 
     def draw(self, surf):
         surf.fill(TEAL_DARK)                     # control strip backdrop (nothing ghosts through the glass)
@@ -615,11 +642,13 @@ class BattleScene(Scene):
             self.trainer.draw(surf)
         self.enemy_sprite.draw(surf)
         self.player_sprite.draw(surf)
+        for f in self.fx:
+            f.draw(surf)
         self.burst.draw(surf)
         e, p = self.bs.enemy, self.bs.player
-        eh = 92 + (22 if e.status else 0)
+        eh = 100 + (22 if e.status else 0)
         self._info_panel(surf, pygame.Rect(30, 28, 380, eh), e, self.shown["e"], self.shown_stab["e"], True)
-        ph = 126 + (22 if p.status else 0)
+        ph = 142 + (22 if p.status else 0)
         self._info_panel(surf, pygame.Rect(W - 30 - 400, SCENE_H - ph - 28, 400, ph), p, self.shown["p"],
                          self.shown_stab["p"], False)
         sfx = render_text("SFX OFF" if audio.muted else "SFX ON", "display", 8, INK)

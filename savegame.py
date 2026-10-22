@@ -49,6 +49,10 @@ def serialize(st):
         "captured": sorted(st.captured), "rival_species": st.rival_species,
         "intro_done": st.intro_done, "rival_beaten": st.rival_beaten,
         "opened_chests": sorted(str(k) for k in st.opened_chests),
+        "visited_healers": sorted(str(k) for k in getattr(st, "visited_healers", ())),
+        "beaten_trainers": sorted(str(k) for k in getattr(st, "beaten_trainers", ())),
+        "location": getattr(st, "location", None) if isinstance(getattr(st, "location", None), dict) else {},
+        "name": getattr(st, "name", "Robin"), "look": getattr(st, "look", None),
     }, sort_keys=True)
 
 
@@ -97,6 +101,12 @@ def load(st):
         st.intro_done = bool(d.get("intro_done"))
         st.rival_beaten = bool(d.get("rival_beaten"))
         st.opened_chests = set(d.get("opened_chests", []))
+        st.visited_healers = set(d.get("visited_healers", []))
+        st.beaten_trainers = set(d.get("beaten_trainers", []))
+        loc = d.get("location")
+        st.location = loc if isinstance(loc, dict) else {}
+        st.name = str(d.get("name") or "Robin")[:12]
+        st.look = d.get("look")
         return bool(st.party)
     except Exception:
         st.reset()

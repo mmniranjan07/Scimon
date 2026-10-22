@@ -12,6 +12,7 @@ import pygame
 import assets
 import interiors
 import layered_room
+import epidimy
 import townview
 import worldmap as wm
 from routes import AREAS
@@ -283,6 +284,16 @@ class TileMap:
             return True
         return box.collidelist(list(npc_rects)) != -1
 
+    def ledge_landing(self, tx, ty, npc_rects=()):
+        """One-way ledge: if (tx, ty) is a ledge tile and the tile right below it is free, return that landing tile (the
+        player hops over the ledge, south only).  Anything else about a ledge tile is plain collision, so it cannot be
+        entered from the sides or from below."""
+        if self.kind != "overworld" or self.tile_at(tx, ty) != wm.LEDGE_DOWN:
+            return None
+        if self.blocked(tx, ty + 1, npc_rects):
+            return None
+        return (tx, ty + 1)
+
     # ---- factories ----------------------------------------------------------------
     @classmethod
     def overworld(cls):
@@ -297,13 +308,14 @@ class TileMap:
         a = AREAS[area_id]
         m = cls("overworld", a.rows, a.npcs)
         m.area, m.name, m.signs = a.id, a.name, dict(a.signs)
-        m._render_route()
+        m._render_epidimy() if a.styled else m._render_route()
         return m
 
     @classmethod
     def interior(cls, b):
         i = b.interior
         m = cls("interior", i.rows, i.npcs, building=b, baked=i.spec)
+        m.area, m.name = getattr(b, "area", "overworld"), b.name   # battles indoors use the building's area bg
         m._render_interior()
         return m
 
@@ -330,6 +342,23 @@ class TileMap:
         self.props = townview.build_props(self.rows, green_only=True)
         self.surface = s
         self.fx = townview.Fx(self.rows, [], {}, {}, [], [], [], studs=False)
+        self._tag_cache = {}
+
+    def _render_epidimy(self):
+        """Epidimy Town with Riven Town's renderer: same lawns, cobbles + kerbs, stone walls, coping-rimmed ponds, trees, lamps."""
+        rr = [r.replace("A", "P") for r in self.rows]                    # stairs are drawn as road tiles, like Route 1's
+        s = pygame.Surface((self.px_w, self.px_h))
+        s.fill(VOID)
+        townview.draw_ground(s, rr, draw_overworld_tile)
+        cx, cy = epidimy.CAVE                                             # the cave mouth cut into the stone wall
+        pygame.draw.rect(s, (36, 30, 32), (cx * TILE + 5 * PX, cy * TILE + 4 * PX, 6 * PX, 12 * PX), border_top_left_radius=3 * PX, border_top_right_radius=3 * PX)
+        pygame.draw.rect(s, (92, 84, 88), (cx * TILE + 4 * PX, cy * TILE + 3 * PX, 8 * PX, PX))
+        self.building_rects, origins = townview.draw_buildings(s, epidimy.BUILDINGS)
+        ponds = epidimy.POND_REGIONS
+        self.props = townview.build_props(rr, green_only=True) + townview.pond_reeds(rr, ponds)
+        self.surface = s
+        self.fx = townview.Fx(rr, epidimy.BUILDINGS, self.building_rects, origins,
+                              townview.pond_frames(rr, ponds, [epidimy.FOUNTAIN_REGION]), townview.lamp_points(rr), [])
         self._tag_cache = {}
 
     def sign_at(self, x, y):

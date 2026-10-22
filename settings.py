@@ -43,19 +43,19 @@ MODERN_INTERIORS = f"{INTERIOR_DIR}/modern/Interiors_free_16x16.png"
 MODERN_ROOM_BUILDER = f"{INTERIOR_DIR}/modern/Room_Builder_free_16x16.png"
 MODERN_GRID = 16
 
-# Characters: 16x32 frames, 24 columns x 7 rows per sheet (Adam/Alex/Amelia/Bob layout). Set PLAYER_SHEET to any sheet
-# with this layout (e.g. a scientist re-skin, or LimeZu's Adam_16x16.png) to replace the default player look.
+# Characters: MPWSP01 overworld sheets (assets/mpw/ow/ow1..ow10.png, 128x128 = 4x4 frames of 32x32; rows: down, left, right, up).
+# Who plays whom is MPW_CAST in sprites.py (animation.MpwSheetAnimator reads the sheets).  The legacy 16x32 layout below is
+# only used by animation.SheetAnimator, which the game no longer instantiates.
 CHARACTERS_DIR = "characters"
-# Use the 16x24 "RPG DB" characters (assets/characters/rpgdb0_0.png .. rpgdb11_0.png, made by
-# tools/import_rpgdb_sheet.py) for the whole cast.  False restores the original Adam/Alex/Amelia/Bob look.
-# Who plays whom is the RPGDB_CAST table in sprites.py.
-USE_RPGDB_CAST = True
-PLAYER_SHEET = None                                   # e.g. "sprites/characters/researcher.png"
+# Size of the MPW character sprites in the world: screen pixels per art pixel.  3 (= PX) was the original, very large look;
+# 2 draws every character at two thirds of that (a 32x32 frame becomes 64x64).  Keep it an integer so the pixels stay crisp.
+CHAR_PX = 2
+PLAYER_SHEET = None
 SHEET_LAYOUT = dict(
-    frame=(16, 32),                                   # one frame, native px
+    frame=(16, 32),
     frames_per_dir=6,
-    dir_col={"right": 0, "up": 6, "left": 12, "down": 18},   # first column of each facing
-    rows={"idle": 1, "walk": 2},                      # sheet row of each mode
+    dir_col={"right": 0, "up": 6, "left": 12, "down": 18},
+    rows={"idle": 1, "walk": 2},
     fps={"idle": 4.0, "walk": 16.0},
 )
 

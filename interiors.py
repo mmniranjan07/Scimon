@@ -136,5 +136,41 @@ FARM_A = LayeredSpec(
         S("m_plant_tree", 1, 8), S("m_palm", 10, 8),
     ))
 
-LAYERED = {s.id: s for s in (HOUSE, HALL, LAB, MART, CUSH, LIBRARY, FARM_A)}
+# --------------------------------------------------------------------------- the green gym: the ring
+# A challenge ring: the walkable floor circles a central platform (three counter rows), its corners marked by
+# glowing plasma posts and a cyan outline painted on the floor.  The leader waits on the far side of the ring;
+# the gym coaches patrol the corridor and must be beaten before she accepts a challenge.
+GYM_RING = LayeredSpec(
+    "gym-ring", 16, 13, (7, 8), floor=Floor("m_floor_grey", rows=(
+        "..............",
+        "..............",
+        "...rrrrrrr....",
+        "...r.....r....",
+        "...r.....r....",
+        "...r.....r....",
+        "...rrrrrrr....",
+        "..............",
+        "..............",
+    ), legend={"r": "m_floor_cyan"}),
+    walls=_walls("mint"), door_mat="m_mat",
+    things=(
+        W("x_banner_teal", 3, 0), W("m_window_grey", 6, 0, 2, dy=26), W("x_banner_teal", 12, 0),
+        put("plasma_core", 4, 5), put("plasma_core_violet", 10, 5),          # the ring posts
+        put("plasma_core_violet", 4, 9), put("plasma_core", 10, 9),
+        C("m_counter", 6, 6), C("m_counter", 6, 7), C("m_counter", 6, 8),    # the platform inside the ring
+        F("m_rug_red_v", 7, 4, 2, 2),                                        # the leader's spot
+        # the island's flanks and the corridor hedges: the ring has exactly two single-file gates,
+        # west at (4, 7) and east at (10, 7) -- each guarded by a gym coach (fight them in order)
+        S("m_plant_tree", 5, 6), S("m_plant_tree", 5, 7), S("m_plant_tree", 5, 8),
+        S("m_plant_tree", 9, 6), S("m_plant_tree", 9, 7), S("m_plant_tree", 9, 8),
+        S("m_plant_tree", 1, 7), S("m_plant_tree", 2, 7), S("m_plant_tree", 3, 7),
+        S("m_plant_tree", 11, 7), S("m_plant_tree", 12, 7), S("m_plant_tree", 13, 7), S("m_plant_tree", 14, 7),
+        S("m_plant_tree", 1, 3), S("m_plant_tree", 14, 3),
+        S("m_bench", 2, 10), S("m_bench", 12, 10),
+        S("m_plant_small", 5, 10), S("m_plant_small", 10, 10),
+    ),
+    creatures=(Spawn("sporelet", 13, 4),),
+)
+
+LAYERED = {s.id: s for s in (HOUSE, HALL, LAB, MART, CUSH, LIBRARY, FARM_A, GYM_RING)}
 ROWS = {k: _layered_rows(s) for k, s in LAYERED.items()}

@@ -7,8 +7,8 @@ import os
 
 import pygame
 
-from settings import ASSET_EXTENSIONS, ASSETS, MAX_IMAGE_BYTES, MAX_IMAGE_SIDE, TILE
 from data import SPECIES
+from settings import ASSET_EXTENSIONS, ASSETS, MAX_IMAGE_BYTES, MAX_IMAGE_SIDE, TILE
 
 _raw = {}        # path -> source Surface
 _scaled = {}     # (path, w, h, smooth) -> Surface
@@ -94,6 +94,7 @@ def fit(rel, max_w, max_h, smooth=True):
     return scaled(rel, w * k, h * k, smooth)
 
 
+# --- Scimon sprites (assets/scimon/<species>-front.png / -back.png, the original art) -----------------------------
 def mon_path(species_id, back=False):
     sp = SPECIES[species_id]
     name = sp.back if (back and sp.back) else sp.front
@@ -102,6 +103,18 @@ def mon_path(species_id, back=False):
 
 def mon_image(species_id, max_w, max_h, back=False):
     return fit(mon_path(species_id, back), max_w, max_h)
+
+
+def mon_anim(species_id, kind, max_w, max_h, max_k=4):
+    """Frame list for the idle / attack animation.  The original Scimon art is a single still per species, so this is one
+    frame, drawn at the same scale as mon_image(); ScimonSprite then breathes (idle) and lunges (attack) on top of it."""
+    return [mon_image(species_id, max_w, max_h)]
+
+
+def ui_icon(name, scale=2):
+    """MPW UI icon (assets/mpw/ui/<name>.png) scaled by an integer factor with nearest neighbour."""
+    img = image(f"mpw/ui/{name}.png")
+    return scaled(f"mpw/ui/{name}.png", img.get_width() * scale, img.get_height() * scale, smooth=False)
 
 
 def font(kind, size):
@@ -117,7 +130,7 @@ def preload_steps():
     """Yield (done, total) after each asset, so a caller can draw a progress bar between loads
     (the browser build needs that: one long blocking call would leave the canvas blank)."""
     jobs = []
-    for folder in ("buildings", "scimon", "tiles/nature", "tiles/hitech", "tiles/res", "interiors", "characters", "town"):
+    for folder in ("scimon", "mpw/buildings", "mpw/trees", "mpw/ow", "mpw/ui", "mpw/fx", "mpw/bg", "tiles/nature", "tiles/hitech", "tiles/res", "interiors", "town"):
         full = safe_path(folder, directory=True)
         for name in sorted(os.listdir(full)):
             if name.lower().endswith(".png"):

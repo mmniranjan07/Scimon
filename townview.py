@@ -28,10 +28,16 @@ def hash2(x, y):
     return n - math.floor(n)
 
 
-def spr(name):
-    """Native sprite scaled x3 with nearest neighbour (cached)."""
-    img = assets.image(f"town/{name}.png")
-    return assets.scaled(f"town/{name}.png", img.get_width() * PX, img.get_height() * PX, smooth=False)
+def _rel(name):
+    """Asset path for a sprite name: bare names live in assets/town/, names with a folder ("mpw/buildings/lab") are paths."""
+    return f"{name}.png" if "/" in name else f"town/{name}.png"
+
+
+def spr(name, k=PX):
+    """Native sprite scaled by `k` (x3 by default) with nearest neighbour (cached)."""
+    rel = _rel(name)
+    img = assets.image(rel)
+    return assets.scaled(rel, max(1, int(img.get_width() * k)), max(1, int(img.get_height() * k)), smooth=False)
 
 
 def tile(name):
@@ -114,6 +120,7 @@ def draw_ground(s, rows, draw_old_tile):
                     s.blit(tile("fence_post"), (sx, sy))
                     if l or r:
                         s.blit(tile("fence_h"), (sx, sy))
+    _draw_ledges(s, rows)
     _draw_tide_pools(s, rows)
     # stone rim around the pond
     for y in range(h_):
@@ -124,6 +131,71 @@ def draw_ground(s, rows, draw_old_tile):
                 if _at(rows, x + dx, y + dy) != "w":
                     nx, ny = (x + dx) * TILE, (y + dy) * TILE
                     s.blit(tile(f"coping_{key}"), (nx, ny))
+
+
+_ledge_cache = {}
+_LEDGE_HI, _LEDGE_LIP, _LEDGE_FACE, _LEDGE_DARK = (226, 204, 160), (196, 170, 128), (152, 118, 84), (98, 74, 52)
+
+
+def _ledge_piece(left_end, right_end, vertical, strip_right, variant):
+    """One 16x16 art-pixel ledge tile (x3).  Horizontal: tan lip, brown face, dark foot and a soft shadow, with the ends
+    rounded where the ledge stops.  Vertical (the side edge of a ledge run): a 4-pixel wide brown column."""
+    key = (left_end, right_end, vertical, strip_right, variant)
+    img = _ledge_cache.get(key)
+    if img is not None:
+        return img
+    img = pygame.Surface((TILE, TILE), pygame.SRCALPHA)
+
+    def px(x, y, w, h, col):
+        img.fill(col, (x * PX, y * PX, w * PX, h * PX))
+
+    if vertical:
+        x0 = 11 if strip_right else 1
+        px(x0 + (0 if strip_right else 3), 0, 1, 16, _LEDGE_LIP)          # lit inner edge
+        px(x0 + (1 if strip_right else 1), 0, 2, 16, _LEDGE_FACE)
+        px(x0 + (3 if strip_right else 0), 0, 1, 16, _LEDGE_DARK)         # dark outer edge
+        for y in range(1, 16, 4):                                           # a few stones
+            px(x0 + 1 + (variant + y) % 2, y, 1, 1, _LEDGE_DARK)
+    else:
+        a, b = (1 if left_end else 0), (15 if right_end else 16)
+        px(a, 9, b - a, 1, _LEDGE_HI)
+        px(a, 10, b - a, 1, _LEDGE_LIP)
+        px(a, 11, b - a, 3, _LEDGE_FACE)
+        px(a + (1 if left_end else 0), 14, b - a - (1 if left_end else 0) - (1 if right_end else 0), 1, _LEDGE_DARK)
+        for i in range(variant % 4, 16, 4):                                 # stone seams
+            if a <= i < b:
+                px(i, 11, 1, 2, _LEDGE_DARK)
+        shade = pygame.Surface((TILE, PX), pygame.SRCALPHA)
+        shade.fill((0, 0, 0, 55))
+        img.blit(shade, (a * PX, 15 * PX), pygame.Rect(0, 0, (b - a) * PX, PX))
+    _ledge_cache[key] = img
+    return img
+
+
+def _draw_ledges(s, rows):
+    """One-way ledges ('l').  A tile with ledge neighbours left/right is a horizontal run; a tile with ledge tiles only above
+    or below is the vertical side edge of a run, drawn on the side the run extends from."""
+    for y in range(len(rows)):
+        for x in range(len(rows[0])):
+            if rows[y][x] != "l":
+                continue
+            l, r = _at(rows, x - 1, y) == "l", _at(rows, x + 1, y) == "l"
+            u, d = _at(rows, x, y - 1) == "l", _at(rows, x, y + 1) == "l"
+            vertical = (u or d) and not (l or r)
+            strip_right = True
+            if vertical:                                           # find the horizontal run this column belongs to
+                yy = y
+                while yy > 0 and rows[yy - 1][x] == "l":
+                    yy -= 1
+                while yy < len(rows) and rows[yy][x] == "l":
+                    if _at(rows, x - 1, yy) == "l":
+                        strip_right = True
+                        break
+                    if _at(rows, x + 1, yy) == "l":
+                        strip_right = False
+                        break
+                    yy += 1
+            s.blit(_ledge_piece(not l, not r, vertical, strip_right, x % 4), (x * TILE, y * TILE))
 
 
 _wall_cache = {}
@@ -175,20 +247,38 @@ PROP_SPRITE = {"L": "lamp_post", "b": "bench_0", "N": "notice_board", "x": "crat
                "S": "signpost", "m": "mailbox", "a": "scarecrow", "q": "well", "u": "bush_0", "r": "rock_small"}
 
 
+# Green trees cut from Trees.png (assets/mpw/trees, built by tools/build_mpw_assets.py).  Only green species are used:
+# round and conical crowns, drawn at 1.25x native size (about 1.6 tiles wide) with a soft ground shadow; the big round tree is rare.
+GREEN_TREES = ("tree_a1", "tree_a2", "tree_a4", "tree_a5", "tree_a7", "tree_a8", "tree_a9", "tree_b3", "tree_b7",
+               "tree_c0", "tree_c4", "tree_c8")
+_shadowed = {}
+
+
 def _tree_name(x, y, rows, green_only=False):
+    """Name of the tree sprite for map tile (x, y): stable per tile, always a green MPW tree."""
     h = hash2(x + 3, y + 11)
-    if green_only:                                             # forest routes: ordinary oaks and pines only
-        return "tree_pine_0" if h < 0.2 else "tree_pine_1" if h < 0.36 else "tree_oak_1" if h < 0.62 else \
-            "tree_oak_2" if h < 0.82 else "tree_oak_0"
-    border = x <= 1 or x >= 42 or y == 0 or y >= 15
-    if border:
-        return ("tree_pine_0" if h < 0.22 else "tree_pine_1" if h < 0.36 else "tree_glow" if h < 0.44 else
-                "tree_oak_1" if h < 0.64 else "tree_oak_2" if h < 0.8 else "tree_oak_0")
-    return ("tree_blossom_0" if h < 0.3 else "tree_blossom_1" if h < 0.5 else "tree_oak_1" if h < 0.75 else "tree_oak_0")
+    if h < 0.06:
+        return "mpw/trees/tree_big"
+    return "mpw/trees/" + GREEN_TREES[int(hash2(x * 7 + 1, y * 13 + 5) * len(GREEN_TREES)) % len(GREEN_TREES)]
 
 
-def make_prop(name, tx, ty, w_tiles=1, dy=0):
-    img = spr(name)
+def _with_shadow(name, k=1):
+    """Sprite with a translucent ground ellipse under its trunk, so trees sit on the lawn instead of floating."""
+    key = (name, k)
+    img = _shadowed.get(key)
+    if img is None:
+        base = spr(name, k)
+        w, h = base.get_size()
+        sh_h = max(8, h // 7)
+        img = pygame.Surface((w, h + sh_h // 2), pygame.SRCALPHA)
+        pygame.draw.ellipse(img, (14, 40, 14, 70), (w // 8, h - sh_h // 2, w * 3 // 4, sh_h))
+        img.blit(base, (0, 0))
+        _shadowed[key] = img
+    return img
+
+
+def make_prop(name, tx, ty, w_tiles=1, dy=0, k=PX, shadow=False):
+    img = _with_shadow(name, k) if shadow else spr(name, k)
     x = tx * TILE + (w_tiles * TILE - img.get_width()) // 2
     bottom = (ty + 1) * TILE
     return Prop(img, x, bottom - img.get_height() + dy, bottom)
@@ -202,7 +292,9 @@ def build_props(rows, green_only=False):
         while x < w_:
             t = rows[y][x]
             if t == "T":
-                props.append(make_prop(_tree_name(x, y, rows, green_only), x, y, dy=6))
+                props.append(make_prop(_tree_name(x, y, rows, green_only), x, y, dy=4, k=1.25, shadow=True))
+            elif t == "u":                                            # green bush from Trees.png, halved to one tile wide
+                props.append(make_prop(f"mpw/trees/bush_{int(hash2(x, y) * 2) % 2}", x, y, dy=2, k=0.5))
             elif t in PROP_SPRITE:
                 props.append(make_prop(PROP_SPRITE[t], x, y, dy=2 if t != "L" else 3))
             elif t == "O":
@@ -235,7 +327,7 @@ def draw_buildings(s, buildings, as_props=()):
     seen = {}
     for b in buildings:
         fx, fy, fw, fh = b.footprint
-        pic = spr(b.sprite.split("/")[-1][:-4])
+        pic = spr(b.sprite[:-4])
         bx = int(fx * TILE + (fw * TILE - pic.get_width()) // 2)
         by = int((fy + fh) * TILE - pic.get_height() + 2 * PX)
         sh = pygame.Surface((pic.get_width() + 14, 22), pygame.SRCALPHA)
@@ -257,7 +349,7 @@ def building_props(buildings, ids, zones):
         if b.id not in ids:
             continue
         fx, fy, fw, fh = b.footprint
-        pic = spr(b.sprite.split("/")[-1][:-4])
+        pic = spr(b.sprite[:-4])
         bx = int(fx * TILE + (fw * TILE - pic.get_width()) // 2)
         by = int((fy + fh) * TILE - pic.get_height() + 2 * PX)
         pr = Prop(pic, bx, by, int((fy + fh) * TILE))
@@ -267,26 +359,30 @@ def building_props(buildings, ids, zones):
 
 
 # ---------------------------------------------------------------------------------------------------- pond
-def pond_frames(rows):
+def pond_frames(rows, regions=None, jet_regions=None):
+    """Animated water for each pond region (default: the town's).  With `jet_regions`, only those regions get the fountain
+    jet (and no lily pads under it); every other region is plain water with lily pads."""
     frames = []
-    for region in wm.POND_REGIONS:
+    for region in (wm.POND_REGIONS if regions is None else regions):
         px0, py0, pw, ph = region
+        jet = jet_regions is None or region in jet_regions
         per = []
         for f in range(4):
             surf = pygame.Surface((pw * TILE, ph * TILE))
             for yy in range(ph):
                 for xx in range(pw):
                     surf.blit(tile(f"pond_{(f + xx + yy) % 4}"), (xx * TILE, yy * TILE))
-            surf.blit(spr("lilypads"), (TILE * 2 + 8, TILE + 6))
-            surf.blit(spr("lilypads"), (pw * TILE - TILE * 3, TILE * (ph - 2) + 4))
+            if jet_regions is None or not jet:
+                surf.blit(spr("lilypads"), (TILE * 2 + 8, TILE + 6))
+                surf.blit(spr("lilypads"), (pw * TILE - TILE * 3, TILE * (ph - 2) + 4))
             per.append(surf)
-        frames.append((region, per))
+        frames.append((region, per, jet))
     return frames
 
 
-def pond_reeds(rows):
+def pond_reeds(rows, regions=None):
     out = []
-    for (px0, py0, pw, ph) in wm.POND_REGIONS:
+    for (px0, py0, pw, ph) in (wm.POND_REGIONS if regions is None else regions):
         for x in (px0, px0 + pw - 1):
             for y in (py0, py0 + ph - 1):
                 out.append(make_prop(f"reeds_{(x + y) % 2}", x, y, dy=-4))
@@ -351,10 +447,12 @@ def draw_beacon(surf, cam, t, fx):
 def draw_fx(surf, cam, t, fx, focus, font_render, rows):
     vw, vh = int(cam.view.x), int(cam.view.y)
     # pond
-    for (region, per) in fx.ponds:
+    for (region, per, has_jet) in fx.ponds:
         px0, py0, pw, ph = region
         frame = per[int(t * 2.2) % 4]
         surf.blit(frame, (px0 * TILE - cam.x, py0 * TILE - cam.y))
+        if not has_jet:
+            continue
         jet = spr(f"fountain_{int(t * 7) % 3}")
         cx = (px0 + pw / 2) * TILE - cam.x
         cy = (py0 + ph / 2) * TILE - cam.y + 22

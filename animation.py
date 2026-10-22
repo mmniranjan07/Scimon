@@ -15,7 +15,7 @@ import random
 import pygame
 
 import assets
-from settings import PX, SHEET_LAYOUT
+from settings import CHAR_PX, PX, SHEET_LAYOUT
 
 
 # --------------------------------------------------------------------------- frame sequences
@@ -159,6 +159,58 @@ def sheet_animator(rel):
     sa = _sheet_cache.get(rel)
     if sa is None:
         sa = _sheet_cache[rel] = SheetAnimator(assets.image(rel))
+    return sa
+
+
+# --------------------------------------------------------------------------- MPW overworld sheets (32x32, 4x4)
+class MpwSheetAnimator:
+    """MPWSP01 overworld sheet: 128x128 = 4 columns x 4 rows of 32x32 frames.  Rows are facings (down, left, right, up);
+    frames 0 and 2 are the standing pose, 1 and 3 the two walking steps.  Frames are cropped (rows only) to the union of
+    their opaque pixels so the feet sit on the bottom edge, then drawn at CHAR_PX (settings.py, 2x) with nearest-neighbour scaling.
+    Same interface as SheetAnimator: animation / frame / frame_index."""
+    ROWS = {"down": 0, "left": 1, "right": 2, "up": 3}
+    FPS = {"idle": 3.0, "walk": 8.0}
+
+    def __init__(self, sheet):
+        self.sheet, self._anims = sheet, {}
+        top, bottom = 32, 0
+        for r in range(4):
+            for c in range(4):
+                rect = sheet.subsurface((c * 32, r * 32, 32, 32)).get_bounding_rect()
+                if rect.h:
+                    top, bottom = min(top, rect.y), max(bottom, rect.bottom)
+        self.top, self.bottom = (top, bottom) if bottom > top else (0, 32)
+
+    def _frames(self, facing):
+        r = self.ROWS[facing]
+        h = self.bottom - self.top
+        return [pygame.transform.scale(self.sheet.subsurface((c * 32, r * 32 + self.top, 32, h)), (32 * CHAR_PX, h * CHAR_PX))
+                for c in range(4)]
+
+    def animation(self, mode, facing):
+        key = (mode, facing)
+        anim = self._anims.get(key)
+        if anim is None:
+            f = self._frames(facing)
+            anim = self._anims[key] = Animation(f if mode == "walk" else [f[0]], fps=self.FPS.get(mode, 3.0))
+        return anim
+
+    def frame(self, mode, facing, t):
+        return self.animation(mode, facing).frame_at(t)
+
+    def frame_index(self, mode, facing, index):
+        a = self.animation(mode, facing)
+        return a.frames[index % len(a.frames)]
+
+
+_mpw_cache = {}
+
+
+def mpw_animator(n):
+    """Shared MpwSheetAnimator for assets/mpw/ow/ow<n>.png (n = 1..10)."""
+    sa = _mpw_cache.get(n)
+    if sa is None:
+        sa = _mpw_cache[n] = MpwSheetAnimator(assets.image(f"mpw/ow/ow{n}.png"))
     return sa
 
 
