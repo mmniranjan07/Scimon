@@ -8,7 +8,7 @@ from scenes import TitleScene
 import overworld as ow
 from settings import TILE
 
-OUT = "/home/claude/shots"; os.makedirs(OUT, exist_ok=True)
+OUT = sys.argv[1] if len(sys.argv) > 1 else "/home/claude/shots"; os.makedirs(OUT, exist_ok=True)
 random.seed(3)
 eng = Engine(); eng.push(TitleScene())
 held = {"d": None}
@@ -43,9 +43,18 @@ def battle_auto(max_steps=400, shots=None, prefer="fight"):
     return False
 
 # ---- story flow to overworld
-run(0.3); key(pygame.K_RETURN); run(0.6)
-for _ in range(5): key(pygame.K_RETURN); key(pygame.K_RETURN); run(0.1)
-run(0.6); key(pygame.K_RETURN); run(1.0)               # choose Florabot
+def until(state, max_presses=80):
+    """Click/confirm through dialogue until the given scene is on top."""
+    for _ in range(max_presses):
+        if eng.top.state_id == state and not eng.transitioning:
+            run(0.6); return
+        key(pygame.K_RETURN); run(0.12)
+    raise AssertionError(f"never reached {state}, stuck at {eng.top.state_id}")
+run(0.3); key(pygame.K_RETURN); run(0.6)               # title -> customize
+key(pygame.K_RETURN); run(0.8)                         # start journey -> wake-up
+until(StateId.BRIEF)                                   # dismiss the wake-up lines
+until(StateId.STARTER_SELECT)                          # Prof. Venn's lab briefing
+key(pygame.K_RETURN); run(1.0)                         # choose Florabot
 for _ in range(6): key(pygame.K_RETURN); key(pygame.K_RETURN); run(0.1)
 run(1.0)
 assert battle_auto(shots={}), "rival battle did not finish"

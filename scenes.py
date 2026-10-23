@@ -1,5 +1,7 @@
-"""Story scenes: title screen, click-through dialogue, the wake-up scene, starter selection and the rival
-encounter, plus the flow that chains them (Title -> Wake -> Starter -> Rival -> Battle -> Overworld).
+"""Story scenes: title screen, click-through dialogue, the wake-up scene, the professor's lab briefing
+(animated explanation of what Scimon are and how battles work), starter selection and the rival encounter,
+plus the flow that chains them
+(Title -> Customize -> Wake -> Brief -> Starter -> Rival -> Battle -> Overworld).
 
 Dialogue is a state, not a loop: lines advance on input while the engine keeps running at full frame rate."""
 import math
@@ -13,9 +15,9 @@ from data import SPECIES, STARTER_IDS
 from engine import Scene, StateId
 from monsters import create_scimon
 from settings import CREAM, H, INK, ORANGE, TEAL, TEAL_DARK, W
-from sprites import (CLOTH_HUES, HAIR_HUES, SKIN_OFFSETS, class_swatches, look_animator, make_look)
-from ui import (ButtonGrid, Button, DialogueBox, circuit_backdrop, draw_button, is_back, is_click, is_confirm, label_chip, nav_dir,
-                panel, text, type_chip, wrap_text)
+from sprites import (CLOTH_HUES, HAIR_HUES, SKIN_OFFSETS, Character, class_swatches, look_animator, look_for, make_look)
+from ui import (ButtonGrid, Button, DialogueBox, circuit_backdrop, draw_button, hp_color, is_back, is_click, is_confirm,
+                label_chip, nav_dir, panel, text, type_chip, wrap_text)
 
 RIVAL_NAME = "Kael"
 # Kael always picks the starter that is WEAK against yours: florabot > aquabit > pyrodrive > florabot.
@@ -99,18 +101,22 @@ class DialogueScene(Scene):
         if self.grid:
             self.grid.update(dt)
 
+    def _draw_stage(self, surf):
+        """The animated stage above the text box: species sprites bobbing over their shadows."""
+        n = len(self.sprites)
+        for k, sid in enumerate(self.sprites):
+            img = assets.mon_image(sid, 210, 210)
+            x = W // 2 + (k - (n - 1) / 2) * 290 - img.get_width() // 2
+            y = 430 - img.get_height() + math.sin(self.t * 2.6 + k * 1.3) * 4
+            shadow = pygame.Surface((img.get_width() // 1.4, 22), pygame.SRCALPHA)
+            pygame.draw.ellipse(shadow, (10, 10, 14, 70), shadow.get_rect())
+            surf.blit(shadow, shadow.get_rect(midtop=(x + img.get_width() // 2, 424)))
+            surf.blit(img, (x, y))
+
     def draw(self, surf):
         if self.bg:
             self.bg(surf, self.t)
-            n = len(self.sprites)
-            for k, sid in enumerate(self.sprites):
-                img = assets.mon_image(sid, 210, 210)
-                x = W // 2 + (k - (n - 1) / 2) * 290 - img.get_width() // 2
-                y = 430 - img.get_height() + math.sin(self.t * 2.6 + k * 1.3) * 4
-                shadow = pygame.Surface((img.get_width() // 1.4, 22), pygame.SRCALPHA)
-                pygame.draw.ellipse(shadow, (10, 10, 14, 70), shadow.get_rect())
-                surf.blit(shadow, shadow.get_rect(midtop=(x + img.get_width() // 2, 424)))
-                surf.blit(img, (x, y))
+            self._draw_stage(surf)
         self.box.draw(surf)
         if self.asking and self.grid:
             self.grid.draw(surf, size=18)
@@ -153,15 +159,246 @@ def bedroom_bg(surf, t):
 
 
 def outdoor_bg(surf, t):
-    surf.fill((207, 227, 198))
-    for y in range(352, H):
-        k = (y - 352) / (H - 352)
-        pygame.draw.line(surf, (int(183 - 16 * k), int(207 - 14 * k), int(166 - 21 * k)), (0, y), (W, y))
-    for i in range(5):
-        x = (i * 230 - t * 10) % (W + 240) - 120
-        cl = pygame.Surface((140, 36), pygame.SRCALPHA)
-        pygame.draw.ellipse(cl, (255, 255, 255, 140), cl.get_rect())
-        surf.blit(cl, (x, 50 + (i * 53) % 120))
+    """Outside the lab in Riven Town: sky, drifting clouds, the lab facade, path and hedges."""
+    for i in range(340):                                   # sky gradient
+        k = i / 340
+        pygame.draw.line(surf, (int(120 + 60 * k), int(190 + 40 * k), int(215 + 25 * k)), (0, i), (W, i))
+    for k, (cx, cy, spd, sc) in enumerate(((120, 60, 9, 1.0), (430, 96, 6, 1.4), (760, 48, 11, 0.8))):
+        x = (cx + t * spd) % (W + 240) - 120               # clouds drift slowly to the right
+        for dx, dy, r in ((0, 0, 26 * sc), (30 * sc, 8 * sc, 20 * sc), (-28 * sc, 10 * sc, 18 * sc)):
+            pygame.draw.circle(surf, (246, 250, 252), (int(x + dx), int(cy + dy)), int(r))
+    pygame.draw.rect(surf, (122, 176, 96), (0, 330, W, H - 330))          # lawn
+    pygame.draw.rect(surf, (86, 140, 70), (0, 330, W, 8))
+    for gx in range(0, W, 34):                              # grass tufts sway
+        sway = int(math.sin(t * 1.8 + gx * 0.35) * 3)
+        pygame.draw.line(surf, (74, 128, 60), (gx, 372 + (gx * 7) % 180), (gx + sway, 358 + (gx * 7) % 180), 3)
+    # the lab building behind the stage: the town's real lab sprite, not a placeholder facade
+    lab = assets.scaled("town/bld_lab.png", 246, 294, smooth=False)
+    surf.blit(lab, (480 - lab.get_width() // 2, 336 - lab.get_height()))
+    # sandy path the trainers stand on
+    pygame.draw.ellipse(surf, (216, 196, 150), (140, 470, 680, 150))
+    pygame.draw.ellipse(surf, (196, 176, 132), (140, 470, 680, 150), 4)
+
+
+# =========================================================================== professor's lab briefing
+def _demo_pad(surf, cx, cy, w):
+    """A glowing lab scanner pad the demos stand on."""
+    pygame.draw.ellipse(surf, (16, 40, 38), (cx - w // 2, cy - 14, w, 30))
+    pygame.draw.ellipse(surf, (120, 134, 128), (cx - w // 2, cy - 24, w, 30))
+    pygame.draw.ellipse(surf, (208, 216, 210), (cx - w // 2 + 10, cy - 21, w - 20, 24))
+
+
+def _demo_materialize(surf, t):
+    """Idea demo: a Scimon materializes on the scanner pad inside a sweeping scan beam."""
+    text(surf, "SCI-MON", (480, 128), "display", 24, CREAM, anchor="center", shadow=(20, 40, 38))
+    text(surf, "autonomous machine - research partner", (480, 164), "body", 26, (214, 230, 222), anchor="center", shadow=(20, 40, 38))
+    _demo_pad(surf, 480, 404, 250)
+    k = min(1.0, (t % 3.6) / 2.0)                          # materialize, then hold
+    img = assets.mon_image("florabot", 190, 190)
+    w, h = max(8, int(img.get_width() * (0.25 + 0.75 * k))), max(8, int(img.get_height() * (0.25 + 0.75 * k)))
+    sc = pygame.transform.smoothscale(img, (w, h))
+    sc.set_alpha(int(255 * k))
+    surf.blit(sc, (480 - w // 2, 400 - h + int((1 - k) * 60)))
+    beam = pygame.Surface((70, 196), pygame.SRCALPHA)      # scan beam sweeping across the pad
+    pygame.draw.rect(beam, (140, 235, 205, 64), beam.get_rect())
+    pygame.draw.line(beam, (190, 255, 230, 190), (0, 0), (0, 196), 3)
+    pygame.draw.line(beam, (190, 255, 230, 190), (69, 0), (69, 196), 3)
+    surf.blit(beam, (350 + int((t * 120) % 260), 200))
+    if k < 1.0:                                            # sparkles while it forms
+        for i in range(6):
+            a = t * 5 + i * 1.9
+            sx = 480 + int(math.cos(a) * (26 + 30 * math.sin(i * 2.2)))
+            sy = 400 - int((a * 46 + i * 37) % 150)
+            pygame.draw.circle(surf, (250, 250, 200), (sx, sy), 3)
+
+
+def _demo_battle(surf, t):
+    """Rules demo: Florabot lands a super-effective Leaf Cutter on a wild Aquabit; HP drains."""
+    T = 3.4
+    ph = t % T
+    text(surf, "A SCIMON BATTLE", (480, 116), "display", 18, CREAM, anchor="center", shadow=(20, 40, 38))
+    _demo_pad(surf, 330, 408, 210)
+    _demo_pad(surf, 650, 408, 210)
+    limg = assets.mon_image("florabot", 150, 130)
+    rimg = assets.mon_image("aquabit", 150, 130)
+    shake = 8 if 0.9 <= ph < 1.15 else 0
+    surf.blit(limg, (330 - limg.get_width() // 2, 396 - limg.get_height()))
+    surf.blit(rimg, (650 - rimg.get_width() // 2, 396 - rimg.get_height() + shake))
+
+    def hp_bar(cx, y, ratio, label):
+        text(surf, label, (cx, y - 16), "display", 12, CREAM, anchor="center", shadow=(20, 40, 38))
+        r = pygame.Rect(cx - 80, y, 160, 14)
+        pygame.draw.rect(surf, (24, 44, 42), r.inflate(6, 6), border_radius=7)
+        pygame.draw.rect(surf, (60, 74, 70), r, border_radius=6)
+        pygame.draw.rect(surf, hp_color(ratio), (r.x, r.y, max(4, int(r.w * ratio)), r.h), border_radius=6)
+
+    hp_bar(330, 226, 1.0, "FLORABOT  Lv5")
+    hp_bar(650, 226, 1.0 - 0.65 * min(1.0, max(0.0, (ph - 1.05) / 0.45)), "WILD AQUABIT  Lv5")
+    if ph < 0.9:
+        text(surf, "FLORABOT used LEAF CUTTER!", (480, 158), "display", 16, CREAM, anchor="center", shadow=(20, 40, 38))
+    if 0.35 <= ph < 0.9:                                   # the leaf arcs across the arena
+        p = (ph - 0.35) / 0.55
+        x, y = int(405 + p * 170), int(320 - math.sin(p * math.pi) * 46)
+        leaf = pygame.Surface((26, 14), pygame.SRCALPHA)
+        pygame.draw.ellipse(leaf, (96, 190, 92), leaf.get_rect())
+        pygame.draw.line(leaf, (60, 130, 60), (2, 7), (24, 7), 2)
+        surf.blit(leaf, (x, y))
+    if 0.9 <= ph < 1.6:                                    # impact flash + effectiveness callout
+        a = int(220 * (1 - (ph - 0.9) / 0.7))
+        fl = pygame.Surface((130, 130), pygame.SRCALPHA)
+        pygame.draw.circle(fl, (255, 240, 160, a), (65, 65), 60)
+        pygame.draw.circle(fl, (255, 255, 255, a), (65, 65), 32)
+        surf.blit(fl, (650 - 65, 320 - 65))
+        if ph < 1.4:
+            text(surf, "SUPER EFFECTIVE! x1.5", (650, 186 + int((1.4 - ph) * 40)), "display", 18, ORANGE,
+                 anchor="center", shadow=(60, 20, 10))
+
+
+def _demo_types(surf, t):
+    """Types demo: the starter triangle, with counters lighting up one by one."""
+    pos = {"florabot": (480, 268), "aquabit": (310, 400), "pyrodrive": (650, 400)}
+    order = [("florabot", "aquabit", "BOTANIC drenches HYDRO"),
+             ("aquabit", "pyrodrive", "HYDRO shorts THERMAL"),
+             ("pyrodrive", "florabot", "THERMAL scorches BOTANIC")]
+    text(surf, "TYPE TRIANGLE", (480, 104), "display", 18, CREAM, anchor="center", shadow=(20, 40, 38))
+    imgs = {sid: assets.mon_image(sid, 150, 130) for sid in pos}
+    for i, sid in enumerate(pos):
+        cx, cy = pos[sid]
+        _demo_pad(surf, cx, cy + 18, 200)
+        bob = math.sin(t * 2.4 + i * 2.1) * 4
+        img = imgs[sid]
+        surf.blit(img, (cx - img.get_width() // 2, cy - img.get_height() + bob))
+    k, p = int(t / 2.1) % 3, (t / 2.1) % 1
+    src, dst, lab = order[k]
+    c = {sid: (x, y - imgs[sid].get_height() // 2 - 10) for sid, (x, y) in pos.items()}
+    (x0, y0), (x1, y1) = c[src], c[dst]
+    if p < 0.62:                                           # attacker highlighted, arrow grows
+        img = imgs[src]
+        r = pygame.Rect(0, 0, img.get_width() + 16, img.get_height() + 16)
+        r.center = (x0, y0 + 6)
+        pygame.draw.rect(surf, ORANGE, r, 3, border_radius=10)
+        g = min(1.0, p / 0.45)
+        ex, ey = x0 + (x1 - x0) * g, y0 + (y1 - y0) * g
+        pygame.draw.line(surf, ORANGE, (x0, y0), (ex, ey), 6)
+        ang = math.atan2(y1 - y0, x1 - x0)
+        for da in (2.65, -2.65):
+            pygame.draw.line(surf, ORANGE, (ex, ey), (ex + math.cos(ang + da) * 18, ey + math.sin(ang + da) * 18), 6)
+    if 0.5 <= p < 0.9:                                     # impact flash on the defender
+        a = int(200 * (1 - (p - 0.5) / 0.4))
+        fl = pygame.Surface((110, 110), pygame.SRCALPHA)
+        pygame.draw.circle(fl, (255, 240, 160, a), (55, 55), 50)
+        surf.blit(fl, (x1 - 55, y1 - 55))
+    if 0.55 <= p < 0.95:
+        text(surf, f"{lab}  x1.5!", (480, 448), "display", 18, ORANGE, anchor="center", shadow=(60, 20, 10))
+
+
+def _demo_scan(surf, t):
+    """Scanning demo: a wild Sporelet is caught in the scanner beam and added to the team."""
+    pct = (t * 55) % 130
+    _demo_pad(surf, 480, 404, 260)
+    img = assets.mon_image("sporelet", 170, 150)
+    bob = math.sin(t * 2.2) * 4
+    surf.blit(img, (480 - img.get_width() // 2, 400 - img.get_height() - 12 + bob))
+    beam = pygame.Surface((260, 230), pygame.SRCALPHA)     # beam cone from the ceiling scanner
+    pygame.draw.polygon(beam, (140, 235, 205, 46), [(100, 0), (160, 0), (240, 230), (20, 230)])
+    surf.blit(beam, (350, 140))
+    pygame.draw.rect(surf, (66, 82, 78), (440, 100, 80, 40), border_radius=8)
+    pygame.draw.circle(surf, (250, 240, 170), (480, 140), 8)
+    for i in range(3):                                     # expanding scan rings
+        rr = ((t * 90) + i * 46) % 140
+        a = int(150 * (1 - rr / 140))
+        ring = pygame.Surface((rr * 2 + 8, rr * 2 + 8), pygame.SRCALPHA)
+        pygame.draw.circle(ring, (120, 235, 205, a), (rr + 4, rr + 4), max(2, rr), 3)
+        surf.blit(ring, (480 - rr - 4, 344 - rr - 4))
+    bar = pygame.Rect(360, 152, 240, 18)
+    pygame.draw.rect(surf, (24, 44, 42), bar.inflate(6, 6), border_radius=9)
+    pygame.draw.rect(surf, (60, 74, 70), bar, border_radius=8)
+    pygame.draw.rect(surf, (110, 235, 190), (bar.x, bar.y, int(bar.w * min(1.0, pct / 100)), bar.h), border_radius=8)
+    if pct < 100:
+        text(surf, f"SCANNING {int(pct)}%", (480, 184), "display", 14, CREAM, anchor="center", shadow=(20, 40, 38))
+    else:
+        text(surf, "SCANNED! +1 TO THE TEAM", (480, 184), "display", 14, (150, 240, 170), anchor="center", shadow=(20, 40, 38))
+        pygame.draw.circle(surf, (150, 240, 170), (480, 344), int(40 + 26 * math.sin(t * 6)), 4)
+
+
+BRIEF_STEPS = [
+    ("idea", [
+        "So! You're finally awake, {name}. Welcome to my lab - I'm Prof. Venn.",
+        "This world runs on SCI-MON: Scientific Monsters - autonomous machines that behave like living creatures.",
+        "Scan one with your Scanner and it becomes your research partner. It battles, learns techniques and grows with you.",
+    ]),
+    ("battle", [
+        "Researchers settle their questions with Scimon battles. Every Scimon has HP: when it reaches zero, it powers down and is withdrawn.",
+        "Watch closely: my Florabot hits a wild Aquabit with Leaf Cutter. Botanic against Hydro deals 1.5x damage - a super effective hit!",
+    ]),
+    ("types", [
+        "Types decide battles. Botanic drenches Hydro, Hydro shorts out Thermal, and Thermal scorches Botanic - a triangle of counters.",
+        "Pick a partner whose strengths cover your gaps. Learn the triangle and you've already half-won.",
+    ]),
+    ("scan", [
+        "Out in the field, weaken a wild Scimon and then SCAN it to add it to your team. Up to six partners can travel with you.",
+        "And that's everything. Three Scimons have gathered on my pads right now, curious about your Scanner.",
+        "Choose the one you connect with, {name} - your research journey starts today!",
+    ]),
+]
+DEMOS = {"idea": _demo_materialize, "battle": _demo_battle, "types": _demo_types, "scan": _demo_scan}
+
+
+class ProfBriefScene(Scene):
+    """Prof. Venn's lab briefing, on a generic backdrop (not the lab interior): the idea of Scimon and the
+    battle rules, each point told with an animated demo on the stage while Prof. Venn (his actual in-game
+    sprite) presents, then straight on to the starter selection."""
+    state_id = StateId.BRIEF
+
+    def __init__(self):
+        self.t = 0.0
+        self.step = 0
+        self.box = DialogueBox(size=36)
+        self._set_step(0)
+        self.done = False
+        self.prof = Character(3, 7, look_for("venn"), "down")     # Prof. Venn himself
+        self.prof.pos = pygame.Vector2(148, 366)                  # fixed spot beside the demo stage
+
+    def on_enter(self):
+        self._set_step(self.step)                     # {name} is only known once the engine is attached
+
+    def _set_step(self, i):
+        name = getattr(self.engine.state, "name", "") if self.engine is not None else ""
+        self.box.set_lines([ln.replace("{name}", name) for ln in BRIEF_STEPS[i][1]])
+
+    def _advance(self):
+        if self.box.advance():
+            if self.step + 1 < len(BRIEF_STEPS):
+                self.step += 1
+                self._set_step(self.step)
+                audio.play("move")
+            else:
+                self.done = True
+                self.finish()
+
+    def finish(self):
+        eng = self.engine
+        eng.fade_to(lambda: eng.replace(StarterScene()))
+
+    def handle_event(self, e):
+        if not self.done and (is_confirm(e) or is_click(e)):
+            audio.play("move")
+            self._advance()
+
+    def update(self, dt):
+        self.t += dt
+        self.box.update(dt)
+        self.prof.anim_t += dt                           # idle animation: breathing, blinking
+        self.prof.refresh()
+
+    def draw(self, surf):
+        circuit_backdrop(surf, self.t)                   # generic backdrop, not the lab interior
+        DEMOS[BRIEF_STEPS[self.step][0]](surf, self.t)   # the animated explanations on the stage
+        surf.blit(self.prof.image, self.prof.draw_pos)
+        self.box.draw(surf)
+        for k in range(len(BRIEF_STEPS)):                  # progress dots
+            c = ORANGE if k == self.step else (130, 152, 146)
+            pygame.draw.circle(surf, c, (W - 36 - (len(BRIEF_STEPS) - 1 - k) * 24, 30), 6)
 
 
 # =========================================================================== character customization (New Game)
@@ -228,10 +465,10 @@ class CustomizeScene(Scene):
         st.look = make_look(self.body, self.skin, self.hair, self.outfit)
         audio.play("select")
 
-        def to_starter():
-            eng.fade_to(lambda: eng.replace(StarterScene()))
+        def to_brief():
+            eng.fade_to(lambda: eng.replace(ProfBriefScene()))
 
-        eng.fade_to(lambda: eng.replace(DialogueScene(wake_lines(st.name), on_done=to_starter, bg=bedroom_bg,
+        eng.fade_to(lambda: eng.replace(DialogueScene(wake_lines(st.name), on_done=to_brief, bg=bedroom_bg,
                                                       pop_on_done=False)))
 
     # ---- input --------------------------------------------------------------------------
