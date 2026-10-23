@@ -80,7 +80,7 @@ localStorage; on desktop in `~/.scimon/save.json`. The title screen offers CONTI
 | `sprites.py` | `Player`, `NPC` (sheet-based, hitbox-anchored), `ScimonSprite`, `TrainerSprite`, `ImpactBurst` |
 | `interiors.py` | the eight interior rooms as sprite props with footprints; generates each room's collision grid |
 | `overworld.py` | exploration scene: movement, doors, talk, encounters, HUD |
-| `scenes.py` | title, dialogue, wake-up, starter select, rival encounter, game flow |
+| `scenes.py` | title, dialogue, wake-up, professor's lab briefing, starter select, rival encounter, game flow |
 | `menus.py` | Pack, Shop, Sci-Database, repair service menu |
 | `ui.py` | glass panels, pixel text, typewriter dialogue box, bars, chips, button grid, toast |
 | `touch.py` | mobile support: layouts, on-screen D-pad / A / B / PACK, multi-touch finger tracking |
@@ -171,7 +171,7 @@ licence for them. Fonts (Press Start 2P, VT323) are SIL OFL. Before making the r
 and `assets/scimon` (monster sprites) yourself or have the right to share them.
 
 ## Tests (headless)
-    python tests/smoke.py   # title -> wake -> starter -> rival battle
+    python tests/smoke.py   # title -> wake -> professor briefing -> starter -> rival battle
     python tests/play.py    # battle, collision, doors, shop, pack, database, capture
     python tests/fuzz.py 1  # random input + teleports, asserts invariants
     python tests/touch.py   # touch layouts, D-pad / button events, tap routing

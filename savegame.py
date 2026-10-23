@@ -15,6 +15,8 @@ _FILE = os.path.join(os.path.expanduser("~"), ".scimon", "save.json")
 
 
 def _read():
+    if os.environ.get("SCIMON_NO_SAVE"):       # tests / previews must never touch the player's real save
+        return None
     try:
         if _WEB:
             import platform
