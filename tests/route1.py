@@ -27,7 +27,10 @@ assert len(tall) >= 15 and len(stairs) >= 5, (len(tall), len(stairs))
 # ---- play it
 eng = Engine(); ow.ENCOUNTER_CHANCE = 0                    # no random fights while we survey the map
 eng.state.beaten_trainers |= {"luke", "walker"}            # trainers never scan; tests/route1_loop.py covers their battle
+<<<<<<< HEAD
 eng.state.story.add("bandit1")                             # the Corrupt Bandits already ambushed us once
+=======
+>>>>>>> c2c3a3e6f1fbe4107fe0aa474b9a4c12c2bd6165
 held = {"d": None}
 ow.OverworldScene._held_dir = lambda self: held["d"]
 ovs = ow.OverworldScene(); eng.push(ovs)
