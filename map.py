@@ -353,9 +353,11 @@ class TileMap:
         cx, cy = epidimy.CAVE                                             # the cave mouth cut into the stone wall
         pygame.draw.rect(s, (36, 30, 32), (cx * TILE + 5 * PX, cy * TILE + 4 * PX, 6 * PX, 12 * PX), border_top_left_radius=3 * PX, border_top_right_radius=3 * PX)
         pygame.draw.rect(s, (92, 84, 88), (cx * TILE + 4 * PX, cy * TILE + 3 * PX, 8 * PX, PX))
-        self.building_rects, origins = townview.draw_buildings(s, epidimy.BUILDINGS)
+        ids = [b.id for b in epidimy.BUILDINGS]                           # every building is a walk-behind fade prop
+        self.building_rects, origins = townview.draw_buildings(s, epidimy.BUILDINGS, as_props=ids)
         ponds = epidimy.POND_REGIONS
-        self.props = townview.build_props(rr, green_only=True) + townview.pond_reeds(rr, ponds)
+        self.props = (townview.build_props(rr, green_only=True) + townview.pond_reeds(rr, ponds)
+                      + townview.building_props(epidimy.BUILDINGS, ids, wm.BACK_ZONES))
         self.surface = s
         self.fx = townview.Fx(rr, epidimy.BUILDINGS, self.building_rects, origins,
                               townview.pond_frames(rr, ponds, [epidimy.FOUNTAIN_REGION]), townview.lamp_points(rr), [])

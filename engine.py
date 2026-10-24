@@ -24,6 +24,7 @@ class StateId(enum.Enum):
     START_MENU = "start_menu"
     CUSTOMIZE = "customize"
     WAKE = "wake"
+    BRIEF = "prof_brief"
     STARTER_SELECT = "starter_select"
     RIVAL = "rival"
     OVERWORLD = "overworld"
@@ -33,6 +34,7 @@ class StateId(enum.Enum):
     SHOP = "shop"
     DATABASE = "database"
     SERVICE = "service"
+    HELP = "help"
 
 
 class Scene:

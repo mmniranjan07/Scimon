@@ -347,6 +347,33 @@ CATALOG["scanner"] = ItemDef("scanner", "Field Scanner", "FS",
 CATALOG["townpass"] = ItemDef("townpass", "Riven Town Pass", "TP",
                               "Grants a researcher free access to Riven Town's civic facilities.",
                               "#e8c33a", "key", permanent=True)
+CATALOG["epipass"] = ItemDef("epipass", "Epidimy Town Pass", "EP",
+                             "Grants a researcher free access to Epidimy's civic facilities.",
+                             "#57b06f", "key", permanent=True)
+
+# key items that live in the Pack's PASSES folder, sorted ahead of the other key items
+PASSES = ("townpass", "epipass")
+
+# --------------------------------------------------------------------------- the Corrupt Bandits (story)
+# Items the villain arc hands out.  The Shadow Module is never obtainable - it appears in cutscenes only.
+CATALOG["shadowmodule"] = ItemDef("shadowmodule", "Shadow Module", "SH",
+                                  "A jet-black containment module, factory-stamped with a scratched-out logo. Its "
+                                  "firmware hums with something corrupted.", "#26262e", "key", permanent=True)
+CATALOG["banditticket"] = ItemDef("banditticket", "Bandit Repair Ticket", "BT",
+                                  "A repair ticket stamped with the Cush franchise logo - found on a Corrupt Bandit. "
+                                  "Why would a Bandit carry one of these?", "#8a8f98", "key", permanent=True)
+CATALOG["mastersticket"] = ItemDef("mastersticket", "Mastermind's Ticket", "MT",
+                                   "Cush's own franchise ticket, void-stamped the moment he fled. A memento of the "
+                                   "Corrupt Bandits' fall.", "#d1552f", "key", permanent=True)
+
+# the Corrupt Bandits' teams (id -> [(species, level), ...]) and Kael's post-reveal rematch team
+BANDIT_TEAMS = {
+    "act1": [("cindermite", 3), ("dewbit", 4)],
+    "act2": [("sparkit", 6), ("pebblon", 7)],
+    "boss": [("nanolyte", 9), ("florabot", 10)],
+}
+KAEL_RETEAM = {"florabot": ("aquabit", 8), "pyrodrive": ("florabot", 8), "aquabit": ("pyrodrive", 8)}
+KAEL_RETEAM2 = ("sporelet", 9)
 
 
 def item_def(item_id):

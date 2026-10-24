@@ -3,7 +3,7 @@
     pip install -r requirements.txt
     python main.py
 
-Flow: Title -> wake-up scene -> pick a starter -> rival battle with Kael -> explore Riven Town.
+Flow: Title -> wake-up scene -> Prof. Venn's lab briefing -> pick a starter -> rival battle with Kael -> explore Riven Town.
 
 The same file runs on the desktop and, built with pygbag, in the browser (GitHub Pages).  In the browser
 it draws a loading bar while assets load and prints any startup error on the canvas instead of failing silently."""

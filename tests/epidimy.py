@@ -13,6 +13,7 @@ OUT = sys.argv[1] if len(sys.argv) > 1 else None
 if OUT: os.makedirs(OUT, exist_ok=True)
 assert routes.validate() and epi.validate()
 eng = Engine(); ow.ENCOUNTER_CHANCE = 0
+eng.state.story |= {"bandit1", "bandit2"}                  # the Bandits already ambushed both towns
 held = {"d": None}
 ow.OverworldScene._held_dir = lambda self: held["d"]
 ovs = ow.OverworldScene(); eng.push(ovs)
@@ -30,7 +31,8 @@ def walk_to(goal):
         if c == goal: break
         for d, (dx, dy) in D.items():
             n = (c[0] + dx, c[1] + dy)
-            if n not in prev and not m.blocked(*n, ovs._npc_rects()): prev[n] = (c, d); q.append(n)
+            if n in prev or n in epi.DOOR_INDEX: continue   # never path through a door: stepping on one enters the house
+            if not m.blocked(*n, ovs._npc_rects()): prev[n] = (c, d); q.append(n)
     assert goal in prev, f"no path to {goal} on {m.name}"
     steps, c = [], goal
     while prev[c]: steps.append(prev[c][1]); c = prev[c][0]

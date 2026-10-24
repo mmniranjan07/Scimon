@@ -37,10 +37,11 @@ def playtime_str(seconds):
 
 
 # Everything the player starts with, keyed by catalogue id (V34 INITIAL_ITEMS).
+# No Town Pass: Mayor Rees at the Town Hall issues it (the pass gates the Mart and Cush's services).
 INITIAL_ITEMS = {
     "repaircell": 5, "nanorepair": 2, "stabilizer": 3,
     "standard": 15, "cryo": 3, "bio": 3,
-    "thermalcore": 1, "plating": 1, "scanner": 1, "townpass": 1,
+    "thermalcore": 1, "plating": 1, "scanner": 1,
 }
 
 
@@ -67,6 +68,8 @@ class GameState:
         self.name = "Robin"                  # chosen on the New Game character-customization screen
         self.look = None                     # player look code (sprites.make_look); None = the default look
         self.stamps = set()                  # gym stamps earned (ids into GYM_STAMPS)
+        self.story = set()                   # Corrupt Bandits arc flags: bandit1, bandit2, snatch_done, exposed, boss_beaten
+        self.snatched = None                 # a party Sci-Mon taken by the Bandits (Act 2 loss) until it is recovered
         self.playtime = 0.0                  # seconds of play, ticked by Engine.step
 
     # ---- trainer profile ------------------------------------------------------------------

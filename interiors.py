@@ -102,7 +102,7 @@ MART = LayeredSpec(
 CUSH = LayeredSpec(
     "cush", 12, 10, (5, 6), floor=Floor("m_floor_grey"), walls=_walls("lavender"), door_mat="m_mat",
     things=(
-        W("x_tool_wall", 4, 1, 3),
+        W("x_tool_wall", 4, 1, 3), W("x_backdoor", 9, 0, dy=4),             # the back-room door (the Bandits' reveal)
         S("x_parts_shelf", 1, 3, 3), S("x_workbench", 4, 3, 3), S("m_lamp_red", 7, 3),
         T("m_counter", 8, 3, 3), N("m_monitor", 8, 3, 3, dy=-50),
         C("m_table_long", 3, 5, 6), N("x_register", 4, 5, dy=-48), N("x_toolbox", 7, 5, dy=-48),

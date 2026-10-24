@@ -5,21 +5,33 @@ import random
 
 import pygame
 
-import assets
 import audio
+import villain
 from battle import BG_FOR_AREA, BattleScene, new_battle
-from data import ROUTE_ENCOUNTERS, item_def
+from data import KAEL_RETEAM2, ROUTE_ENCOUNTERS, item_def
 from engine import Scene, StateId
 from map import Camera, TileMap
-from menus import DatabaseScene, InventoryScene, ServiceScene, ShopScene
-from monsters import create_scimon
+from menus import DatabaseScene, HelpScene, InventoryScene, ShopScene
+from monsters import PARTY_LIMIT, create_scimon
 import epidimy
 from routes import AREAS, HEALERS, LINKS, ROUTE1_START, TOWN, building_at, travel_cost
+from sprites import black_look
+
+_contact = None
+
+
+def _contact_shadow():
+    """One cached soft ellipse shared by every character: grounds the sprites without per-frame surface churn."""
+    global _contact
+    if _contact is None:
+        _contact = pygame.Surface((34, 10), pygame.SRCALPHA)
+        pygame.draw.ellipse(_contact, (10, 22, 18, 70), _contact.get_rect())
+    return _contact
 from scenes import DialogueScene
 from settings import ENCOUNTER_CHANCE, H, INK, TILE, W
-from sprites import DIRS, NPC, Player, look_animator
+from sprites import DIRS, NPC, Player, look_animator, look_for
 import touch
-from ui import bar, hp_color, is_click, is_confirm, label_chip, panel, render_text, text
+from ui import is_click, is_confirm, label_chip, panel, render_text, text
 from worldmap import PLAYER_START, building_at_door, BUILDINGS
 
 
@@ -58,6 +70,7 @@ class OverworldScene(Scene):
         self.approacher = None            # trainer currently walking up to the player
         self._fighting = None             # trainer npc whose battle is in progress
         self.pack_rect = pygame.Rect(0, 0, 0, 0)
+        self.help_rect = pygame.Rect(0, 0, 0, 0)
 
     def on_enter(self):
         look = getattr(self.engine.state, "look", None) if self.engine is not None else None
@@ -115,6 +128,9 @@ class OverworldScene(Scene):
 
     def _load_npcs(self):
         self.npcs.empty()
+        st = self.engine.state if self.engine is not None else None
+        if st and "boss_beaten" in getattr(st, "story", set()) and self.building and self.building.repairs:
+            self.map.npc_defs = [self._kael_def(d) if d.get("service") == "repair" else d for d in self.map.npc_defs]
         for d in self.map.npc_defs:
             n = NPC(d)
             if n.trainer_battle and n.aside and n.id in self.engine.state.beaten_trainers:
@@ -138,6 +154,14 @@ class OverworldScene(Scene):
             self.player.place(*b.interior.spawn, "up")
             self.map.sync_state(self.engine.state)
             self._sync_location()
+            st = self.engine.state
+            if b.id == villain.REVEAL_BUILDING:
+                if self._reveal_ready():
+                    self._start_reveal()              # the finish is staged in the Epidimy nook
+                elif "exposed" in st.story and "boss_beaten" not in st.story:
+                    self.engine.push(DialogueScene(
+                        ["Cush: Back so soon? The back room is open, kid - let's finish this.",
+                         "Cush: Send out your Sci-Mon!"], on_done=self._start_boss_battle))
         audio.play("door")
         self.engine.fade_to(apply)
 
@@ -170,6 +194,9 @@ class OverworldScene(Scene):
         dx, dy = DIRS[p.facing]
         fx, fy = p.tile[0] + dx, p.tile[1] + dy
         if m.is_terminal(fx, fy) and self.building:
+            if self.engine.state.snatched:
+                self._recover_snatched()                  # the Bandits' haul sits in Cush's own database
+                return
             self.engine.push(DatabaseScene())
             return
         sign = m.sign_at(fx, fy) if not self.building else None      # signposts (the plaza's, Route 1's)
@@ -199,16 +226,34 @@ class OverworldScene(Scene):
                     self.engine.push(DialogueScene(list(npc.post) or list(npc.lines)))
             elif npc.trainer_battle:
                 self._challenge(npc)                      # challenge by talking (gated leaders refuse here)
+            elif npc.service and not self.engine.state.qty(
+                    "epipass" if getattr(self.building, "area", "overworld") == "epidimy" else "townpass"):
+                self.engine.push(DialogueScene([          # pass barrier: Mart / Cush serve pass holders only
+                    f"{npc.name}: Terribly sorry - services here are for Town Pass holders only.",
+                    f"{npc.name}: The Town Hall issues them. Do visit the Mayor!"]))
             else:
-                self.engine.push(DialogueScene(npc.lines, on_done=lambda n=npc: self._after_talk(n)))
+                st = self.engine.state
+                lines = list(npc.lines)
+                if npc.service == "repair" and st.snatched:
+                    lines.append(villain.SNATCH_HINT)     # a quiet clue while a Sci-Mon is still missing
+                if npc.gives and not st.qty(npc.gives):   # first talk: the hall hands over the Town Pass
+                    lines += [f"{npc.name}: Oh, one more thing - every researcher needs a Town Pass.",
+                              f"{npc.name}: Here you go. This opens all of the town's services for you."]
+                self.engine.push(DialogueScene(lines, on_done=lambda n=npc: self._after_talk(n)))
 
     def _offer_rematch(self, n):
         ask = list(n.rematch_ask) or [f"{n.name}: Another battle, {self.engine.state.name}?"]
-        self.engine.push(DialogueScene(ask, choices=[("BATTLE!", lambda nn=n: self._trainer_battle(nn)),
-                                                     ("NOT NOW", None)]))
+        choices = [("BATTLE!", lambda nn=n: self._trainer_battle(nn)), ("NOT NOW", None)]
+        if getattr(n, "service", None) == "repair":       # the nook's new owner still repairs, even mid-rivalry
+            choices.insert(1, ("REPAIR", self._repair))
+        self.engine.push(DialogueScene(ask, choices=choices))
 
     def _after_talk(self, npc):
         st = self.engine.state
+        if npc.gives and not st.qty(npc.gives):
+            st.add_item(npc.gives, 1)
+            audio.play("heal")
+            self.engine.toast.show(f"{item_def(npc.gives).name} added to your Key Items.", 2.6)
         if npc.heals:
             st.heal_party()
             audio.play("heal")
@@ -221,7 +266,8 @@ class OverworldScene(Scene):
         if npc.service == "shop":
             self.engine.push(ShopScene(b))
         elif npc.service == "repair":
-            self.engine.push(ServiceScene(b, self._repair))
+            ask = [f"{npc.name}: Shall I repair your Sci-Mons? Free of charge!"]
+            self.engine.push(DialogueScene(ask, choices=[("YES, PLEASE!", self._repair), ("NO, THANKS", None)]))
 
     def _repair(self):
         self.engine.state.heal_party()
@@ -355,8 +401,8 @@ class OverworldScene(Scene):
         self.approacher = None
         self._fighting = n
         st = self.engine.state
-        sid, lv = n.trainer_battle
-        enemy = create_scimon(sid, lv)
+        tb = n.trainer_battle
+        enemy = [create_scimon(sid, lv) for sid, lv in tb] if isinstance(tb, list) else create_scimon(*tb)
         b = new_battle(st.party, enemy, st.battle_bag(), st.battle_modules(), trainer=n.name)
         bg = BG_FOR_AREA.get(getattr(self.map, "area", "overworld"), 1)
 
@@ -400,11 +446,20 @@ class OverworldScene(Scene):
             if e.key in (pygame.K_i, pygame.K_TAB, pygame.K_ESCAPE):
                 self.open_pack()
                 return
+            if e.key == pygame.K_h:
+                self.open_help()
+                return
         if is_confirm(e):
             if not self.player.moving:
                 self.interact()
-        elif is_click(e) and self.pack_rect.collidepoint(e.pos):
-            self.open_pack()
+        elif is_click(e):
+            if self.pack_rect.collidepoint(e.pos):
+                self.open_pack()
+            elif self.help_rect.collidepoint(e.pos):
+                self.open_help()
+
+    def open_help(self):
+        self.engine.push(HelpScene())
 
     def _held_dir(self):
         k = pygame.key.get_pressed()
@@ -479,6 +534,161 @@ class OverworldScene(Scene):
         elif t == "E" and self.building:
             self.exit_building()
         self._sync_location()
+        self._check_ambush()
+
+    # ---- the Corrupt Bandits (villain arc) ---------------------------------------------------
+    def _check_ambush(self):
+        """One Bandit pair per city: stepping on a trigger tile stages them on the road and starts the scene."""
+        st = self.engine.state
+        if self.building or self.map.kind != "overworld" or not st.party:
+            return
+        tile = self.player.tile
+        for amb in villain.AMBUSHES:
+            if amb["id"] in st.story:
+                continue
+            if self.map.area != amb["area"]:                 # tile coordinates repeat across areas!
+                continue
+            if amb["id"] == "bandit2" and "bandit1" not in st.story:
+                continue
+            if tile in amb["triggers"] and not any(n.id.startswith("bandit") for n in self.npcs):
+                self._start_ambush(amb)
+                return
+
+    def _start_ambush(self, amb):
+        """The pair stages itself on the road, shouts its piece, and the battle starts."""
+        for i, spot in enumerate(amb["spots"]):
+            who = ("bandit-a", "bandit-b")[i]
+            self.npcs.add(NPC({"id": who, "x": spot[0], "y": spot[1], "name": "Corrupt Bandit", "lines": [],
+                               "look": black_look(who), "facing": "down"}))
+        audio.play("deny")
+        self.engine.push(DialogueScene(list(amb["intro"]), on_done=lambda: self._start_bandit_battle(amb)))
+
+    def _start_bandit_battle(self, amb):
+        st = self.engine.state
+        enemy = [create_scimon(sid, lv) for sid, lv in amb["team"]]
+        b = new_battle(st.party, enemy, st.battle_bag(), st.battle_modules(), trainer=amb["leader"])
+        bg = BG_FOR_AREA.get(amb["area"], 1)
+
+        def apply():
+            self.engine.push(BattleScene(b, lambda res: self.end_bandit_battle(amb, res),
+                                         allow_capture=False, allow_run=False, bg=bg))
+        self.engine.fade_to(apply, color=(255, 255, 255))
+
+    def _dismiss_thugs(self):
+        for n in [n for n in self.npcs if n.id.startswith("bandit")]:
+            self.npcs.remove(n)
+
+    def end_bandit_battle(self, amb, res):
+        st = self.engine.state
+        st.merge_battle_result(res["bag"], res["modules"])
+        st.party = res["party"]
+        self._dismiss_thugs()
+        st.story.add(amb["id"])
+        if res["outcome"] == "win":
+            lines = list(amb["win"])
+            if amb["id"] == "bandit2":
+                st.add_item("banditticket", 1)
+                lines.append("You find a repair ticket dropped during the scuffle - stamped with the Cush franchise logo.")
+        else:
+            st.heal_party()
+            lines = list(amb["lose"])
+            if amb["id"] == "bandit2":
+                st.add_item("banditticket", 1)
+                if len(st.party) >= 2:
+                    taken = random.choice(st.party)
+                    st.party.remove(taken)
+                    st.snatched = taken
+                    lines.insert(3, f"The Snatcher's black hold snaps shut around {taken.name}!")
+                else:
+                    lines.insert(3, "But your Field Scanner shrieks a counter-signal - the Snatcher burns out empty-handed!")
+        name = st.name
+
+        def after():
+            if res["outcome"] == "lose":
+                healer = self._nearest_visited_healer()
+                if healer:
+                    self._blackout_to(healer)
+                else:
+                    self.engine.toast.show("Your team was knocked offline... systems restored.", 3.0)
+        self.engine.push(DialogueScene([ln.replace("{name}", name) for ln in lines], on_done=after))
+
+    def _recover_snatched(self):
+        """The stolen Sci-Mon sits in a shadow-box of the Cush franchise database (the arc's quiet clue)."""
+        st = self.engine.state
+        mon = st.snatched
+        mon.hp = mon.max_hp
+        lines = [ln.replace("{mon}", mon.name) for ln in villain.RECOVERY_LINES]
+        if len(st.party) < PARTY_LIMIT:
+            st.party.append(mon)
+            lines.append(f"{mon.name} rejoins your party!")
+        else:
+            st.storage.append(mon)
+            lines.append(f"Your party is full, so {mon.name} was placed in storage.")
+        st.snatched = None
+        st.story.add("snatch_done")
+        audio.play("heal")
+        self.engine.push(DialogueScene(lines))
+
+    def _reveal_ready(self):
+        st = self.engine.state
+        return ("bandit1" in st.story and "bandit2" in st.story
+                and villain.REVEAL_STAMP in st.stamps and "exposed" not in st.story and "boss_beaten" not in st.story)
+
+    def _start_reveal(self):
+        st = self.engine.state
+        st.story.add("exposed")
+        self.engine.push(DialogueScene([ln.replace("{name}", st.name) for ln in villain.REVEAL_LINES],
+                                       on_done=self._start_boss_battle))
+
+    def _start_boss_battle(self):
+        st = self.engine.state
+        enemy = [create_scimon(sid, lv) for sid, lv in villain.BOSS_TEAM]
+        enemy[-1].name = "Grim " + enemy[-1].name                     # the shadow-palette ace
+        b = new_battle(st.party, enemy, st.battle_bag(), st.battle_modules(), trainer=villain.BOSS_NAME)
+        bg = BG_FOR_AREA.get(villain.REVEAL_BUILDING and "epidimy", 2)
+
+        def apply():
+            self.engine.push(BattleScene(b, self.end_boss_battle, allow_capture=False, allow_run=False, bg=bg))
+        self.engine.fade_to(apply, color=(255, 255, 255))
+
+    def end_boss_battle(self, res):
+        st = self.engine.state
+        st.merge_battle_result(res["bag"], res["modules"])
+        st.party = res["party"]
+        if res["outcome"] == "lose":
+            st.heal_party()
+            healer = self._nearest_visited_healer()
+            if healer:
+                self._blackout_to(healer)
+            self.engine.toast.show("Cush: Ha! The nook will be here when you're ready to lose again.", 3.0)
+            return
+        st.story.add("boss_beaten")
+        if st.qty("banditticket"):
+            st.remove_item("banditticket", 1)
+        st.add_item("mastersticket", 1)
+        self._swap_nooks_to_kael()
+        lines = [ln.replace("{name}", st.name) for ln in villain.BOSS_WIN_LINES + villain.KAEL_ARRIVAL]
+        self.engine.push(DialogueScene(lines))
+
+    def _kael_def(self, d):
+        st = self.engine.state
+        team = [(st.rival_species or "aquabit", 9), KAEL_RETEAM2]
+        return {"id": "kael-nook", "x": d["x"], "y": d["y"], "name": villain.RIVAL_NAME, "facing": "down",
+                "look": look_for("kael"), "service": "repair",
+                "lines": [f"{villain.RIVAL_NAME}: The nook is under new management. Free repairs, honest books.",
+                          f"{villain.RIVAL_NAME}: Dad's gone. Don't bring him up."],
+                "battle": team, "rematch": True,
+                "ask": list(villain.KAEL_REMATCH_ASK), "post": list(villain.KAEL_REMATCH_POST_WIN)}
+
+    def _swap_nooks_to_kael(self):
+        """After the fall, every nook's counter is Kael's - now and in every future visit."""
+        for m in self.map.npc_defs:
+            if m.get("service") == "repair":
+                m.clear()
+                m.update(self._kael_def({"x": m.get("x", 5), "y": m.get("y", 4)}))
+        for n in [n for n in list(self.npcs) if getattr(n, "service", None) == "repair"]:
+            self.npcs.remove(n)
+            self.npcs.add(NPC(self._kael_def({"x": n.tile[0], "y": n.tile[1]})))
 
     # ---- drawing -------------------------------------------------------------------------------
     def draw(self, surf):
@@ -486,7 +696,9 @@ class OverworldScene(Scene):
         m.focus = self.player.rect.center
         m.draw(surf, cam, self.t, debug=self.engine.debug)
         # characters and standing furniture share one depth order: whoever's footprint bottom is lower draws later
-        if self.player.lift > 0:                                # ground shadow while hopping a ledge
+        for c in (*self.npcs, self.player):                     # soft contact shadow grounds every sprite
+            surf.blit(_contact_shadow(), (c.rect.centerx - 17 - cam.x, c.rect.bottom - 7 - cam.y))
+        if self.player.lift > 0:                                # bigger shadow while hopping a ledge
             sh = pygame.Surface((34, 12), pygame.SRCALPHA)
             pygame.draw.ellipse(sh, (0, 0, 0, 90), sh.get_rect())
             surf.blit(sh, (self.player.rect.centerx - 17 - cam.x, self.player.rect.bottom - 10 - cam.y))
@@ -499,6 +711,22 @@ class OverworldScene(Scene):
             x, y = n.draw_pos
             label_chip(surf, "!", (x - cam.x + (n.image.get_width() - 26) // 2, y - cam.y - 30), (225, 65, 55), size=16)
         m.draw_top(surf, cam, self.t)
+        if self.building and self.building.has_database:      # floating tag just above the database computer
+            for ty, row in enumerate(m.rows):
+                tx = row.find("@")
+                if tx == -1:
+                    continue
+                span = pygame.Rect(tx * TILE, ty * TILE, TILE, TILE)
+                while tx + span.width // TILE < len(row) and row[tx + span.width // TILE] == "@":
+                    span.width += TILE
+                over = [p for p in m.props if p.x < span.right and p.x + p.image.get_width() > span.left
+                        and p.y <= span.bottom and p.sort_y >= span.top]
+                host = min(over, key=lambda p: p.y) if over else None
+                cx = (host.x + host.image.get_width() // 2) if host else span.centerx
+                top = host.y if host else span.top
+                img = render_text("SCI-DATABASE", "display", 8, (255, 255, 255))
+                label_chip(surf, "SCI-DATABASE", (cx - cam.x - (img.get_width() + 10) // 2,
+                                                  top - cam.y - img.get_height() - 10), (42, 103, 99), size=8)
         if self.engine.debug:
             for r in self._npc_rects():
                 pygame.draw.rect(surf, (255, 0, 255), cam.apply(r), 2)
@@ -521,28 +749,21 @@ class OverworldScene(Scene):
 
     def _hud(self, surf):
         st = self.engine.state
-        x = 10
-        for mon in st.party[:6]:
-            r = pygame.Rect(x, 10, 142, 42)
-            panel(surf, r, "chip", blur=False, shadow=False)
-            img = assets.mon_image(mon.species_id, 30, 30)
-            surf.blit(img, img.get_rect(center=(r.x + 20, r.centery)))
-            text(surf, f"{mon.name} L{mon.level}", (r.x + 40, r.y + 5), "body", 20, INK)
-            ratio = mon.hp / mon.max_hp
-            bar(surf, (r.x + 40, r.y + 26, 94, 8), ratio, hp_color(ratio))
-            x += 148
         loc = self.building.name if self.building else self.map.name
         locr = render_text(loc, "display", 8, INK)
-        w = max(150, locr.get_width() + 28)
-        lr = pygame.Rect(W - 10 - w, 10, w, 28)
+        lr = pygame.Rect(10, 10, locr.get_width() + 24, 28)    # location, extreme top left
         panel(surf, lr, "chip", blur=False, shadow=False)
         surf.blit(locr, locr.get_rect(center=lr.center))
-        cr = pygame.Rect(W - 10 - 150, 44, 150, 28)
-        panel(surf, cr, "chip", blur=False, shadow=False)
-        text(surf, f"\u00a2 {st.credits}", cr.center, "display", 8, INK, anchor="center")
-        self.pack_rect = pygame.Rect(W - 10 - 150, 78, 150, 28)
-        panel(surf, self.pack_rect, "button", blur=False, shadow=False)
-        text(surf, "Pack (I)", self.pack_rect.center, "display", 8, INK, anchor="center")
+        packr = render_text("Pack (I)", "display", 8, INK)
+        helpr = render_text("Help (H)", "display", 8, INK)
+        hr = pygame.Rect(W - 10 - (helpr.get_width() + 24), 10, helpr.get_width() + 24, 28)   # extreme top right
+        pr = pygame.Rect(hr.x - 8 - (packr.get_width() + 24), 10, packr.get_width() + 24, 28)
+        panel(surf, pr, "button", blur=False, shadow=False)
+        text(surf, "Pack (I)", pr.center, "display", 8, INK, anchor="center")
+        self.pack_rect = pr
+        panel(surf, hr, "button", blur=False, shadow=False)
+        text(surf, "Help (H)", hr.center, "display", 8, INK, anchor="center")
+        self.help_rect = hr
         done, total = st.dex_progress
         text(surf, f"Captured {done}/{total}", (W - 12, H - 8), "display", 8, (255, 255, 255), anchor="bottomright",
              shadow=(0, 0, 0))

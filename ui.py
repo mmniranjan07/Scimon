@@ -384,17 +384,21 @@ def draw_button(surf, b, selected=False, size=24, kind="display", t=0.0):
     if not b.enabled:
         color = (120, 120, 112)
     img = render_text(b.label, kind, size, color)
-    if b.icon:                                                            # MPW icon at the left, label centred in the rest
-        name = ICON_SELECTED.get(b.icon, b.icon) if selected else b.icon
-        ic = assets.ui_icon(name, 2)
+    list_row = b.right is not None or b.sub is not None
+    if b.icon:                                                            # icon at the left, label after it
+        ic = assets.item_icon(b.icon, 2)                                  # item / disc / module icon when one exists
+        if ic is None:
+            name = ICON_SELECTED.get(b.icon, b.icon) if selected else b.icon
+            ic = assets.ui_icon(name, 2)
         if not b.enabled:
             ic = ic.copy()
             ic.set_alpha(110)
         surf.blit(ic, (b.rect.x + 12, b.rect.centery - ic.get_height() // 2))
-        surf.blit(img, img.get_rect(center=(b.rect.centerx + 14, b.rect.centery)))
-        return
-    list_row = b.right is not None or b.sub is not None
-    if b.sub:
+        if b.right is not None:
+            surf.blit(img, (b.rect.x + 22 + ic.get_width() + 6, b.rect.centery - img.get_height() // 2))
+        else:
+            surf.blit(img, img.get_rect(center=(b.rect.centerx + 14, b.rect.centery)))
+    elif b.sub:
         y = b.rect.y + max(6, (b.rect.h - img.get_height() - 16) // 2)
         surf.blit(img, (b.rect.x + 16, y))
         chip = render_text(b.sub, "display", 8, (255, 255, 255))

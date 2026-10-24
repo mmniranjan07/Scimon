@@ -76,8 +76,10 @@ POND_REGIONS = _water_regions()
 
 
 # --------------------------------------------------------------------------- NPCs
-def _npc(id, x, y, color, hair, name, lines, heals=False, service=None):
-    return dict(id=id, x=x, y=y, color=color, hair=hair, name=name, lines=lines, heals=heals, service=service)
+def _npc(id, x, y, color, hair, name, lines, heals=False, service=None, gives=None):
+    """`gives`: item id this NPC hands over the first time the player talks to them and lacks it (Town Pass)."""
+    return dict(id=id, x=x, y=y, color=color, hair=hair, name=name, lines=lines, heals=heals, service=service,
+                gives=gives)
 
 
 def _trainer(id, x, y, name, lines, battle, post=(), facing="down", rematch=False, ask=(), requires=(), locked=(),
@@ -180,9 +182,9 @@ BUILDINGS = [
     Building("hall", "Riven Town Hall", "Hall", "hall", (11, 5), (11, 6), (9, 0, 5, 6), "town/bld_hall.png",
              Interior("hall-interior", ROOM_ROWS["hall"], (5, 9), (5, 8), [
                  _npc("mayor", 6, 4, "#c9b06f", "#5a4a2a", "Mayor Rees", [
-                     "Mayor Rees: Riven Town was founded on the old Astrion dig site.",
-                     "Mayor Rees: Researchers are always welcome here, {name}.",
-                     "Mayor Rees: Mind the tall grass out by the Farms."])],
+                      "Mayor Rees: Riven Town was founded on the old Astrion dig site.",
+                      "Mayor Rees: Researchers are always welcome here, {name}.",
+                      "Mayor Rees: Mind the tall grass out by the Farms."], gives="townpass")],
                       PALETTES["hall"], spec="hall")),
     Building("cush", "Cush's Repair Nook", "Cush", "repair", (14, 12), (14, 13), (12, 9, 5, 4),
              "town/bld_cush.png",
@@ -244,8 +246,7 @@ def building_at_door(x, y):
 # Walk-behind buildings: the upper rows of these footprints (below the top map row) become walkable back yard ('e'), so the
 # backs of the Hall, Lab, Library and Mart can be reached from the lawn strips beside them.  The facade (the bottom three rows
 # of the footprint, door included) stays solid, and the building is drawn as a depth-sorted prop so you walk *behind* it.
-BACK_ACCESS = ("hall", "lab", "library", "mart")
-BACK_ROWS = (1, 2, 3)                      # offsets from the footprint's top row; offset 0 stays solid (map edge)
+BACK_ACCESS = tuple(b.id for b in BUILDINGS)   # every building is walk-behind: facade fades, top rows open up
 BACK_ZONES = {}                            # building id -> (x0, y0, x1, y1) in tiles, used to fade the building while you are behind it
 
 
@@ -289,22 +290,26 @@ def trim_footprints(rows, buildings, scale=3, tile=48):
 MAP_ROWS[:] = trim_footprints(MAP_ROWS, BUILDINGS)
 
 
-def _open_backs():
-    for b in BUILDINGS:
-        if b.id not in BACK_ACCESS:
-            continue
+def open_backs(rows, buildings):
+    """Every building's hitbox is a solid block of rows from the door up - 3 rows for the big buildings, 2 for the
+    small ones - and the remaining top footprint rows become walk-behind 'e' tiles: the facade goes translucent
+    (BACK_ZONES) while the player runs behind it.  Nothing is sandwiched: one solid block, one open strip on top."""
+    out = [list(r) for r in rows]
+    for b in buildings:
         fx, fy, fw, fh = (int(v) for v in b.footprint)
-        ys = [fy + o for o in BACK_ROWS]
+        solid = 3 if fh >= 6 else 2                       # hitbox rows, door row included
+        ys = list(range(fy, fy + fh - solid))             # the top strip: walk-behind, facade fades
         for y in ys:
-            row = list(MAP_ROWS[y])
+            row = list(out[y])
             for x in range(fx, fx + fw):
-                if row[x] == "B":                  # corners that are already lawn / flowers stay as they are
+                if row[x] == "B":              # corners that are already lawn / flowers stay as they are
                     row[x] = "e"
-            MAP_ROWS[y] = "".join(row)
+            out[y] = "".join(row)
         BACK_ZONES[b.id] = (fx, ys[0], fx + fw - 1, ys[-1])
+    return ["".join(r) for r in out]
 
 
-_open_backs()
+MAP_ROWS[:] = open_backs(MAP_ROWS, BUILDINGS)
 
 # What the plaza signpost (S tile) says when you face it and press confirm. Directions are as seen from the sign itself.
 SIGN_LINES = [

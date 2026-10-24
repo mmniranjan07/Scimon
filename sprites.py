@@ -34,7 +34,8 @@ JUMP_SPEED, JUMP_HEIGHT = 1.15, TILE * 0.55        # ledge hop: a little faster 
 MPW_CAST = {
     "player": 1, "venn": 7, "kael": 8, "ilo": 4, "jori": 2, "sella": 6, "lab-aide": 3, "mayor": 10, "cush": 9,
     "archivist": 3, "shopkeeper": 5, "farmer-wren": 10, "grower": 5, "player-mom": 6, "toma": 2, "reya": 9, "ranger": 4,
-    "luke": 8, "walker": 10, "gym-sora": 9, "gym-rook": 4, "epi-leader": 5,
+    "luke": 8, "walker": 10, "gym-sora": 9, "gym-rook": 4, "epi-leader": 5, "epi-mayor": 6,
+    "bandit-a": 8, "bandit-b": 5, "cush-boss": 9,
 }
 
 # Palette classes per sheet: which hex colours of each MPWSP01 sheet are skin, hair, main outfit and accent pieces
@@ -81,18 +82,28 @@ _SHEET_CLASSES = {
 # ramp a sprite's original skin lightness lands.
 HAIR_HUES = (10, 28, 45, 130, 200, 262, 292, 330)          # ginger, brown, blond, green, azure, indigo, violet, pink
 CLOTH_HUES = (0, 60, 105, 160, 215, 240, 305, 350)         # crimson, gold, leaf, teal, cobalt, royal, orchid, rose
+CLOTH_BLACK = len(CLOTH_HUES)                              # index 8: the Corrupt Bandits' near-black shadow uniform
 SKIN_LIGHT, SKIN_DARK = hexc("fdf5e2"), hexc("6b3226")
 SKIN_OFFSETS = (0.05, 0.0, -0.08, -0.18, -0.28, -0.38)     # pale .. deep
 
 
 def make_look(sheet, skin, hair, cloth):
-    """Look code from explicit variant indices (skin 0..5, hair 0..7, cloth 0..5) -- used by character creation
-    and by look_for, which hashes a character id into these indices."""
+    """Look code from explicit variant indices (skin 0..5, hair 0..7, cloth 0..7 -- 8 forces the near-black
+    shadow uniform) -- used by character creation and by look_for, which hashes a character id into these indices."""
     return sheet * 1024 + 1 + skin + 6 * hair + 48 * cloth
 
 
+def black_look(who):
+    """A character's look with the outfit forced to the near-black shadow uniform (Corrupt Bandits / Cush's boss form)."""
+    n, v = divmod(look_for(who), 1024)
+    v -= 1
+    return make_look(n, v % len(SKIN_OFFSETS), (v // len(SKIN_OFFSETS)) % len(HAIR_HUES), CLOTH_BLACK)
+
+
 def look_for(who):
-    """Variant look code for a character id; stable per id."""
+    """Variant look code for a character id; stable per id.  LOOK_ALIKE staff the same franchise with the exact
+    same sprite: every Cush repair centre is manned by Cush himself."""
+    who = {"epi-cush": "cush"}.get(who, who)
     n = MPW_CAST.get(who)
     if not n:
         n = 2 + zlib.crc32(str(who).encode()) % 9
@@ -108,9 +119,14 @@ LOOKS = {"player": look_for("player"), "kael": look_for("kael")}
 SKIN_REF, HAIR_REF, CLOTH_REF = hexc("feddb1"), hexc("793122"), hexc("03a897")
 
 
-def _map_class_color(cname, rgb, skin_dl, hair_h, cloth_h, acc_h):
+def _map_class_color(cname, rgb, skin_dl, hair_h, cloth_h, acc_h, black=False):
     """One palette entry mapped to its variant colour -- the single mapping shared by the sheet recolour and the UI swatches."""
     r, g, b = rgb
+    if black and cname in ("cloth", "acc"):     # the shadow uniform: all folds compressed into near-black
+        _, li, _ = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+        _, dark_l, _ = colorsys.rgb_to_hls(*(c / 255 for c in hexc("1c1c22")))
+        l = dark_l * (0.5 + 0.5 * min(1.0, li * 1.5))
+        return tuple(round(255 * c) for c in colorsys.hls_to_rgb(262 / 360, l, 0.10))
     if cname == "skin":                       # lerp along the cream -> brown ramp by original lightness
         t = min(1.0, max(0.0, colorsys.rgb_to_hls(r / 255, g / 255, b / 255)[1] + skin_dl))
         return tuple(round(d + (l - d) * t) for l, d in zip(SKIN_DARK, SKIN_LIGHT))
@@ -133,18 +149,20 @@ def _recolor_sheet(n, v):
     lightness (and mostly saturation) are kept, so every shade ramp -- hair, skin, outfit -- stays shaded correctly."""
     sheet = assets.image(f"mpw/ow/ow{n}.png").copy()
     classes = _SHEET_CLASSES.get(n)
-    if not classes or not 0 < v <= len(SKIN_OFFSETS) * len(HAIR_HUES) * len(CLOTH_HUES):
+    if not classes or not 0 < v <= len(SKIN_OFFSETS) * len(HAIR_HUES) * (len(CLOTH_HUES) + 1):
         return sheet
     v -= 1
     skin_dl = SKIN_OFFSETS[v % len(SKIN_OFFSETS)]
     hair_h = HAIR_HUES[(v // len(SKIN_OFFSETS)) % len(HAIR_HUES)]
-    cloth_h = CLOTH_HUES[(v // (len(SKIN_OFFSETS) * len(HAIR_HUES))) % len(CLOTH_HUES)]
+    cloth_i = (v // (len(SKIN_OFFSETS) * len(HAIR_HUES))) % (len(CLOTH_HUES) + 1)
+    cloth_h = CLOTH_HUES[cloth_i % len(CLOTH_HUES)]
     acc_h = (cloth_h + 150) % 360                     # accent pieces go near-complementary to the outfit
+    black = cloth_i >= len(CLOTH_HUES)                # the shadow uniform
     lut = {}
     for cname, colors in classes.items():
         for hexstr in colors:
             r, g, b = (int(hexstr[i:i + 2], 16) for i in (0, 2, 4))
-            lut[(r, g, b)] = _map_class_color(cname, (r, g, b), skin_dl, hair_h, cloth_h, acc_h)
+            lut[(r, g, b)] = _map_class_color(cname, (r, g, b), skin_dl, hair_h, cloth_h, acc_h, black)
     with pygame.PixelArray(sheet) as pa:
         for y in range(sheet.get_height()):
             for x in range(sheet.get_width()):
@@ -274,9 +292,11 @@ class Player(Character):
 
 class NPC(Character):
     def __init__(self, d):
-        super().__init__(d["x"], d["y"], look_for(d["id"]), d.get("facing", "down"))
+        look = d.get("look") or look_for(d["id"])       # story NPCs (the Bandits) carry an explicit look
+        super().__init__(d["x"], d["y"], look, d.get("facing", "down"))
         self.id, self.name, self.lines = d["id"], d["name"], d["lines"]
         self.heals, self.service = d.get("heals", False), d.get("service")
+        self.gives = d.get("gives")                    # key item handed over on first talk (Town Pass)
         self.trainer_battle = d.get("battle")          # (species_id, level): this trainer battles on sight
         self.post = d.get("post", [])                  # lines after the player wins
         self.rematch = d.get("rematch", False)         # beaten trainer offers a new battle when talked to

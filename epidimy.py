@@ -11,14 +11,15 @@ Collision legend (the same letters as worldmap.OVERWORLD_SOLID, so TileMap colli
   G grass  F flower patch  P cobbled road  A stairs (walkable)  L lamp post (walk-past, drawn as a prop)  D door
   Solid: T tree  w water  h stone wall (rock band / plateau rim)  B building  S signpost  b bench  u bush  r boulder  f fence
 Peaceful town: no tall grass, so no wild encounters here."""
-from worldmap import (Building, Interior, INTERIOR_SOLID, PALETTES, ROOM_ROWS, _npc, _trainer, trim_footprints)
+from worldmap import (BACK_ZONES, Building, Interior, INTERIOR_SOLID, PALETTES, ROOM_ROWS, _npc, _trainer,
+                      open_backs, trim_footprints)
 
 AREA_ID = "epidimy"
 NAME = "Epidimy Town"
 W, H = 32, 29
 FOREST_Y = 25                      # rows from here down are the southern forest (with the Route 1 road cut through it)
 FOUNTAIN_REGION = (12, 11, 5, 3)   # the fountain pond (x, y, w, h in tiles): the only water with a jet
-LEGEND = "GFPALDTwhBSbur"          # every letter the grid may contain (validated below)
+LEGEND = "GFPALDTwhBSbure"         # every letter the grid may contain (validated below; e = walk-behind row)
 SOLID = set("TwhBSbur")
 
 # arrival tiles: one step inside the map from the road that links to Route 1 (x 6..9 on both sides)
@@ -100,7 +101,7 @@ CAVE = (12, 1)
 SIGNS = {
     (10, 14): ["Signpost: Epidimy Town.",
                "North: the Highland Terrace - two cottages and the cave.",
-               "North-east: the Green Gym and the Scimon Center.",
+               "North-east: the Green Gym, Cush's Repair Nook and the Town Hall.",
                "East: cottages. South: Route 1."],
     (13, 21): ["Signpost: Epidimy Supply Mart - open daily. Containment Modules and repair kits."],
     CAVE: ["The cave mouth is dark and cold. A rope barrier and a notice: 'Survey in progress - closed until further notice.'"],
@@ -178,23 +179,29 @@ BUILDINGS = [
                              "Fern: The ring has an order - Sora first, then Rook.",
                              "Fern: Clear both gates, and I'll gladly show you what a champion looks like."]),
              ], PALETTES["hall"], spec="gym-ring"), area=AREA_ID),
-    Building("epi-center", "Epidimy Scimon Center", "Center", "repair", (27, 5), (27, 6), (25, 2, 5, 4), "town/bld_cush.png",
+    # every repair centre is a Cush franchise: same name, same sprite, same nook (see sprites.LOOK_ALIKE)
+    Building("epi-center", "Cush's Repair Nook", "Cush", "repair", (27, 5), (27, 6), (25, 2, 5, 4), "town/bld_cush.png",
              Interior("epi-center-interior", ROOM_ROWS["cush"], (5, 9), (5, 8), [
-                 _npc("epi-nurse", 5, 4, "#e07a8a", "#8a3a4a", "Nurse Ivy", [
-                     "Ivy: Welcome to the Epidimy Scimon Center, {name}.",
-                     "Ivy: Hand me your Scimons and I'll patch them up - no charge."], service="repair")],
-                      PALETTES["repair"], spec="cush"),
+                  _npc("epi-cush", 5, 4, "#e07a8a", "#8a3a4a", "Cush", [
+                      "Cush: Welcome to the nook, {name}.",
+                      "Cush: Hand me your Scimons and I'll patch up their systems - no charge."], service="repair")],
+                       PALETTES["repair"], spec="cush"),
              shop=[("repaircell", 200), ("nanorepair", 600)], repairs=True, has_database=True, area=AREA_ID),
-    # cottages above the high street
-    _house("epi-mira", "Milo's House", 0, 19, 10, _npc("epi-mira-npc", 6, 6, "#4f8fae", "#2a3a4a", "Milo", [
-        "Milo: Hello there, {name}! The fountain looks lovely in the morning light.",
-        "Milo: Hester next door grumbles about everything, but she means well."])),
-    _house("epi-hale", "Hester's House", 1, 23, 10, _npc("epi-hale-npc", 6, 6, "#c98a4a", "#5a3a24", "Old Hester", [
+    # cottages above the high street (the hall stands where Milo's cottage used to, next to the gym)
+    _house("epi-hale", "Hester's House", 1, 24, 10, _npc("epi-hale-npc", 6, 6, "#c98a4a", "#5a3a24", "Old Hester", [
         "Hester: Back in my day, Route 1 was nothing but mud.",
         "Hester: Now there's a ledge to hop down. Progress, hmph."])),
     _house("epi-tamsin", "Tamsin's House", 2, 28, 10, _npc("epi-tamsin-npc", 6, 6, "#c9b06f", "#5a4a2a", "Tamsin", [
         "Tamsin: I moved here for the quiet. And the pond.",
         "Tamsin: The ducks never showed up, though."])),
+    # the town hall: Mayoress Vela issues the Epidimy Town Pass (services here are pass-gated)
+    Building("epi-hall", "Epidimy Town Hall", "Hall", "hall", (21, 13), (21, 14), (19, 10, 5, 4), "town/bld_hall.png",
+             Interior("epi-hall-interior", ROOM_ROWS["hall"], (5, 9), (5, 8), [
+                 _npc("epi-mayor", 6, 4, "#7fae9a", "#3a5a4a", "Mayoress Vela", [
+                     "Vela: Welcome to Epidimy Town Hall, {name}.",
+                     "Vela: Epidimy runs on trust, but even trust needs paperwork.",
+                     "Vela: The highland air makes every Scimon shinier - ask any trainer."], gives="epipass")],
+                      PALETTES["hall"], spec="hall"), area=AREA_ID),
     # beside the west lake and the mart
     _house("epi-corin", "Corinne's House", 2, 10, 16, _npc("epi-corin-npc", 6, 6, "#c98a4a", "#5a3a24", "Corinne", [
         "Corinne: Ora fishes in the lake all day. I've never seen her catch anything.",
@@ -210,7 +217,10 @@ BUILDINGS = [
 ]
 DOOR_INDEX = {b.door: b for b in BUILDINGS}
 
-ROWS = trim_footprints(_build(), BUILDINGS)
+# walk-behind backs + fade zones for every Epidimy building; the hall's sprite is taller than its footprint and
+# overhangs the road behind it, so its fade zone reaches up over the road as well
+ROWS = open_backs(trim_footprints(_build(), BUILDINGS), BUILDINGS)
+BACK_ZONES["epi-hall"] = (18, 8, 23, 13)
 
 
 def _ponds():
