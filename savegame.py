@@ -15,6 +15,8 @@ _FILE = os.path.join(os.path.expanduser("~"), ".scimon", "save.json")
 
 
 def _read():
+    if os.environ.get("SCIMON_NO_SAVE"):       # tests / previews must never touch the player's real save
+        return None
     try:
         if _WEB:
             import platform
@@ -55,6 +57,8 @@ def serialize(st):
         "visited_areas": sorted(str(k) for k in getattr(st, "visited_areas", ())),
         "beaten_trainers": sorted(str(k) for k in getattr(st, "beaten_trainers", ())),
         "stamps": sorted(str(k) for k in getattr(st, "stamps", ())),
+        "story": sorted(str(k) for k in getattr(st, "story", ())),
+        "snatched": dataclasses.asdict(st.snatched) if getattr(st, "snatched", None) else None,
         "playtime": round(float(getattr(st, "playtime", 0.0)), 1),
         "location": getattr(st, "location", None) if isinstance(getattr(st, "location", None), dict) else {},
         "name": getattr(st, "name", "Robin"), "look": getattr(st, "look", None),
@@ -111,6 +115,9 @@ def load(st):
         st.visited_areas = set(d.get("visited_areas", []))
         st.beaten_trainers = set(d.get("beaten_trainers", []))
         st.stamps = {s for s in d.get("stamps", []) if stamp_by_id(s)}
+        st.story = set(d.get("story", []))
+        sn = d.get("snatched")
+        st.snatched = Scimon(**{k: v for k, v in sn.items() if k in fields}) if sn and sn.get("species_id") in SPECIES else None
         st.playtime = float(d.get("playtime", 0.0) or 0.0)
         loc = d.get("location")
         st.location = loc if isinstance(loc, dict) else {}

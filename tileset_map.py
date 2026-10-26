@@ -237,3 +237,4 @@ for _n in ("bed_blue", "lamp_table_b", "stove", "fridge_white", "flowers_pink", 
            "x_workbench", "x_tool_wall", "x_toolbox", "x_seed_bins", "x_trough_a", "x_watering_can", "x_hanging_plants",
            "x_banner_red", "x_banner_teal", "x_window_light"):
     _t(_n, L(_n))
+_t("x_backdoor", L("doorway_black"), layer="wall")     # the repair bays' back-room door (the Bandits' reveal)

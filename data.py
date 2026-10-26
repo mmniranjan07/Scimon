@@ -136,6 +136,71 @@ _t("magshock", "Magnetic Shock", "Electric", "special", 35, 100, "A pulse of mag
 _t("rocktoss", "Rock Toss", "Geologic", "physical", 40, 95, "Hurls hardened mineral plating.")
 _t("naniteswarm", "Nanite Swarm", "Nano", "special", 40, 100, "Deploys microscopic machines that infest the target.",
    status="Nanite-Infected", status_chance=0.25)
+
+# ---- the wider region's wild Scimons brought the full type chart with them: one full learnset pool per type ----
+_t("cinderbite", "Cinder Bite", "Thermal", "physical", 45, 100, "Red-hot jaws clamp onto the target.",
+   status="Overheated", status_chance=0.15)
+_t("furnacevent", "Furnace Vent", "Thermal", "special", 65, 90, "A roaring blast from an overheated core.")
+_t("heatsink", "Heat Sink", "Thermal", "status", 0, 100, "Absorbs ambient heat to push Power up.", buff_power=0.25)
+_t("tidalslam", "Tidal Slam", "Hydro", "physical", 50, 95, "A wall of ballast water crashes down.")
+_t("brineblast", "Brine Blast", "Hydro", "special", 45, 100, "Salted spray corrodes the target.",
+   status="Deoxygenated", status_chance=0.2)
+_t("riptide", "Riptide", "Hydro", "special", 60, 95, "A dragging undertow that pulls the target under.")
+_t("thornvolley", "Thorn Volley", "Botanic", "physical", 45, 100, "Fires a spread of hardened thorns.")
+_t("sapdrain", "Sap Drain", "Botanic", "special", 35, 100, "Saps nutrient fluid to repair the user.", drain=0.5)
+_t("boulderbarge", "Boulder Barge", "Geologic", "physical", 55, 90, "A mass of compressed stone barrels forward.")
+_t("quakestomp", "Quake Stomp", "Geologic", "physical", 65, 85, "A ground-shaking stomp from a heavy chassis.")
+_t("shardguard", "Shard Guard", "Geologic", "status", 0, 100, "Raises mineral plating for a Power push.", buff_power=0.25)
+_t("galecut", "Gale Cut", "Atmospheric", "physical", 45, 100, "Blade-thin wind shear lances out.")
+_t("cyclone", "Cyclone", "Atmospheric", "special", 55, 95, "A tight vortex tears at the target's seams.")
+_t("decompress", "Decompress", "Atmospheric", "status", 0, 90, "Drops the local pressure - systems starve.",
+   status="Deoxygenated", status_chance=1)
+_t("voltnet", "Volt Net", "Electric", "special", 50, 95, "A spreading mesh of live wire.",
+   status="Electrified", status_chance=0.25)
+_t("coilcrash", "Coil Crash", "Electric", "physical", 55, 95, "A magnetically accelerated body slam.")
+_t("capacitance", "Capacitance", "Electric", "status", 0, 100, "Banks a charge to push Power up.", buff_power=0.25)
+_t("frostbite", "Frostbite", "Cryo", "special", 45, 100, "Flash-freezes the target's joints.")
+_t("permafrost", "Permafrost", "Cryo", "special", 60, 95, "A deep-cold wave that locks servos solid.")
+_t("rimeedge", "Rime Edge", "Cryo", "physical", 50, 100, "A blade of hoarfrost, harder than steel.")
+_t("alloybash", "Alloy Bash", "Metallic", "physical", 50, 100, "A hammer blow from layered alloy plating.")
+_t("ferrofilament", "Ferro Filament", "Metallic", "special", 40, 100, "Wire filaments flay the target's coating.",
+   status="Corroded", status_chance=0.2)
+_t("platingcast", "Plating Cast", "Metallic", "status", 0, 100, "Casts fresh armour, stiffening every strike.", buff_power=0.2)
+_t("acidburst", "Acid Burst", "Chemical", "special", 45, 100, "A jet of reactive solvent.",
+   status="Corroded", status_chance=0.25)
+_t("toxinspray", "Toxin Spray", "Chemical", "special", 55, 95, "An aerosol of corrosive catalysts.")
+_t("catalyst", "Catalyst", "Chemical", "status", 0, 100, "Speeds every reaction - Power climbs.", buff_power=0.3)
+_t("phaselance", "Phase Lance", "Quantum", "special", 50, 95, "A probability-focused energy lance.")
+_t("entanglepulse", "Entangle Pulse", "Quantum", "status", 0, 85, "Tangles the target's states - logic wobbles.",
+   status="Glitched", status_chance=0.75)
+_t("superposition", "Superposition", "Quantum", "special", 65, 85, "Strikes from every state at once.")
+_t("ionstorm", "Ion Storm", "Plasma", "special", 55, 95, "A supercharged ion front rolls over the target.",
+   status="Electrified", status_chance=0.2)
+_t("plasmacutter", "Plasma Cutter", "Plasma", "physical", 50, 100, "A contained arc blade slices out.")
+_t("fusionflare", "Fusion Flare", "Plasma", "special", 70, 90, "A brief, contained fusion burn.")
+_t("lumenburst", "Lumen Burst", "Radiant", "special", 50, 100, "A burst of clean white light.")
+_t("prismbeam", "Prism Beam", "Radiant", "special", 60, 95, "One beam split into a barrage of spectra.")
+_t("suncloak", "Sun Cloak", "Radiant", "status", 0, 100, "Bathes in pure light, raising Power.", buff_power=0.25)
+_t("duskwake", "Dusk Wake", "Shadow", "special", 50, 100, "A cold ripple of lightless static.")
+_t("voidpincer", "Void Pincer", "Shadow", "physical", 55, 95, "Claws of compressed darkness.")
+_t("nightleech", "Night Leech", "Shadow", "special", 40, 100, "Drains integrity through the dark.", drain=0.5)
+_t("myceliumweb", "Mycelium Web", "Bio", "status", 0, 90, "A web of living filaments chokes the target.",
+   status="Deoxygenated", status_chance=0.75)
+_t("splicetalon", "Splice Talon", "Bio", "physical", 50, 100, "Genespliced claws rake out.")
+_t("cellburst", "Cell Burst", "Bio", "special", 55, 95, "Overcharges its own cells in a burst.")
+_t("servoslam", "Servo Slam", "Mechanical", "physical", 55, 95, "Every actuator fires at once.")
+_t("wreckingarm", "Wrecking Arm", "Mechanical", "physical", 65, 85, "A full-force hydraulic wrecking swing.")
+_t("swarmbite", "Swarm Bite", "Nano", "physical", 40, 100, "A million tiny jaws in one bite.",
+   status="Nanite-Infected", status_chance=0.2)
+_t("disassembler", "Disassembler", "Nano", "special", 55, 95, "Takes the target apart, screw by screw.",
+   status="Corroded", status_chance=0.2)
+_t("packetstorm", "Packet Storm", "Digital", "special", 50, 100, "A flood of malformed packets.")
+_t("firewallbreaker", "Firewall Breaker", "Digital", "physical", 45, 100, "A ram-charge through any defence.")
+_t("recompile", "Recompile", "Digital", "status", 0, 100, "Rewrites its own loops - Power climbs.", buff_power=0.3)
+_t("starfall", "Starfall", "Cosmic", "special", 55, 95, "Calls down a scatter of burning dust.")
+_t("voidlance", "Void Lance", "Cosmic", "physical", 50, 95, "A spear of hard vacuum.")
+_t("nebulaglow", "Nebula Glow", "Cosmic", "special", 60, 90, "Wraps the target in a glowing stellar cloud.")
+
 # Disc-only art (never appears in a learnset): each gym leader's secret technique, taught by their move disc.
 _t("verdantstorm", "Verdant Storm", "Botanic", "special", 75, 90,
    "The Green Gym's secret art: a storm of razor leaves and choking pollen.",
@@ -216,6 +281,115 @@ _s("nanolyte", 16, "Nanolyte", "Microbot Swarm", ["Nano", "Digital"], (38, 40, 3
    "Swarm Logic", "A rare cluster of nanobots bound by an unstable shared consciousness.", "rare")
 
 STARTER_IDS = ["florabot", "pyrodrive", "aquabit"]
+
+# ---- the wider region's wild Scimons (species_expanded.py: 100 curated entries; stats and learnsets derive
+# from the species' archetype and type pool, the art from tools/build_scimon_art.py) -------------------------------
+from species_expanded import expanded_species
+
+WILD_HOME = {}                         # species id -> home biome (routes.py builds the encounter tables from it)
+for _i, _row in enumerate(expanded_species(), 17):
+    WILD_HOME[_row[0]] = _row[13]
+    _s(_row[0], _i, _row[1], _row[2], _row[3], _row[4], _row[5], _row[6], _row[7], _row[8], _row[9], _row[10],
+       _row[11], _row[12])
+
+# --------------------------------------------------------------------------- evolutions
+# Every Sci-Mon evolves.  The three starters climb a full three-stage line (dex 4-9); wild lines have either two
+# stages (base -> final) or three (baby -> base -> final) -- the seeded split is ~40% three-stage.  Stage stats
+# derive from the base species' archetype (babies smaller and easier to catch, finals larger and rarer), and every
+# stage inherits its line's habitat (WILD_HOME) so the biome rule holds for the whole family.
+EVOLUTIONS = {}                        # species id -> (target id, level)
+CHAIN_OF = {}                          # every member id -> [stage ids, first..last]
+CURATED_STARTER_STAGES = [
+    # (base, mid name, mid level, final name, final level)
+    ("florabot", "Floravine", 16, "Floratitan", 32),
+    ("pyrodrive", "Pyroblaze", 16, "Pyrodrake", 32),
+    ("aquabit", "Aquafin", 16, "Aquarex", 32),
+]
+_FINAL_SUFFIXES = ("Prime", "Rex", "Max", "Nova", "King", "Zero")
+_next_dex = [4]                        # the reserved dex slots 4-9 go to the starters' evolved stages
+
+
+def _build_evolutions():
+    _seen_names = {s.name for s in SPECIES.values()}
+    wild_ids = [s.id for s in SPECIES.values()
+                if s.id not in STARTER_IDS and not (s.id.endswith("-mid") or s.id.endswith("-final")
+                                                     or s.id.endswith("-baby"))]
+
+    def baby_name(base):
+        stem = base[:-2] if len(base) > 6 else base
+        for cand in (stem + "ling", stem + "let", stem + "iling"):
+            if cand not in _seen_names and not cand.endswith("lling"):
+                return cand
+        return base + " Jr"
+
+    def final_name(base):
+        for cand in (base + " " + suf for suf in _FINAL_SUFFIXES):
+            if cand not in _seen_names:
+                return cand
+        return base + " Prime II"
+
+    # ---- starters: curated three-stage lines, dex 4-9
+    for base, mid_name, mid_lv, final_name_, final_lv in CURATED_STARTER_STAGES:
+        sp = SPECIES[base]
+        chain = [base]
+        for sid, name, lv, scale in ((f"{base}-mid", mid_name, mid_lv, 1.28),
+                                     (f"{base}-final", final_name_, final_lv, 1.55)):
+            b = tuple(max(20, round(v * scale)) for v in sp.base)
+            _s(sid, _next_dex[0], name, sp.classification, list(sp.types), b,
+               45, int(sp.xp_yield * 1.5), f"{sid}-front.png", None,
+               list(sp.learnset), sp.ability,
+               f"The evolved form of {sp.name}. {sp.desc}", sp.rarity)
+            _next_dex[0] += 1
+            EVOLUTIONS[chain[-1]] = (sid, lv)
+            chain.append(sid)
+            _seen_names.add(name)
+        for member in chain:
+            CHAIN_OF[member] = list(chain)
+
+    # ---- wild lines: seeded two/three-stage split (dex 117+)
+    _next_dex[0] = max(_next_dex[0], 117)
+    for base in wild_ids:
+        sp = SPECIES[base]
+        r = __import__("zlib").crc32(("evo:" + base).encode())
+        three = (r % 100) < 40
+        chain = [base]
+        if three:                                       # a baby pre-stage before the known species
+            bid = f"{base}-baby"
+            b = tuple(max(20, round(v * 0.62)) for v in sp.base)
+            bn = baby_name(sp.name)
+            first_move = sp.learnset[0][1]
+            _s(bid, _next_dex[0], bn, sp.classification, list(sp.types), b,
+               190, max(20, int(sp.xp_yield * 0.6)), f"{bid}-front.png", None,
+               [(1, first_move), (1, "sysram") if first_move != "sysram" else (1, first_move)],
+               sp.ability, f"A young {sp.name}. {sp.desc}", "common")
+            _next_dex[0] += 1
+            EVOLUTIONS[bid] = (base, 10 + r % 5)
+            chain.insert(0, bid)
+            _seen_names.add(bn)
+        fid = f"{base}-final"
+        f = tuple(max(20, round(v * (1.4 if three else 1.45))) for v in sp.base)
+        fn = final_name(sp.name)
+        _s(fid, _next_dex[0], fn, sp.classification, list(sp.types), f,
+           max(35, sp.catch_rate // 3), int(sp.xp_yield * 1.6),
+           f"{fid}-front.png", None,
+           list(sp.learnset) + [(26, sp.learnset[-1][1]), (32, sp.learnset[min(2, len(sp.learnset) - 1)][1])],
+           sp.ability, f"The final form of {sp.name}. {sp.desc}", "rare")
+        _next_dex[0] += 1
+        EVOLUTIONS[chain[-1]] = (fid, (24 + r % 10) if three else (14 + r % 9))
+        chain.append(fid)
+        _seen_names.add(fn)
+        for member in chain:
+            CHAIN_OF[member] = list(chain)
+
+    # stages inherit the line's habitat (the base species' biome)
+    for sid, chain in CHAIN_OF.items():
+        if sid not in WILD_HOME:
+            home_chain = [c for c in chain if c in WILD_HOME]
+            WILD_HOME[sid] = WILD_HOME[home_chain[0]] if home_chain else "meadow"
+
+
+_build_evolutions()
+
 SPECIES_COUNT = len(SPECIES)
 
 # (species, weight, min level, max level)
@@ -347,6 +521,33 @@ CATALOG["scanner"] = ItemDef("scanner", "Field Scanner", "FS",
 CATALOG["townpass"] = ItemDef("townpass", "Riven Town Pass", "TP",
                               "Grants a researcher free access to Riven Town's civic facilities.",
                               "#e8c33a", "key", permanent=True)
+CATALOG["epipass"] = ItemDef("epipass", "Epidimy Town Pass", "EP",
+                             "Grants a researcher free access to Epidimy's civic facilities.",
+                             "#57b06f", "key", permanent=True)
+
+# key items that live in the Pack's PASSES folder, sorted ahead of the other key items
+PASSES = ("townpass", "epipass")
+
+# --------------------------------------------------------------------------- the Corrupt Bandits (story)
+# Items the villain arc hands out.  The Shadow Module is never obtainable - it appears in cutscenes only.
+CATALOG["shadowmodule"] = ItemDef("shadowmodule", "Shadow Module", "SH",
+                                  "A jet-black containment module, factory-stamped with a scratched-out logo. Its "
+                                  "firmware hums with something corrupted.", "#26262e", "key", permanent=True)
+CATALOG["banditticket"] = ItemDef("banditticket", "Bandit Repair Ticket", "BT",
+                                  "A repair ticket stamped with the Cush franchise logo - found on a Corrupt Bandit. "
+                                  "Why would a Bandit carry one of these?", "#8a8f98", "key", permanent=True)
+CATALOG["mastersticket"] = ItemDef("mastersticket", "Mastermind's Ticket", "MT",
+                                   "Cush's own franchise ticket, void-stamped the moment he fled. A memento of the "
+                                   "Corrupt Bandits' fall.", "#d1552f", "key", permanent=True)
+
+# the Corrupt Bandits' teams (id -> [(species, level), ...]) and Kael's post-reveal rematch team
+BANDIT_TEAMS = {
+    "act1": [("cindermite", 3), ("dewbit", 4)],
+    "act2": [("sparkit", 6), ("pebblon", 7)],
+    "boss": [("nanolyte", 9), ("florabot", 10)],
+}
+KAEL_RETEAM = {"florabot": ("aquabit", 8), "pyrodrive": ("florabot", 8), "aquabit": ("pyrodrive", 8)}
+KAEL_RETEAM2 = ("sporelet", 9)
 
 
 def item_def(item_id):

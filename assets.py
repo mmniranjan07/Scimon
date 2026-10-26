@@ -17,6 +17,8 @@ _fonts = {}      # (kind, size) -> Font
 FONT_FILES = {
     "display": "PressStart2P-Regular.ttf",   # chunky 8-bit headings / HUD (V34 --font-pixel)
     "body": "VT323-Regular.ttf",             # readable terminal body text (V34 --font-pixel-body)
+    "ui": "DejaVuSans.ttf",                  # clean plain interface text (menus)
+    "ui_b": "DejaVuSans-Bold.ttf",           # bold interface headings / section labels
 }
 
 
@@ -86,12 +88,34 @@ def scaled(rel, w, h, smooth=True):
     return surf
 
 
-def fit(rel, max_w, max_h, smooth=True):
-    """Scale keeping aspect ratio so the image fits in max_w x max_h."""
+def fit(rel, max_w, max_h, smooth=True, trim=False):
+    """Scale keeping aspect ratio so the image fits in max_w x max_h.  With `trim`, transparent margins are cut
+    first (cached bounding box), so the art renders at its true size and smooth scaling never blends the empty
+    border into the visible edge pixels."""
     src = image(rel)
+    if trim:
+        r = _opaque_bbox(rel)
+        if r.width < src.get_width() or r.height < src.get_height():
+            src = src.subsurface(r)
     w, h = src.get_size()
     k = min(max_w / w, max_h / h)
-    return scaled(rel, w * k, h * k, smooth)
+    w2, h2 = max(1, int(w * k)), max(1, int(h * k))
+    key = ("fit2", rel, w2, h2, smooth, trim)
+    out = _scaled.get(key)
+    if out is None:
+        fn = pygame.transform.smoothscale if smooth else pygame.transform.scale
+        out = _scaled[key] = fn(src, (w2, h2))
+    return out
+
+
+_trim_cache = {}
+
+
+def _opaque_bbox(rel):
+    r = _trim_cache.get(rel)
+    if r is None:
+        r = _trim_cache[rel] = image(rel).get_bounding_rect()
+    return r
 
 
 # --- Scimon sprites (assets/scimon/<species>-front.png / -back.png, the original art) -----------------------------
@@ -102,7 +126,7 @@ def mon_path(species_id, back=False):
 
 
 def mon_image(species_id, max_w, max_h, back=False):
-    return fit(mon_path(species_id, back), max_w, max_h)
+    return fit(mon_path(species_id, back), max_w, max_h, trim=True)
 
 
 def mon_anim(species_id, kind, max_w, max_h, max_k=4):
@@ -115,6 +139,15 @@ def ui_icon(name, scale=2):
     """MPW UI icon (assets/mpw/ui/<name>.png) scaled by an integer factor with nearest neighbour."""
     img = image(f"mpw/ui/{name}.png")
     return scaled(f"mpw/ui/{name}.png", img.get_width() * scale, img.get_height() * scale, smooth=False)
+
+
+def item_icon(item_id, scale=2):
+    """Pixel-art icon for a disc / module / item (assets/items/<id>.png), nearest-neighbour scaled; None when absent."""
+    p = f"items/{item_id}.png"
+    if not has(p):
+        return None
+    img = image(p)
+    return scaled(p, img.get_width() * scale, img.get_height() * scale, smooth=False)
 
 
 def font(kind, size):
@@ -130,12 +163,13 @@ def preload_steps():
     """Yield (done, total) after each asset, so a caller can draw a progress bar between loads
     (the browser build needs that: one long blocking call would leave the canvas blank)."""
     jobs = []
-    for folder in ("scimon", "mpw/buildings", "mpw/trees", "mpw/ow", "mpw/ui", "mpw/fx", "mpw/bg", "tiles/nature", "tiles/hitech", "tiles/res", "interiors", "town"):
+    for folder in ("scimon", "mpw/buildings", "mpw/trees", "mpw/ow", "mpw/ui", "mpw/fx", "mpw/bg", "tiles/nature", "tiles/hitech", "tiles/res", "interiors", "town", "items"):
         full = safe_path(folder, directory=True)
         for name in sorted(os.listdir(full)):
             if name.lower().endswith(".png"):
                 jobs.append((False, f"{folder}/{name}"))
-    for kind, sizes in (("display", (8, 16, 24, 32, 48, 64)), ("body", (16, 20, 24, 28, 32, 40, 48))):
+    for kind, sizes in (("display", (8, 16, 24, 32, 48, 64)), ("body", (16, 20, 24, 28, 32, 40, 48)),
+                        ("ui", (12, 13, 14, 15, 18)), ("ui_b", (12, 13, 15, 18))):
         for s in sizes:
             jobs.append((True, (kind, s)))
     for n, (is_font, ref) in enumerate(jobs, 1):

@@ -37,6 +37,9 @@ class BattleState:
     outcome: str = ""            # "" | win | lose | caught | run
     must_switch: bool = False
     trainer: Optional[str] = None
+    enemy_party: list = field(default_factory=list)   # trainers with more than one Sci-Mon
+    enemy_index: int = 0
+    enemy_token: int = 0                              # bumped whenever a new enemy Sci-Mon is sent out
 
     @property
     def player(self):
@@ -62,11 +65,20 @@ def enemy_label(s):
 
 
 def new_battle(party, enemy, bag, modules, trainer=None):
-    """Battles run on copies; the caller commits the result (party, bag) when the battle ends."""
+    """Battles run on copies; the caller commits the result (party, bag) when the battle ends.  `enemy` is one
+    Sci-Mon or a list of them (trainer teams): the next one is sent out whenever the current faints."""
+    enemies = copy.deepcopy(list(enemy) if isinstance(enemy, (list, tuple)) else [enemy])
     party = copy.deepcopy(party)
     active = max(0, next((i for i, m in enumerate(party) if m.hp > 0), 0))
-    return BattleState(party=party, active_index=active, enemy=enemy, bag=dict(bag), modules=dict(modules),
-                       trainer=trainer)
+    return BattleState(party=party, active_index=active, enemy=enemies[0], bag=dict(bag), modules=dict(modules),
+                       trainer=trainer, enemy_party=enemies)
+
+
+def _swap_enemy(s, i):
+    """The trainer sends out their next Sci-Mon: fresh body, fresh status, new token (the scene re-renders it)."""
+    s.enemy_index = i
+    s.enemy = s.enemy_party[i]
+    s.enemy_token += 1
 
 
 def trainer_credits(s, outcome, wallet):
@@ -205,6 +217,12 @@ def _finalize(sim, events):
     if sim.enemy.hp <= 0:
         events.append(BattleEvent(f"{enemy_label(sim)} was defeated!", sfx="faint"))
         _apply_xp(sim, events)
+        nxt = next((i for i, m in enumerate(sim.enemy_party) if m.hp > 0 and i != sim.enemy_index), None)
+        if nxt is not None:
+            incoming = sim.enemy_party[nxt]
+            events.append(BattleEvent(f"{sim.trainer} sends out {incoming.name}!", sfx="select",
+                                      effect=lambda s, i=nxt: _swap_enemy(s, i)))
+            return
         events.append(BattleEvent(effect=lambda s: setattr(s, "outcome", "win")))
         return
     if _active(sim).hp <= 0:
@@ -337,10 +355,20 @@ CTRL = pygame.Rect(14, SCENE_H + 8, W - 28, H - SCENE_H - 22)
 ENEMY_MID = (722, 236)
 PLAYER_MID = (236, 452)
 
-# MPW battle backgrounds (assets/mpw/bg/bg1 grass, bg2 beach, bg3 snow), picked by the outdoor area the fight starts in
+# MPW battle backgrounds (assets/mpw/bg/bg1 grass, bg2 beach, bg3 snow), picked by the outdoor area the fight starts in.
+# Styled towns fight on the grass field, routes and wild places on the beach field, Epidimy keeps its snow field.
 BG_FOR_AREA = {"overworld": 1, "route1": 2, "epidimy": 3}
 BUTTON_ICONS = {"fight": "options1", "defend": "options2", "switch": "options3", "capture": "options4",
                 "item": "baricon4", "run": "baricon6"}
+
+# The wider network (routes.py merges towns.py + kanto.py): styled towns fight on the grass field, the routes
+# and wild places on the beach field.  (Epidimy keeps its snow field; route1 its beach.)
+try:
+    import routes as _routes
+    for _a in _routes.AREAS.values():
+        BG_FOR_AREA.setdefault(_a.id, 1 if _a.styled else 2)
+except Exception:                           # never let background picking break the battle scene
+    pass
 
 
 class BattleScene(Scene):
@@ -365,6 +393,7 @@ class BattleScene(Scene):
         self.shown_xp = self.bs.player.xp / max(1, self.bs.player.xp_to_next)
         self.shown_stab = {"p": 1.0, "e": 1.0}
         self.player_uid = None
+        self.enemy_token = self.bs.enemy_token
         self._make_sprites(appear=True)
         self.trainer = TrainerSprite((ENEMY_MID[0] + 150, ENEMY_MID[1] - 20)) if self.bs.trainer else None
         self.cursor_hint = ""
@@ -405,6 +434,11 @@ class BattleScene(Scene):
             audio.play(ev.sfx)
         if self.bs.player.uid != self.player_uid:
             self._make_player_sprite(True)
+        if self.bs.enemy_token != self.enemy_token:
+            self.enemy_token = self.bs.enemy_token
+            self.enemy_sprite = ScimonSprite(self.bs.enemy.species_id, (ENEMY_MID[0], ENEMY_MID[1] - 8), (250, 220),
+                                             appear=True)
+            self.shown["e"], self.shown_stab["e"] = 1.0, 1.0
         if self.bs.enemy.hp <= 0 or self.bs.outcome == "caught":
             self.enemy_sprite.faint()
         if self.bs.player.hp <= 0:
@@ -599,8 +633,9 @@ class BattleScene(Scene):
 
     # ---- drawing ------------------------------------------------------------------------------
     def _background(self, surf):
-        """MPW battle background (640x320 art scaled 1.5x to the 960x480 stage)."""
-        surf.blit(assets.scaled(f"mpw/bg/bg{self.bg}.png", W, SCENE_H, smooth=False), (0, 0))
+        """MPW battle background (640x320 art scaled 1.5x to the 960x480 stage; smooth keeps the non-integer
+        scale from doubling pixels unevenly)."""
+        surf.blit(assets.scaled(f"mpw/bg/bg{self.bg}.png", W, SCENE_H, smooth=True), (0, 0))
 
     def _platform(self, surf, center, wide=False):
         """Soft ground shadow under a fighter (the MPW backgrounds have no platform art)."""

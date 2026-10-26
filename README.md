@@ -77,10 +77,14 @@ localStorage; on desktop in `~/.scimon/save.json`. The title screen offers CONTI
 | `battle.py` | turn engine (`plan_turn` -> events) and `BattleScene` UI |
 | `map.py` | `TileMap` (Rect collision, pre-rendered world), `Camera`, terrain/interior art |
 | `worldmap.py` | Riven Town layout, buildings, NPCs, interior grids |
+| `routes.py` | outdoor areas + the link graph (Route 1 + merged towns/kanto), healers, chests, network validation |
+| `towns.py` | the styled towns of the wider region (Stonreach ... Astrion Plateau, Ost's Cabin): grids, buildings, outfits |
+| `kanto.py` | Routes 2-25 and the wild places between them: seeded maps, signs, travelers, the edge list |
+| `species_expanded.py` | the wider region's 100 wild Scimons: curated tables, archetype stats, type learnset pools |
 | `sprites.py` | `Player`, `NPC` (sheet-based, hitbox-anchored), `ScimonSprite`, `TrainerSprite`, `ImpactBurst` |
 | `interiors.py` | the eight interior rooms as sprite props with footprints; generates each room's collision grid |
 | `overworld.py` | exploration scene: movement, doors, talk, encounters, HUD |
-| `scenes.py` | title, dialogue, wake-up, starter select, rival encounter, game flow |
+| `scenes.py` | title, dialogue, wake-up, professor's lab briefing, starter select, rival encounter, game flow |
 | `menus.py` | Pack, Shop, Sci-Database, repair service menu |
 | `ui.py` | glass panels, pixel text, typewriter dialogue box, bars, chips, button grid, toast |
 | `touch.py` | mobile support: layouts, on-screen D-pad / A / B / PACK, multi-touch finger tracking |
@@ -134,12 +138,113 @@ Route 1's north road (row 0, x 6..9) leads to **Epidimy Town**, laid out after a
 station and a cottage, a cave mouth in the rock band (sealed, read its sign), a fountain pond, west lake, south-east and north-east
 ponds, seven cottages, the Library, the Scimon Center (free healing) and a supply mart. Peaceful: no tall grass.
 * `epidimy.py` - grid, buildings, NPCs, signs, `validate()` (everything reachable, NPCs never cut a road).
-* Drawn by `TileMap._render_epidimy` with **Riven Town's own renderer** (`townview.py`): same lawns, cobbled roads + kerbs, stone walls,
+* Drawn by `TileMap._render_styled` with **Riven Town's own renderer** (`townview.py`): same lawns, cobbled roads + kerbs, stone walls,
   coping-rimmed animated ponds (only the middle one has the fountain jet), trees, lamps, benches, name tags and glowing road studs.
-  Buildings are Riven's sprites (`town/bld_house_0..2`, `bld_library`, `bld_cush`, `bld_mart`).
+* Buildings are Riven's sprites (`town/bld_house_0..2`, `bld_library`, `bld_cush`, `bld_mart`).
 * Doors are per area (`Building.area`, `routes.building_at`). Interiors reuse the house / library / cush / mart rooms.
-* Test: `python tests/epidimy.py [screenshot_dir]`. Note: `tests/play.py` and `tests/route1.py` were already failing before this change.
+* New in the network: Epidimy's north lane (x 6..7) gates to Route 2 and its west forest road (rows 20..21) gates to Route 22.
+* Test: `python tests/epidimy.py [screenshot_dir]`. Note: `tests/play.py` was already failing before this change.
   Delete `~/.scimon/save.json` before running `tests/smoke.py` (it expects a fresh game).
+
+## The wider region (the town network)
+Every road on the reference map is its own walkable area, wired into one graph by `routes.LINKS` -- 42 areas in all:
+Riven Town, Epidimy Town, 8 styled towns, 5 wild places and 25 numbered routes.
+* **Towns** (`towns.py`, drawn like Epidimy with Riven's renderer + the landmark sprites): **Stonreach Town** (quarry, moon
+  crystals), **Tidebrook Town** (river with plank bridges), **Aurum City** (the golden crossroads), **Emberport City**
+  (harbour, pier, lighthouse), **Verdance City** (hedges and garden arches), **Dusklight Town** (monuments under the rim),
+  **Vespera City** (hedge walks), **Cinderfall Island** (volcanic ground, lava pools, two sea piers), the **Astrion Plateau**
+  (the League's grand hall) and **Ost's Cabin** (windmill at the end of Route 25). Each has Cush's Repair Nook (free
+  healing, pass-free) and a Supply Mart; every town's `validate()` runs at import.
+* **Places** (`kanto.py`): Mossmere Wood, Mt. Crescent (glowing crystals), Hollowgate Tunnel (a lit corridor), Ascent Road
+  and Seaglass Isles (sand and sea glass). Routes 2-25 are generated from seeds (winding roads, tall grass, signs,
+  travelers); sea routes 19-21 are plank walkways over the ocean, and Riven Town gains a fishing pier (rows 21-23, x 10-11)
+  linking to Route 21.
+* `routes.validate()` now checks the whole network at import: every open tile reachable, ledges never soft-lock, NPCs
+  never cut a road, signs readable, one-way graph connectivity from the town, healer warp tiles sane.
+* Battle backgrounds per area: styled towns on the grass field, routes/places on the beach field (`battle.BG_FOR_AREA`).
+* Test: `python tests/network.py [screenshot_dir]` - validates + renders all 42 maps, walks
+  Riven -> Epidimy -> Mossmere -> Stonreach -> Mt. Crescent -> Tidebrook, opens both hidden chests and checks the
+  far-wipe healer fallback.
+
+## The wider region's Scimons (100 new species + biome encounters)
+The dex grows from 9 to **109 species**: 100 originals in `species_expanded.py` (stats/learnsets derive from
+archetype + a per-type technique pool; 49 new techniques cover all 18 types), with original art generated by
+`tools/build_scimon_art.py` (seeded, part-based pixel-art in the established style; re-run any time, add
+`--sheet` for a contact sheet at `assets/scimon/_contact_sheet.png`).
+* **Habitat rules** (species_expanded.WILD_HOME, enforced by routes.validate()): Botanic/Bio/Atmospheric/Chemical/
+  Mechanical/Radiant live in the grass biomes (meadow + Mossmere forest); Hydro on the sea routes' tide-grass beds;
+  Cryo above the snow line of the Epidimy climb (routes 22, Ascent Road); Thermal on Cinderfall's volcanic shores
+  (routes 20-21); Geologic and Metallic in the caves (Mt. Crescent, route 3/10) and Hollowgate's glow-moss chambers;
+  Electric on Aurum's grid routes and the tunnel lantern line; Plasma/Quantum/Nano/Digital on the big-city roads
+  (routes 5-8); Cosmic and Shadow by Dusklight's monuments (routes 8/10/12/13) and off the deep sea lanes.
+  The classic Route 1 cast (Sporelet, Dewbit, Cindermite, Sparkit, Pebblon, Nanolyte) stays on Route 1 only.
+* `routes.AREA_ENCOUNTERS` gives every grass-bearing area its own table; levels scale with distance from Riven
+  (near 2-6, mid 6-12, far 12-18), common > uncommon > rare weights. Sea routes, Seaglass Isles, Hollowgate
+  Tunnel and the Ascent Road gained encounter patches (tide-grass / glow-moss).
+* Test: `python tests/specimens.py` - data integrity, sprite loading, biome rules, all 30 tables, battle smoke.
+
+## FRLG landmarks (the reference-map build)
+Every town and route follows its FireRed/LeafGreen counterpart's building placement, adapted to the region.
+**All 25 routes and 5 wild places are hand-authored to their FRLG shapes** (`kanto.py` `*_ROWS` grids): Route 2's
+forest corridors and hop-down ledges, Route 3's ledge tiers, Route 4's descent with the sealed chest clearing,
+Route 5's Day-Care, Route 12/13's coastal water strips, Route 17's fence-railed cycling road with one-way slope
+cuts, Route 19-21's sea boardwalks and islets, Route 23's checkpoint climb with its water bridge, Route 24's
+Nugget Bridge at the Tidebrook exit, Mossmere's two-gate forest, Hollowgate's two-mouth tunnel, the Ascent Road's
+ledge climb and Seaglass Isles' sand islets. Pass `rows=` to `kanto.Route` to hand-draw a map -- gate positions
+are derived from the drawn rims and written back into each entry's `ends`, so geography and the link graph can
+never disagree.
+* **New landmark buildings** (`tools/town_network_art.py`): `bld_tower` (Dusklight's Monument Tower, Aurum's
+  Spire), `bld_museum` (Stonreach's Museum of Science), `bld_deptstore` (Verdance's Grand Mart - extended stock),
+  `bld_gatehouse` (route guard huts), `bld_mansion` (Cinderfall's Old Mansion), plus the Research Lab (Astrion
+  lab sprite). Interiors reuse the shared room set with themed NPCs (Tower Keeper, Curator, wardens, scientists).
+* **Towns**: Pewter-style Stonreach (museum east, gym lot north-centre), Cerulean-style Tidebrook (gym lot
+  south-centre, Wheelworks west), Saffron-style Aurum (Spire on the plaza), Vermilion-style Emberport (fan club
+  east, gym lot west), Celadon-style Verdance (Grand Mart north-west, Hedge Corner south-east), Lavender-style
+  Dusklight (tower north-east), Fuchsia-style Vespera (Safari Gate north-east - "closed for survey"), Cinnabar-
+  style Cinderfall (lab west, mansion north-west), Indigo-style Astrion Plateau (nook + mart either side of the
+  road). Each town carries a fenced, signposted **gym lot** - the League runs one gym per region, so the lots
+  wait for a second season (7 empty stamp slots).
+* **Routes**: gate huts on 2, 2N, 5, 6, 11, 12, 15, 16, 22 and the League checkpoint on 23 (all enterable, guards
+  inside); the **Day-Care** on Route 5; **Cush's nook mid-Route 10** (a real healer on the road); Route 24's
+  **long plank bridge** over the river band (the Nugget Bridge); Route 17's **one-way descent** (slope ledges,
+  like the cycling road); Route 25's sea cove. `routes.validate()` now also proves every route door reachable.
+* Test: the network walk covers the reworked roads; `python tests/network.py [dir]`.
+
+## Evolutions (every Sci-Mon evolves)
+All 268 species evolve: the three starters climb three-stage lines (Florabot -> Floravine Lv16 -> Floratitan
+Lv32; Pyrodrive -> Pyroblaze -> Pyrodrake; Aquabit -> Aquafin -> Aquarex -- dex 4-9), and every wild line runs
+two stages (base -> "Rex/Prime/Nova..." final) or three (a "ling" baby -> base -> final; a seeded ~40/60 split,
+159 stage species in all).  Levels trigger the change automatically after a battle: level-ups in the fight carry
+over, and the overworld announces each evolution ("Florabot is evolving! ...").  Stage stats derive from the
+line's archetype (babies 62%, finals ~145% with rarer catch rates and richer learnsets), stages inherit the
+family's habitat so the biome rule holds per family, and babies/finals appear in the wild pools: babies common at
+the low end of a route's band, finals rare at the top.  Starters and the classic Route 1 cast are never wild
+outside Route 1 (enforced by routes.validate()).
+* Mechanics: `data.EVOLUTIONS` / `data.CHAIN_OF` (pure data, built in data.py), `monsters.evolve` /
+  `check_evolutions`, `overworld._evolution_lines`.
+* Sprites: `tools/build_scimon_art.py` renders any species missing a PNG; babies are drawn smaller with a big
+  visor, finals gain a golden crest and aura motes.
+
+## Hidden chests
+Two supply chests are tucked away off the beaten path (tile `X`, solid, interacted with like interior chests):
+* **Epidimy Town**: the nook behind the west lake's north bank - Hydro Cell x1 + Nano Repair x2.
+* **Route 4**: a tree-sealed clearing off the road - Bio Trellis x1 + Repair Cell x3.
+Opening is remembered in `opened_chests` (savegame) and restored by `OverworldScene` via `map.sync_state` on travel,
+restore and blackout. `routes.CHESTS` holds the registry; `routes.validate()` enforces the house rule: at most one
+town and one route may hide a chest, each on an `X` tile with a reachable approach.
+
+## New region art and character outfits
+* `tools/town_network_art.py` (pure Pillow, seeded, same style as the other town generators) builds
+  `assets/town/`: bridges, pier planks, mooring posts, volcanic ground, lava pools, cinder rocks, the Dusklight
+  monument, moon crystals, tunnel beams, sea glass, the garden arch and the landmark buildings
+  (`bld_lighthouse`, `bld_windmill`, `bld_plateau`). Re-run with `python3 tools/town_network_art.py`.
+* New map letters: walkable `R` bridge, `I` pier, `V` volcanic ground, `U` sea glass; solid props `n` cinder rock,
+  `o` lava (with glow), `Z` monument, `C` crystal (glow), `t` tunnel beam (glow), `K` arch, `d` mooring post,
+  `J` lighthouse (2x2), `X` chest. Wired through `townview.draw_ground` / `build_props` / `Fx` glows.
+* **Area outfits**: NPCs of every new town dress for their town (`towns.OUTFITS` + `towns.area_look` - sailors in
+  Emberport cobalt, gardeners in Verdance leaf, league staff in royal on the Plateau...). Route travelers wear shared
+  ranger / sailor / hiker palettes (`kanto.RANGER_LOOK` etc.); the Cush franchises keep Cush's own look everywhere.
+  `worldmap._npc` / `_trainer` accept an explicit `look=` code (the formula behind `sprites.make_look`).
 
 ## Parity notes and deliberate differences
 * Ported 1:1 from V34: type chart, techniques, species, stat/damage/capture/XP formulas, held items,
@@ -171,7 +276,9 @@ licence for them. Fonts (Press Start 2P, VT323) are SIL OFL. Before making the r
 and `assets/scimon` (monster sprites) yourself or have the right to share them.
 
 ## Tests (headless)
-    python tests/smoke.py   # title -> wake -> starter -> rival battle
+    python tests/smoke.py   # title -> wake -> professor briefing -> starter -> rival battle
     python tests/play.py    # battle, collision, doors, shop, pack, database, capture
+    python tests/specimens.py # 109 species: data, art, biome rules, per-area encounter tables
+    python tests/network.py # the 42-area network: render + walk-through + hidden chests + healer fallback
     python tests/fuzz.py 1  # random input + teleports, asserts invariants
     python tests/touch.py   # touch layouts, D-pad / button events, tap routing

@@ -6,7 +6,7 @@ import random
 from dataclasses import dataclass, field
 from typing import Optional
 
-from data import SPECIES, TECHNIQUES, MODULES, CATALOG, effectiveness
+from data import SPECIES, TECHNIQUES, MODULES, CATALOG, EVOLUTIONS, effectiveness
 
 PARTY_LIMIT = 6
 _uid = itertools.count(1)
@@ -170,3 +170,40 @@ def choose_enemy_move(enemy, player):
         return t.power * effectiveness(t.type, player.types) * (1.25 if t.type in enemy.types else 1.0)
 
     return max(damaging, key=score)
+
+
+# --------------------------------------------------------------------------- evolution
+def evolve(mon):
+    """Transform `mon` into its evolved species (keeping level, HP ratio, uid and any nickname).  Returns
+    (old name, new name) or None when there is nothing pending at this level."""
+    evo = EVOLUTIONS.get(mon.species_id)
+    if not evo or mon.level < evo[1]:
+        return None
+    target, _lv = evo
+    old_name = mon.name
+    sp = SPECIES[target]
+    ratio = mon.hp / mon.max_hp if mon.max_hp else 1.0
+    mon.species_id = target
+    mon.types = list(sp.types)
+    mon.name = sp.name if mon.name == old_name else mon.name   # keep nicknames
+    known = set(mon.moves)
+    for lv, tech in sp.learnset:
+        if lv <= mon.level and tech not in known:
+            known.add(tech)
+            if len(mon.moves) < 4:
+                mon.moves.append(tech)
+    mon.recalc_stats(keep_hp_ratio=True)
+    return old_name, sp.name
+
+
+def check_evolutions(party):
+    """Run every pending evolution across the party (after a battle's level-ups).  Returns a list of
+    (mon, "old name", "new name") in party order."""
+    done = []
+    for mon in party:
+        while True:
+            res = evolve(mon)
+            if not res:
+                break
+            done.append((mon, res[0], res[1]))
+    return done

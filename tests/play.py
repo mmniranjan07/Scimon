@@ -8,7 +8,7 @@ from scenes import TitleScene
 import overworld as ow
 from settings import TILE
 
-OUT = "/home/claude/shots"; os.makedirs(OUT, exist_ok=True)
+OUT = sys.argv[1] if len(sys.argv) > 1 else "/home/claude/shots"; os.makedirs(OUT, exist_ok=True)
 random.seed(3)
 eng = Engine(); eng.push(TitleScene())
 held = {"d": None}
@@ -43,9 +43,18 @@ def battle_auto(max_steps=400, shots=None, prefer="fight"):
     return False
 
 # ---- story flow to overworld
-run(0.3); key(pygame.K_RETURN); run(0.6)
-for _ in range(5): key(pygame.K_RETURN); key(pygame.K_RETURN); run(0.1)
-run(0.6); key(pygame.K_RETURN); run(1.0)               # choose Florabot
+def until(state, max_presses=80):
+    """Click/confirm through dialogue until the given scene is on top."""
+    for _ in range(max_presses):
+        if eng.top.state_id == state and not eng.transitioning:
+            run(0.6); return
+        key(pygame.K_RETURN); run(0.12)
+    raise AssertionError(f"never reached {state}, stuck at {eng.top.state_id}")
+run(0.3); key(pygame.K_RETURN); run(0.6)               # title -> customize
+key(pygame.K_RETURN); run(0.8)                         # start journey -> wake-up
+until(StateId.BRIEF)                                   # dismiss the wake-up lines
+until(StateId.STARTER_SELECT)                          # Prof. Venn's lab briefing
+key(pygame.K_RETURN); run(1.0)                         # choose Florabot
 for _ in range(6): key(pygame.K_RETURN); key(pygame.K_RETURN); run(0.1)
 run(1.0)
 assert battle_auto(shots={}), "rival battle did not finish"
@@ -83,7 +92,7 @@ shot("14_house")
 # walk out: exit at (5,9)/(6,9)
 held["d"] = "down"; run(1.2); held["d"] = None; run(0.8)
 print("exited ->", ovs.building, p.tile)
-assert ovs.building is None and p.tile == (38, 5)
+assert ovs.building is None and p.tile[0] == 38 and p.tile[1] >= 5   # may keep walking behind the next cottage
 
 # ---- interiors screenshots
 import worldmap as wm
@@ -95,7 +104,7 @@ ovs.building = None; ovs.map = ovs._get_map(None); ovs._load_npcs(); p.place(38,
 
 # ---- shop
 b = wm.BUILDINGS[4]
-from menus import ShopScene, InventoryScene, DatabaseScene, ServiceScene
+from menus import ShopScene, InventoryScene, DatabaseScene
 eng.push(ShopScene(b)); run(0.2); shot("30_shop")
 c0 = st.credits; key(pygame.K_RETURN); assert st.credits < c0, "buy failed"
 key(pygame.K_TAB); run(0.1); shot("31_shop_sell"); tag=eng.top.grid.current.tag; n=st.qty(tag); key(pygame.K_RETURN); assert st.qty(tag)==n-1, (tag,n)

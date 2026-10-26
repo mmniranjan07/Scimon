@@ -201,6 +201,38 @@ class Chest(AnimatedProp):
         return ["You open the supply case.", f"Found {name} x{n}!"]
 
 
+class FieldChest(Chest):
+    """An outdoor loot chest (routes.CHESTS): same open / loot / save behaviour as the interior Chest, but its
+    reward is its own list of (item, qty) stacks instead of the AnimDef role's single baked tuple."""
+
+    def __init__(self, asset, x, y, sort_y, tile, key, loot):
+        super().__init__(asset, x, y, sort_y, tile, key)
+        self.loot = tuple(loot)
+
+    def interact(self, state):
+        if self.opened:
+            return ["The case is empty."]
+        self.opened = True
+        self.animator.play("opening", restart=True)
+        lines = ["You open the supply case."]
+        for item, n in self.loot:
+            state.add_item(item, n)
+            name = ITEMS[item].name if item in ITEMS else item
+            lines.append(f"Found {name} x{n}!")
+        _opened(state).add(self.key)
+        return lines
+
+
+def field_chest(tile, key, loot):
+    """An outdoor chest prop on `tile`, bottom-anchored like every other prop (built by TileMap.route)."""
+    asset = tileset.anim_asset("chest_wood")
+    tx, ty = tile
+    w, h = asset.size
+    x = tx * TILE + (TILE - w) // 2
+    bottom = (ty + 1) * TILE
+    return FieldChest(asset, x, bottom - h, bottom, (tx, ty), key, loot)
+
+
 _radial_cache = {}
 
 

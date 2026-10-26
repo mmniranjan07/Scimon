@@ -38,13 +38,16 @@ MAP_ROWS = [
     "ssQssssssszsvvvssQssssssssssssssvvssQsssszsj",
     "ssszsvvssQsjvvvssssssssszssssQsssszsszvvssQs",
     "sjssivvsssssvvvssszssssssjsissszsssjssvvssss",
-    "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+    "WWWWWWWWWWIIWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+    "WWWWWWWWWWIIWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+    "WWWWWWWWWWIIWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
 ]
 MAP_W, MAP_H = len(MAP_ROWS[0]), len(MAP_ROWS)
 LEDGE_DOWN = "l"                                 # one-way ledge: hop DOWN over it (see TileMap.ledge_landing), solid from every other side
-OVERWORLD_SOLID = set("TWwBhkHfcbNMOxyYSmauqrQijvlL")
+# Solid scenery letters shared by every outdoor area (town + routes/places, see routes.py):
+#   X loot chest   n cinder rock   o lava pool   Z monument   C moon crystal   t tunnel beam   K garden arch
+#   d mooring post   J lighthouse (2x2 footprint, prop drawn from its top-left tile)
+OVERWORLD_SOLID = set("TWwBhkHfcbNMOxyYSmauqrQijvlL" "XnZoctKdJ")
 INTERIOR_SOLID = set("#CSMKbp@ ")
 PLAYER_START = (38, 5)
 
@@ -76,22 +79,31 @@ POND_REGIONS = _water_regions()
 
 
 # --------------------------------------------------------------------------- NPCs
-def _npc(id, x, y, color, hair, name, lines, heals=False, service=None):
-    return dict(id=id, x=x, y=y, color=color, hair=hair, name=name, lines=lines, heals=heals, service=service)
+def _npc(id, x, y, color, hair, name, lines, heals=False, service=None, gives=None, look=None):
+    """`gives`: item id this NPC hands over the first time the player talks to them and lacks it (Town Pass).
+    `look`: an explicit MPW look code (see sprites.make_look); None = the stable per-id look."""
+    d = dict(id=id, x=x, y=y, color=color, hair=hair, name=name, lines=lines, heals=heals, service=service,
+             gives=gives)
+    if look is not None:
+        d["look"] = look
+    return d
 
 
 def _trainer(id, x, y, name, lines, battle, post=(), facing="down", rematch=False, ask=(), requires=(), locked=(),
-             aside=None, stamp=None, disc=None):
+             aside=None, stamp=None, disc=None, look=None):
     """A trainer NPC: scans for challengers, walks up when the player enters the 3-tile line of sight
     (overworld._trainers_think) and battles `battle` = (species id, level).  With `rematch` a beaten trainer
     offers another battle when talked to (choice: accept or deny).  With `requires`, the trainer refuses to
     battle (`locked` lines) until every listed trainer id is in GameState.beaten_trainers.  With `aside`, a
     beaten trainer steps out of the way (gym gate guards stand in single-file corridors).  A gym leader with
     `stamp` hands their GYM_STAMPS entry to the player the first time they are beaten, and with `disc` their
-    exclusive move disc (a technique no Sci-Mon can learn any other way)."""
-    return dict(id=id, x=x, y=y, name=name, lines=list(lines), battle=tuple(battle), post=list(post),
-                facing=facing, rematch=rematch, ask=list(ask), requires=tuple(requires), locked=list(locked),
-                aside=tuple(aside) if aside else None, stamp=stamp, disc=disc)
+    exclusive move disc (a technique no Sci-Mon can learn any other way).  `look` pins their MPW look."""
+    d = dict(id=id, x=x, y=y, name=name, lines=list(lines), battle=tuple(battle), post=list(post),
+             facing=facing, rematch=rematch, ask=list(ask), requires=tuple(requires), locked=list(locked),
+             aside=tuple(aside) if aside else None, stamp=stamp, disc=disc)
+    if look is not None:
+        d["look"] = look
+    return d
 
 
 NPCS = [
@@ -163,6 +175,7 @@ class Building:
     repairs: bool = False
     has_database: bool = False
     area: str = "overworld"             # which outdoor map the door is on ("overworld" = Riven Town; see routes.py)
+    pass_item: Optional[str] = None     # key item required at this building's service counters (None = open to all)
 
 
 def _house_interior(id_, npc):
@@ -180,9 +193,9 @@ BUILDINGS = [
     Building("hall", "Riven Town Hall", "Hall", "hall", (11, 5), (11, 6), (9, 0, 5, 6), "town/bld_hall.png",
              Interior("hall-interior", ROOM_ROWS["hall"], (5, 9), (5, 8), [
                  _npc("mayor", 6, 4, "#c9b06f", "#5a4a2a", "Mayor Rees", [
-                     "Mayor Rees: Riven Town was founded on the old Astrion dig site.",
-                     "Mayor Rees: Researchers are always welcome here, {name}.",
-                     "Mayor Rees: Mind the tall grass out by the Farms."])],
+                      "Mayor Rees: Riven Town was founded on the old Astrion dig site.",
+                      "Mayor Rees: Researchers are always welcome here, {name}.",
+                      "Mayor Rees: Mind the tall grass out by the Farms."], gives="townpass")],
                       PALETTES["hall"], spec="hall")),
     Building("cush", "Cush's Repair Nook", "Cush", "repair", (14, 12), (14, 13), (12, 9, 5, 4),
              "town/bld_cush.png",
@@ -190,8 +203,8 @@ BUILDINGS = [
                  _npc("cush", 5, 4, "#e07a8a", "#8a3a4a", "Cush", [
                      "Cush: Welcome to the nook, {name}.",
                      "Cush: Hand me your Scimons and I'll patch up their systems - no charge."],
-                      service="repair")], PALETTES["repair"], spec="cush"),
-             shop=[("repaircell", 200), ("nanorepair", 600)], repairs=True, has_database=True),
+                       service="repair")], PALETTES["repair"], spec="cush"),
+             shop=[("repaircell", 200), ("nanorepair", 600)], repairs=True, has_database=True, pass_item="townpass"),
     Building("library", "Riven Library", "Library", "hall", (26, 5), (26, 6), (24, 0, 5, 6),
              "town/bld_library.png",
              Interior("library-interior", ROOM_ROWS["library"], (5, 9), (5, 8), [
@@ -206,8 +219,8 @@ BUILDINGS = [
                      "Clerk Dax: Welcome to the Riven Supply Mart, {name}!",
                      "Clerk Dax: Containment Modules, repair kits - all in stock."], service="shop")],
                       PALETTES["store"], spec="mart"),
-             shop=[("repaircell", 200), ("nanorepair", 600), ("stabilizer", 300), ("standard", 200),
-                   ("cryo", 600), ("magnetic", 600), ("bio", 600)]),
+              shop=[("repaircell", 200), ("nanorepair", 600), ("stabilizer", 300), ("standard", 200),
+                    ("cryo", 600), ("magnetic", 600), ("bio", 600)], pass_item="townpass"),
     Building("farms-a", "Riven Farms Market", "Farms", "store", (5, 6), (5, 7), (3, 1, 5, 6),
              "town/bld_farm_a.png",
              Interior("farms-a-interior", ROOM_ROWS["farms-a"], (5, 9), (5, 8), [
@@ -244,8 +257,7 @@ def building_at_door(x, y):
 # Walk-behind buildings: the upper rows of these footprints (below the top map row) become walkable back yard ('e'), so the
 # backs of the Hall, Lab, Library and Mart can be reached from the lawn strips beside them.  The facade (the bottom three rows
 # of the footprint, door included) stays solid, and the building is drawn as a depth-sorted prop so you walk *behind* it.
-BACK_ACCESS = ("hall", "lab", "library", "mart")
-BACK_ROWS = (1, 2, 3)                      # offsets from the footprint's top row; offset 0 stays solid (map edge)
+BACK_ACCESS = tuple(b.id for b in BUILDINGS)   # every building is walk-behind: facade fades, top rows open up
 BACK_ZONES = {}                            # building id -> (x0, y0, x1, y1) in tiles, used to fade the building while you are behind it
 
 
@@ -289,22 +301,26 @@ def trim_footprints(rows, buildings, scale=3, tile=48):
 MAP_ROWS[:] = trim_footprints(MAP_ROWS, BUILDINGS)
 
 
-def _open_backs():
-    for b in BUILDINGS:
-        if b.id not in BACK_ACCESS:
-            continue
+def open_backs(rows, buildings):
+    """Every building's hitbox is a solid block of rows from the door up - 3 rows for the big buildings, 2 for the
+    small ones - and the remaining top footprint rows become walk-behind 'e' tiles: the facade goes translucent
+    (BACK_ZONES) while the player runs behind it.  Nothing is sandwiched: one solid block, one open strip on top."""
+    out = [list(r) for r in rows]
+    for b in buildings:
         fx, fy, fw, fh = (int(v) for v in b.footprint)
-        ys = [fy + o for o in BACK_ROWS]
+        solid = 3 if fh >= 6 else 2                       # hitbox rows, door row included
+        ys = list(range(fy, fy + fh - solid))             # the top strip: walk-behind, facade fades
         for y in ys:
-            row = list(MAP_ROWS[y])
+            row = list(out[y])
             for x in range(fx, fx + fw):
-                if row[x] == "B":                  # corners that are already lawn / flowers stay as they are
+                if row[x] == "B":              # corners that are already lawn / flowers stay as they are
                     row[x] = "e"
-            MAP_ROWS[y] = "".join(row)
+            out[y] = "".join(row)
         BACK_ZONES[b.id] = (fx, ys[0], fx + fw - 1, ys[-1])
+    return ["".join(r) for r in out]
 
 
-_open_backs()
+MAP_ROWS[:] = open_backs(MAP_ROWS, BUILDINGS)
 
 # What the plaza signpost (S tile) says when you face it and press confirm. Directions are as seen from the sign itself.
 SIGN_LINES = [

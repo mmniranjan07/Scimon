@@ -72,13 +72,27 @@ def draw_ground(s, rows, draw_old_tile):
         for x in range(w_):
             t = rows[y][x]
             sx, sy = x * TILE, y * TILE
-            if t in "sWQijvz":
-                # the beach and ocean: original tile code; beach dressing (Q i j v z) stands on that same sand
+            if t in "sWQijvzU":
+                # the beach and ocean: original tile code; beach dressing (Q i j v z) and sea glass (U) stand on sand
                 draw_old_tile(s, "W" if t == "W" else "s", sx, sy, x, y, rows)
                 if t == "z":
                     s.blit(tile(f"beach_flowers_{int(hash2(x + 5, y + 9) * 6) % 6}"), (sx, sy))
+                elif t == "U":
+                    s.blit(tile(f"seaglass_{int(hash2(x + 3, y + 7) * 3) % 3}"), (sx, sy))
                 continue
-            if t == "P" or t == "D":
+            if t in "RI":                       # bridges and piers: water shows around the planks
+                draw_old_tile(s, "W", sx, sy, x, y, rows)
+                if t == "I":
+                    s.blit(tile("pier_plank"), (sx, sy))
+                else:
+                    horiz = _at(rows, x - 1, y) in "RI" or _at(rows, x + 1, y) in "RI"
+                    s.blit(tile("bridge_h" if horiz else "bridge_v"), (sx, sy))
+                continue
+            if t == "V":
+                s.blit(tile(f"volcanic_ground_{int(hash2(x, y) * 3) % 3}"), (sx, sy))
+            elif t == "o":
+                s.blit(tile("lava_pool_0"), (sx, sy))
+            elif t == "P" or t == "D":
                 s.blit(tile(f"road_{int(hash2(x, y) * 4) % 4}"), (sx, sy))
             elif t == "p":
                 s.blit(tile(f"plaza_{(x + y) % 2 + int(hash2(x, y) * 2) * 2}"), (sx, sy))
@@ -244,7 +258,9 @@ def _draw_tide_pools(s, rows):
 
 # ---------------------------------------------------------------------------------------------------- props
 PROP_SPRITE = {"L": "lamp_post", "b": "bench_0", "N": "notice_board", "x": "crate_stack", "y": "barrel", "Y": "hay_bale",
-               "S": "signpost", "m": "mailbox", "a": "scarecrow", "q": "well", "u": "bush_0", "r": "rock_small"}
+               "S": "signpost", "m": "mailbox", "a": "scarecrow", "q": "well", "u": "bush_0", "r": "rock_small",
+               "n": "cinder_rock", "Z": "monument", "C": "moon_crystal", "t": "tunnel_beam", "K": "garden_arch",
+               "d": "mooring_post"}
 
 
 # Green trees cut from Trees.png (assets/mpw/trees, built by tools/build_mpw_assets.py).  Only green species are used:
@@ -297,6 +313,11 @@ def build_props(rows, green_only=False):
                 props.append(make_prop(f"mpw/trees/bush_{int(hash2(x, y) * 2) % 2}", x, y, dy=2, k=0.5))
             elif t in PROP_SPRITE:
                 props.append(make_prop(PROP_SPRITE[t], x, y, dy=2 if t != "L" else 3))
+            elif t == "J":                                    # the lighthouse: one 2x2 prop from its top-left tile
+                if _at(rows, x - 1, y) != "J" and _at(rows, x, y - 1) != "J":
+                    img = spr("bld_lighthouse")
+                    bottom = (y + 2) * TILE
+                    props.append(Prop(img, x * TILE + TILE - img.get_width() // 2, bottom - img.get_height(), bottom))
             elif t == "O":
                 props.append(make_prop(f"planter_{int(hash2(x, y) * 4) % 4}", x, y, dy=2))
             elif t == "k":
@@ -406,9 +427,10 @@ def _glow_surface(r, color):
 
 
 class Fx:
-    def __init__(self, rows, buildings, rects, origins, ponds, lamps, smoke, studs=True):
+    def __init__(self, rows, buildings, rects, origins, ponds, lamps, smoke, studs=True, glows=()):
         self.rows, self.buildings, self.rects, self.origins = rows, buildings, rects, origins
         self.ponds, self.lamps, self.smoke = ponds, lamps, smoke
+        self.glows = list(glows)                        # (x, y, color, radius): lava, crystals, lanterns, beacons
         self.studs = studs                                      # pulsing studs in the cobbles (town roads only)
 
 
@@ -430,6 +452,23 @@ def lamp_points(rows):
                 pts.append((x * TILE + TILE // 2, (y + 1) * TILE - 33 * PX // 1 + 20))
             elif c == "k":
                 pts.append((x * TILE + TILE // 2, (y + 1) * TILE - 20 * PX + 10))
+    return pts
+
+
+# glowing scenery letters: tile letter -> (color, radius px, point offsets in art px from the tile's bottom-centre)
+GLOW_LETTERS = {"o": ((255, 150, 60), 60, (0, -8)),
+                "C": ((120, 220, 255), 52, (0, -12)),
+                "t": ((255, 205, 94), 46, (0, -20)),
+                "J": ((255, 226, 122), 64, (0, -66))}
+
+
+def glow_points(rows):
+    pts = []
+    for y, row in enumerate(rows):
+        for x, c in enumerate(row):
+            if c in GLOW_LETTERS:
+                color, r, (ox, oy) = GLOW_LETTERS[c]
+                pts.append((x * TILE + TILE // 2 + ox * PX, (y + 1) * TILE + oy * PX, color, r))
     return pts
 
 
@@ -474,6 +513,13 @@ def draw_fx(surf, cam, t, fx, focus, font_render, rows):
             g = _glow_surface(74, (255, 214, 120))
             g.set_alpha(int(190 + 40 * math.sin(t * 2.0 + lx * 0.01)))
             surf.blit(g, (sx - 74, sy - 74))
+    # scenery glows (lava, moon crystals, tunnel lanterns, the lighthouse beacon)
+    for (gx, gy, color, r) in getattr(fx, "glows", ()):
+        sx, sy = gx - cam.x, gy - cam.y
+        if -r - 20 < sx < vw + r + 20 and -r - 20 < sy < vh + r + 20:
+            g = _glow_surface(r, color)
+            g.set_alpha(int(150 + 60 * math.sin(t * 2.6 + gx * 0.013 + gy * 0.007)))
+            surf.blit(g, (sx - r, sy - r))
     # chimney smoke
     for i, (sx0, sy0) in enumerate(fx.smoke):
         for k in range(4):

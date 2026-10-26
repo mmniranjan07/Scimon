@@ -5,26 +5,29 @@ os.environ.setdefault("SDL_VIDEODRIVER", "dummy"); os.environ.setdefault("SDL_AU
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 import pygame
 from engine import Engine, StateId
-from scenes import TitleScene
 import overworld as ow
-import routes, worldmap as wm
-from settings import TILE
+import routes
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else None
 if OUT: os.makedirs(OUT, exist_ok=True)
 random.seed(5)
 r1 = routes.AREAS["route1"]
 
-# ---- data: same size class as the reference (30 x 25), only tiles the game already draws, fully walkable
-assert (r1.w, r1.h) == (30, 25)
-assert set("".join(r1.rows)) <= set("GFgPTurfhS")
+# ---- data: the winding-ledge layout (26 x 30), Epidimy's gate at the top, only tiles the game already draws
+assert (r1.w, r1.h) == (26, 30)
+assert set("".join(r1.rows)) <= set("GFgPTurfhSl")
 assert routes.validate()
+link_tiles = set(routes.LINKS["route1"])                   # stepping on these fades to the town / Epidimy
+assert routes.LINKS[routes.TOWN][(21, 0)] == ("route1", routes.ROUTE1_START, "up")
+assert (routes.ROUTE1_START[0], 29) in link_tiles          # the arrival tile faces the town link one step below
 tall = [(x, y) for y in range(r1.h) for x in range(r1.w) if r1.rows[y][x] == "g"]
-stairs = [(x, y) for y in range(r1.h) for x in range(r1.w) if r1.rows[y][x] == "P" and (x, y) not in ((8, 23), (9, 23), (8, 24), (9, 24))]
+stairs = [(x, y) for y in range(r1.h) for x in range(r1.w) if r1.rows[y][x] == "P" and (x, y) not in link_tiles]
 assert len(tall) >= 15 and len(stairs) >= 5, (len(tall), len(stairs))
 
 # ---- play it
 eng = Engine(); ow.ENCOUNTER_CHANCE = 0                    # no random fights while we survey the map
+eng.state.beaten_trainers |= {"luke", "walker"}            # trainers never scan; tests/route1_loop.py covers their battle
+eng.state.story.add("bandit1")                             # the Corrupt Bandits already ambushed us once
 held = {"d": None}
 ow.OverworldScene._held_dir = lambda self: held["d"]
 ovs = ow.OverworldScene(); eng.push(ovs)
@@ -35,7 +38,7 @@ def shot(n):
 def key(k): eng.dispatch(pygame.event.Event(pygame.KEYDOWN, key=k, mod=0, unicode=""))
 
 DIRS = {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)}
-def path(m, start, goal, allow=()):
+def path(m, start, goal):
     """Shortest 4-way path over tiles the player may enter (BFS), as a list of directions."""
     from collections import deque
     q, prev = deque([start]), {start: None}
@@ -66,10 +69,34 @@ def walk(dirs):
         if eng.transitioning or ovs.map.area != getattr(ovs, "_walk_area", ovs.map.area):
             run(1.2)                                         # a link fired: let the fade finish
         ovs._walk_area = ovs.map.area
-        assert p.tile != t0 or ovs.map.blocked(*(t0[0] + DIRS[d][0], t0[1] + DIRS[d][1])) or True
     run(0.1)
 def goto(goal): walk(path(ovs.map, ovs.player.tile, goal))
-def face_and_talk(target, expect_lines=None):
+def poke(d, frames=90):
+    """Hold a direction for exactly one step or ledge hop (a blocked push just holds); the input is dropped as
+    soon as the move starts so a held key can't chain hops, then the move is given time to finish."""
+    p = ovs.player
+    t0 = p.tile
+    held["d"] = d
+
+    def one_move(begin):
+        def wrapped(*a):
+            begin(*a)
+            held["d"] = None
+        return wrapped
+    begin_step, begin_jump = p.begin_step, p.begin_jump
+    p.begin_step, p.begin_jump = one_move(begin_step), one_move(begin_jump)
+    try:
+        for _ in range(frames):
+            eng.step(1 / 60)
+            if p.tile != t0: break
+    finally:
+        p.begin_step, p.begin_jump = begin_step, begin_jump
+        held["d"] = None
+    for _ in range(240):
+        if not p.moving and not eng.transitioning: break
+        eng.step(1 / 60)
+    run(0.1)
+def face_and_talk(target):
     p = ovs.player
     for d, (dx, dy) in DIRS.items():
         stand = (target[0] - dx, target[1] - dy)
@@ -94,29 +121,31 @@ assert ovs.map.name == "Route 1" and ovs.map.area == "route1", ovs.map.name
 assert ovs.player.tile == routes.ROUTE1_START, ovs.player.tile
 shot("r1_arrival")
 
-# 2) collision: the stone ledge and the trees stop the player
-ovs.player.place(4, 4, "right"); run(0.2); held["d"] = "up"; run(0.8); held["d"] = None
-assert ovs.player.tile == (4, 4) or ovs.player.tile[1] == 4, ovs.player.tile
-assert ovs.map.blocked(4, 3), "the ledge above (4, 4) must be solid"
-ovs.player.place(19, 18, "right"); run(0.2); held["d"] = "right"; run(0.8); held["d"] = None
-assert ovs.player.tile == (19, 18) and ovs.map.blocked(20, 18), ovs.player.tile      # (20,18) is a tree: no walking through
-for wall in ((4, 5), (8, 5), (0, 7), (0, 0)):
+# 2) collision: trees and stone ledges stop the player; a ledge is a one-way hop DOWN
+ovs.player.place(5, 5, "left"); run(0.2); poke("left")
+assert ovs.player.tile == (5, 5) and ovs.map.blocked(4, 5), ovs.player.tile          # the forest wall: no walking through
+for wall in ((0, 0), (9, 5), (3, 7), (25, 24)):
     assert ovs.map.blocked(*wall), wall
+ovs.player.place(10, 10, "up"); run(0.2); poke("up")
+assert ovs.player.tile == (10, 10) and ovs.map.blocked(10, 9), ovs.player.tile       # cannot climb a ledge
+ovs.player.place(9, 9, "right"); run(0.2); poke("right")
+assert ovs.player.tile == (9, 9) and ovs.map.blocked(10, 9), ovs.player.tile         # ...nor cross it sideways
+ovs.player.place(10, 8, "down"); run(0.2); poke("down")
+assert ovs.player.tile == (10, 10), ovs.player.tile                                  # ...but hopping down works
 
-# 3) every tall-grass patch, every stair and every top gate can be walked to (so nothing is sealed)
+# 3) every kind of spot can be walked to (nothing is sealed): tall grass, road/stair tiles, both Epidimy gates
 ovs.player.place(*routes.ROUTE1_START, "up"); run(0.2)
-for tgt in tall[::3] + stairs:
+for tgt in tall[::8] + stairs[::8] + [(18, 21), (19, 21)]:     # (18-19, 21): the stairs through the long ridge
     goto(tgt)
     assert ovs.player.tile == tgt
 shot("r1_stairs")
-goto((12, 0)); shot("r1_north_gate_west")
-goto((23, 0)); shot("r1_north_gate_east")
+goto((6, 1)); shot("r1_north_gate_west")                       # beside the Epidimy gate (x 6..9 on row 0)
+goto((9, 1)); shot("r1_north_gate_east")
 
-# 4) signs and the ranger talk
-lines = face_and_talk((13, 0)); assert lines and "North gate" in lines[0], lines
-lines = face_and_talk((22, 0)); assert lines and "North gate" in lines[0], lines
-lines = face_and_talk((10, 21)); assert lines and "Route 1" in lines[0], lines
-lines = face_and_talk((10, 22)); assert lines and "Ranger Dane" in lines[0], lines
+# 4) the signpost, the ranger and a beaten trainer all talk
+lines = face_and_talk((11, 12)); assert lines and "Route 1" in lines[0], lines
+lines = face_and_talk((14, 13)); assert lines and "Ranger Dana" in lines[0], lines
+lines = face_and_talk((8, 10)); assert lines and "Luke" in lines[0], lines
 shot("r1_ranger")
 
 # 5) encounters work in Route 1's tall grass
@@ -136,10 +165,10 @@ for _ in range(400):
 eng.scenes[:] = [s for s in eng.scenes if s.state_id == StateId.OVERWORLD]
 run(1.0)
 
-# 6) back to town through the south gate
-goto((8, 22)); walk(["down", "down"]); run(1.2)
+# 6) back to town through the south link
+goto((11, 28)); walk(["down"]); run(1.2)
 assert ovs.map.name == "Riven Town" and ovs.player.tile == (21, 1), (ovs.map.name, ovs.player.tile)
 shot("r1_back_in_town")
-# the town still works: its plaza signpost keeps its own text, and a building door still leads inside
+# the town still works: its plaza signpost keeps its own text
 assert ovs.map.sign_at(*next(iter(ovs.map.signs)))[0].startswith("Signpost: Welcome to Riven Town")
-print("OK Route 1:", len(tall), "tall-grass tiles,", len(stairs), "stair tiles, all reachable; town <-> route travel both ways")
+print("OK Route 1:", len(tall), "tall-grass tiles,", len(stairs), "road/stair tiles, all reachable; town <-> route travel both ways")

@@ -12,10 +12,9 @@ import pygame
 import assets
 import interiors
 import layered_room
-import epidimy
 import townview
 import worldmap as wm
-from routes import AREAS
+from routes import AREAS, CHESTS
 from settings import PX, TILE, VOID, W, H, hexc
 
 
@@ -304,11 +303,17 @@ class TileMap:
 
     @classmethod
     def route(cls, area_id):
-        """An outdoor area beyond the town (routes.py): same tiles, collision and encounters as the town, no buildings."""
+        """An outdoor area beyond the town (routes.py): same tiles, collision and encounters as the town, plus the
+        area's own buildings for the styled towns and its loot chests (routes.CHESTS)."""
         a = AREAS[area_id]
         m = cls("overworld", a.rows, a.npcs)
         m.area, m.name, m.signs = a.id, a.name, dict(a.signs)
-        m._render_epidimy() if a.styled else m._render_route()
+        m._render_styled(a) if a.styled else m._render_route()
+        for ch in CHESTS.get(area_id, ()):                 # outdoor loot chests (layered_room.FieldChest)
+            c = layered_room.field_chest(ch["tile"], ch["key"], ch["loot"])
+            m.props.append(c)
+            m.animated.append(c)
+            m.interactables[c.tile] = c
         return m
 
     @classmethod
@@ -334,31 +339,46 @@ class TileMap:
         self._tag_cache = {}
 
     def _render_route(self):
-        """Same ground and scenery renderer as the town, minus buildings, ponds, lamps and beacon."""
+        """The routes' renderer: same ground and scenery as the town, plus any landmark buildings (gate huts,
+        the Route 10 nook, the day-care) -- walk-behind, with name tags like the towns'."""
         s = pygame.Surface((self.px_w, self.px_h))
         s.fill(VOID)
         townview.draw_ground(s, self.rows, draw_overworld_tile)
-        self.building_rects = {}
-        self.props = townview.build_props(self.rows, green_only=True)
+        a = AREAS[self.area]
+        origins = {}
+        if getattr(a, "buildings", ()):
+            ids = [b.id for b in a.buildings]
+            self.building_rects, origins = townview.draw_buildings(s, a.buildings, as_props=ids)
+            self.props = (townview.build_props(self.rows, green_only=True)
+                          + townview.building_props(a.buildings, ids, wm.BACK_ZONES))
+        else:
+            self.building_rects = {}
+            self.props = townview.build_props(self.rows, green_only=True)
         self.surface = s
-        self.fx = townview.Fx(self.rows, [], {}, {}, [], [], [], studs=False)
+        self.fx = townview.Fx(self.rows, a.buildings, self.building_rects, origins, [], [], [], studs=False,
+                              glows=townview.glow_points(self.rows))
         self._tag_cache = {}
 
-    def _render_epidimy(self):
-        """Epidimy Town with Riven Town's renderer: same lawns, cobbles + kerbs, stone walls, coping-rimmed ponds, trees, lamps."""
+    def _render_styled(self, a):
+        """A styled town (Epidimy Town or one of towns.py) with Riven Town's renderer: same lawns, cobbles + kerbs,
+        stone walls, coping-rimmed ponds, trees, lamps -- but the area's own buildings, ponds, jets and cave."""
         rr = [r.replace("A", "P") for r in self.rows]                    # stairs are drawn as road tiles, like Route 1's
         s = pygame.Surface((self.px_w, self.px_h))
         s.fill(VOID)
         townview.draw_ground(s, rr, draw_overworld_tile)
-        cx, cy = epidimy.CAVE                                             # the cave mouth cut into the stone wall
-        pygame.draw.rect(s, (36, 30, 32), (cx * TILE + 5 * PX, cy * TILE + 4 * PX, 6 * PX, 12 * PX), border_top_left_radius=3 * PX, border_top_right_radius=3 * PX)
-        pygame.draw.rect(s, (92, 84, 88), (cx * TILE + 4 * PX, cy * TILE + 3 * PX, 8 * PX, PX))
-        self.building_rects, origins = townview.draw_buildings(s, epidimy.BUILDINGS)
-        ponds = epidimy.POND_REGIONS
-        self.props = townview.build_props(rr, green_only=True) + townview.pond_reeds(rr, ponds)
+        if a.cave:                                                        # a cave mouth cut into the stone wall (Epidimy)
+            cx, cy = a.cave
+            pygame.draw.rect(s, (36, 30, 32), (cx * TILE + 5 * PX, cy * TILE + 4 * PX, 6 * PX, 12 * PX), border_top_left_radius=3 * PX, border_top_right_radius=3 * PX)
+            pygame.draw.rect(s, (92, 84, 88), (cx * TILE + 4 * PX, cy * TILE + 3 * PX, 8 * PX, PX))
+        ids = [b.id for b in a.buildings]                                 # every building is a walk-behind fade prop
+        self.building_rects, origins = townview.draw_buildings(s, a.buildings, as_props=ids)
+        ponds = a.ponds
+        self.props = (townview.build_props(rr, green_only=True) + townview.pond_reeds(rr, ponds)
+                      + townview.building_props(a.buildings, ids, wm.BACK_ZONES))
         self.surface = s
-        self.fx = townview.Fx(rr, epidimy.BUILDINGS, self.building_rects, origins,
-                              townview.pond_frames(rr, ponds, [epidimy.FOUNTAIN_REGION]), townview.lamp_points(rr), [])
+        self.fx = townview.Fx(rr, a.buildings, self.building_rects, origins,
+                              townview.pond_frames(rr, ponds, a.jets), townview.lamp_points(rr), [],
+                              glows=townview.glow_points(rr))
         self._tag_cache = {}
 
     def sign_at(self, x, y):
