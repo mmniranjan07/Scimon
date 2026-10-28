@@ -18,11 +18,7 @@ One configuration drives how large a creature reads in battle:
 Everything is measured on the artwork's nontransparent bounds (the canvases are pre-trimmed by the
 importers), scaled with nearest neighbour (pixel art) and cached per (species, view).
 """
-import os
-
-import numpy as np
 import pygame
-from scipy import ndimage
 
 import assets
 from data import SPECIES
@@ -59,46 +55,107 @@ HOVER_SPECIES = {}                      # per-species override (px)
 
 _measure_cache = {}
 _surface_cache = {}
+_disk_cache = {}
 
 
 def _disk(r):
-    y, x = np.ogrid[-r:r + 1, -r:r + 1]
-    return (x * x + y * y) <= r * r
+    m = _disk_cache.get(r)
+    if m is None:
+        m = pygame.Mask((2 * r + 1, 2 * r + 1))
+        for dy in range(-r, r + 1):
+            for dx in range(-r, r + 1):
+                if dx * dx + dy * dy <= r * r:
+                    m.set_at((dx + r, dy + r))
+        _disk_cache[r] = m
+    return m
+
+
+def _bbox(mask):
+    rects = mask.get_bounding_rects()
+    if not rects:
+        return None
+    return (min(r.x for r in rects), min(r.y for r in rects),
+            max(r.x + r.w for r in rects), max(r.y + r.h for r in rects))
+
+
+def _erode(mask, disk, r):
+    """mask eroded by the (symmetric) disk, via dilation of the inverted mask.  The border band
+    the disk cannot fully reach inside the canvas is always eroded away (scipy's border_value=0)."""
+    w, h = mask.get_size()
+    inv = mask.copy()
+    inv.invert()
+    if w <= 2 * r or h <= 2 * r:
+        return pygame.Mask((w, h)), inv
+    dil = inv.convolve(disk)
+    dil.invert()
+    out = pygame.Mask((w, h))
+    out.draw(dil, (-r, -r))
+    ring = pygame.Mask((w, h))
+    ring.fill()
+    inner = pygame.Mask((w - 2 * r, h - 2 * r))
+    inner.fill()
+    ring.erase(inner, (r, r))
+    out.erase(ring, (0, 0))
+    return out, inv
 
 
 def _measure(key, surface):
     """(full bbox, body bbox) from the nontransparent pixels.  The body is the largest mass that
     survives a morphological opening: thin decorations (wings, tails, flames, antennae) vanish,
-    the torso stays.  Cached per source path."""
+    the torso stays.  Cached per source path.  Pure pygame.mask (web-safe: no numpy/scipy)."""
     if key in _measure_cache:
         return _measure_cache[key]
-    a = pygame.surfarray.array_alpha(surface).transpose(1, 0)     # -> (h, w)
-    mask = a > 16
-    ys, xs = np.nonzero(mask)
-    full = (xs.min(), ys.min(), xs.max() + 1, ys.max() + 1)
+    w0, h0 = surface.get_size()
+    mask = pygame.mask.from_surface(surface, 16)
+    full = _bbox(mask)
+    if full is None:
+        full = (0, 0, w0, h0)
+        _measure_cache[key] = (full, full)
+        return _measure_cache[key]
     w, h = full[2] - full[0], full[3] - full[1]
     r = int(min(max(BODY_PROBE[0] * max(w, h), BODY_PROBE[1]), BODY_PROBE[2]))
-    eroded = ndimage.binary_erosion(mask, structure=_disk(r))
-    if eroded.any():
-        lab, n = ndimage.label(eroded, structure=np.ones((3, 3)))
-        if n > 1:
-            # the torso is the thick mass nearest the artwork's centre: flames, tails and wings
-            # sit at the edges, so "largest blob" alone can pick a decoration
-            cx, cy = full[0] + w / 2, full[1] + h / 2
-            best, best_d = None, 1e9
-            for k in range(1, n + 1):
-                ky, kx = np.nonzero(lab == k)
-                d = np.hypot(kx.mean() - cx, ky.mean() - cy)
-                if d < best_d:
-                    best, best_d = k, d
-            core = lab == best
-        else:
-            core = eroded
-        body = ndimage.binary_dilation(core, structure=_disk(r)) & mask
-        bys, bxs = np.nonzero(body)
-        body_box = (bxs.min(), bys.min(), bxs.max() + 1, bxs.max() + 1)
-    else:
-        body_box = full
+    disk = _disk(r)
+    eroded, inv = _erode(mask, disk, r)
+    # 8-neighbour connected components of the eroded pixels (only rects are listed, the pixels
+    # of each component are regrouped by flood fill)
+    remaining = set()
+    for er in eroded.get_bounding_rects():
+        for y in range(er.y, er.y + er.h):
+            for x in range(er.x, er.x + er.w):
+                if eroded.get_at((x, y)):
+                    remaining.add((x, y))
+    cx, cy = full[0] + w / 2, full[1] + h / 2
+    core, best_d = None, 1e9
+    while remaining:
+        comp = [remaining.pop()]
+        stack = [comp[0]]
+        while stack:
+            px, py = stack.pop()
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    q = (px + dx, py + dy)
+                    if q in remaining:
+                        remaining.discard(q)
+                        stack.append(q)
+                        comp.append(q)
+        mx = sum(p[0] for p in comp) / len(comp)
+        my = sum(p[1] for p in comp) / len(comp)
+        d = (mx - cx) ** 2 + (my - cy) ** 2
+        if d < best_d:
+            core, best_d = comp, d
+    body_box = full
+    if core is not None:
+        core_m = pygame.Mask((w0, h0))
+        for px, py in core:
+            core_m.set_at((px, py))
+        grown = core_m.convolve(disk)
+        body = pygame.Mask((w0, h0))
+        body.draw(grown, (-r, -r))
+        body.erase(inv, (0, 0))                    # body &= mask
+        bb = _bbox(body)
+        if bb is not None:
+            body_box = (bb[0], bb[1], bb[2], bb[2])    # historical: bottom = bxs.max()+1 (width), every
+            # tuned size (STAGE_FACTORS, SPECIES_SCALE, caps) was calibrated against this, keep it
     _measure_cache[key] = (full, body_box)
     return _measure_cache[key]
 
