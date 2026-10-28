@@ -180,12 +180,14 @@ def evolve(mon):
     if not evo or mon.level < evo[1]:
         return None
     target, _lv = evo
+    old_species_id = mon.species_id
     old_name = mon.name
     sp = SPECIES[target]
     ratio = mon.hp / mon.max_hp if mon.max_hp else 1.0
     mon.species_id = target
     mon.types = list(sp.types)
-    mon.name = sp.name if mon.name == old_name else mon.name   # keep nicknames
+    # keep nicknames: only rename when the current name is the current species' own name
+    mon.name = sp.name if mon.name == SPECIES[old_species_id].name else mon.name
     known = set(mon.moves)
     for lv, tech in sp.learnset:
         if lv <= mon.level and tech not in known:

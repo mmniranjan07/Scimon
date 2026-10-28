@@ -106,65 +106,125 @@ ROUTE1_START = (11, 28)
 TOWN = "overworld"                      # key of the town map in OverworldScene
 
 # ---------------------------------------------------------------------------
-# Wild encounters: every grass-bearing area draws from its own biome table.  A species' home biome comes from
-# species_expanded.WILD_HOME (the field survey: Botanic/Bio/Atmospheric/Chemical/Mechanical/Radiant in the grass
-# biomes, Hydro on the water, Cryo in the highland snow country, Thermal by the volcanic shores, Geologic and
-# Metallic in the caves, Electric on the grid + tunnel, Plasma/Quantum/Nano/Digital on Aurum's city roads,
-# Cosmic/Shadow by Dusklight's monuments and the deep sea).  Levels scale with distance from Riven Town.
-BIOME_AREAS = {
-    "meadow": [("route1", 2, 5), ("route4", 6, 10), ("route5", 7, 11), ("route6", 8, 12), ("route7", 8, 12),
-               ("route8", 8, 12), ("route9", 8, 12), ("route11", 5, 9), ("route12", 9, 13), ("route13", 9, 13),
-               ("route14", 10, 14), ("route15", 10, 14), ("route16", 9, 13), ("route17", 9, 13),
-               ("route18", 10, 14), ("route24", 5, 9), ("route25", 5, 9)],
-    "forest": [("route2", 3, 7), ("route2n", 4, 8), ("mossmere", 4, 8)],
-    "water": [("route19", 12, 16), ("route20", 12, 16), ("route21", 12, 16), ("seaglass", 12, 16)],
-    "highland": [("route22", 10, 15), ("ascent", 13, 17)],
-    "volcanic": [("route20", 12, 16), ("route21", 12, 16)],
-    "cave": [("route3", 6, 10), ("route10", 11, 15), ("mt_crescent", 11, 15)],
-    "tunnel": [("hollowgate", 12, 16)],
-    "city": [("route5", 7, 11), ("route6", 8, 12), ("route7", 8, 12), ("route8", 8, 12)],
-    "ghost": [("route8", 8, 12), ("route10", 11, 15), ("route12", 9, 13), ("route13", 9, 13)],
-    "plateau": [("ascent", 13, 17)],
-    "sea": [("route19", 12, 16), ("route20", 12, 16), ("route21", 12, 16)],
+# Wild encounters: an explicit zone registry replaces the old per-area biome tables.  Each zone pins one
+# habitat_id to concrete tiles of one area (a tile-letter mask, optionally narrowed by rectangles), carries the
+# area's level band from the database, and is the only thing the overworld's encounter trigger consults.  Mixed
+# areas (water + volcanic on the sea routes, city + meadow on the grid roads, ghost patches near Dusklight,
+# highland vs plateau on the Ascent) distinguish their patches by tile letters or position -- an area-wide
+# habitat list can mis-spawn, so it is never consulted.
+from data import DB as _DB
+from data import HABITATS as _HABITATS
+
+# area id -> [(habitat_id, tile letters, rectangles or None for the whole area)]; first match wins.
+ZONE_TABLE = {
+    "route1": [("meadow", "g", None)],
+    "route2": [("forest", "g", None)],
+    "route2n": [("forest", "g", None)],
+    "mossmere": [("forest", "g", None)],
+    "route3": [("cave", "g", None)],
+    "route4": [("meadow", "g", None)],
+    # the grid roads: tall grass = meadow, the cobbled facility roads = city
+    "route5": [("meadow", "g", None), ("city", "P", None)],
+    "route6": [("meadow", "g", None), ("city", "P", None)],
+    "route7": [("meadow", "g", None), ("city", "P", None)],
+    # route8: west grass = meadow, east grass = Dusklight's ghost patches, roads = city
+    "route8": [("meadow", "g", [(4, 2, 11, 15)]), ("ghost", "g", [(20, 2, 26, 15)]), ("city", "P", None)],
+    "route9": [("meadow", "g", None)],
+    # route10: the north grass = cave, the south grass by the lake = ghost
+    "route10": [("cave", "g", [(0, 0, 27, 9)]), ("ghost", "g", [(0, 10, 27, 19)])],
+    "route11": [("meadow", "g", None)],
+    # route12/13: inland grass = meadow, the coastal grass by the ocean = ghost
+    "route12": [("meadow", "g", [(0, 0, 15, 25)]), ("ghost", "g", [(16, 0, 23, 25)])],
+    "route13": [("meadow", "g", [(0, 0, 15, 25)]), ("ghost", "g", [(16, 0, 23, 25)])],
+    "route14": [("meadow", "g", None)],
+    "route15": [("meadow", "g", None)],
+    "route16": [("meadow", "g", None)],
+    "route17": [("meadow", "g", None)],
+    "route18": [("meadow", "g", None)],
+    "route24": [("meadow", "g", None)],
+    "route25": [("meadow", "g", None)],
+    # the sea routes: tall grass = volcanic shore (Thermal families), sand = water shallows, piers = sea
+    "route19": [("water", "sg", None), ("sea", "I", None)],
+    "route20": [("volcanic", "g", None), ("water", "s", None), ("sea", "I", None)],
+    "route21": [("volcanic", "g", None), ("water", "s", None), ("sea", "I", None)],
+    "seaglass": [("water", "sg", None)],
+    "route22": [("highland", "g", None)],
+    # the Ascent: the upper grass = plateau, the climb below the second ledge = highland
+    "ascent": [("plateau", "g", [(0, 0, 21, 12)]), ("highland", "g", [(0, 13, 21, 27)])],
+    "mt_crescent": [("cave", "g", None)],
+    "hollowgate": [("tunnel", "g", None)],
 }
-_BIOME_WEIGHT = {"common": 10, "uncommon": 5, "rare": 2}
-from data import STARTER_IDS
 
-_CLASSIC_BASES = {"sporelet", "dewbit", "cindermite", "sparkit", "pebblon", "nanolyte"}
-_WILD_EXCLUDED = _CLASSIC_BASES | set(STARTER_IDS)     # classics: Route 1 only; starters: never wild
+_DB_BANDS = {(b["area_id"], h["id"]): (b["min_level"], b["max_level"])
+             for h in _HABITATS.values() for b in h["source_area_level_bands"]}
+DEFAULT_BAND = (2, 16)
 
-AREA_ENCOUNTERS = {}
-AREA_BIOMES = {}                       # area id -> set of home biomes its table draws from (test / debug)
-for _biome, _areas in BIOME_AREAS.items():
-    _pool = [(sid, _BIOME_WEIGHT[SPECIES[sid].rarity]) for sid, home in WILD_HOME.items() if home == _biome
-             and not any(sid == b or sid.startswith(b + "-") for b in _WILD_EXCLUDED)]
-    for _area, _lo, _hi in _areas:
-        AREA_ENCOUNTERS.setdefault(_area, []).extend((sid, _w, _lo, _hi) for sid, _w in _pool)
-        AREA_BIOMES.setdefault(_area, set()).add(_biome)
-# the classic commons are Riven Town's own cast: Route 1 only (every other route draws purely from its biomes)
-_CLASSIC = [("sporelet", 30), ("dewbit", 25), ("cindermite", 20), ("sparkit", 13), ("pebblon", 8), ("nanolyte", 4)]
-AREA_ENCOUNTERS["route1"][:0] = [(sid, _w, 2, 5) for sid, _w in _CLASSIC]
 
-# evolution stages join the wild pools: three-stage lines also spawn their babies (common, low levels) and
-# finals (rare, top-of-band); two-stage lines spawn their finals rarely.  Biome purity holds: stages inherit
-# the line's home biome, so each stage lands in exactly the areas its family already inhabits.
-for _area, _table in list(AREA_ENCOUNTERS.items()):
-    _extra = []
-    _seen = {sid for sid, _w, _lo, _hi in _table}
-    for sid, w, lo, hi in list(_table):
-        chain = CHAIN_OF.get(sid, [sid])
-        if len(chain) < 2:
-            continue
-        if any(chain[0] == b or chain[0].startswith(b + "-") for b in _WILD_EXCLUDED) and _area != "route1":
-            continue
-        pos = chain.index(sid)
-        if pos > 0 and chain[0] not in _seen:                 # the baby of a three-stage line
-            _extra.append((chain[0], max(4, int(w * 0.9)), lo, min(hi, lo + 2)))
-            _seen.add(chain[0])
-        if pos < len(chain) - 1 and chain[-1] not in _seen:   # the final stage, rare and high-level
-            _extra.append((chain[-1], max(2, int(w * 0.2)), max(lo, hi - 3), hi + 2))
-            _seen.add(chain[-1])
-    _table.extend(_extra)
+def _build_zones():
+    from data import FAMILIES as _FAM
+    zones = {}
+    for area, specs in ZONE_TABLE.items():
+        lst = []
+        for i, (habitat, tiles, rects) in enumerate(specs):
+            band = list(_DB_BANDS.get((area, habitat), DEFAULT_BAND))
+            # extend the band minimum downward when first forms can't reach the original floor
+            first_floors = [SPECIES[s].max_wild_level for f in _FAM.values()
+                            if habitat in f["normal_habitats"] for s in f["chain_ids"]
+                            if SPECIES[s].stage_ordinal == 1]
+            if first_floors:
+                floor = max(first_floors)
+                if band[0] > floor:
+                    band[0] = max(1, floor)
+            lst.append({"zone_id": f"{area}:{habitat}:{i}", "area_id": area, "habitat_id": habitat,
+                        "tiles": frozenset(tiles), "rects": tuple(rects) if rects else None,
+                        "band": tuple(band), "wild_enabled": True})
+        zones[area] = lst
+    return zones
+
+
+from data import SPECIES
+
+
+ENCOUNTER_ZONES = _build_zones()
+
+# ---------------------------------------------------------------------------
+# Gym progression: each zone references the gym it prepares the player for.  The gym's wild ceiling
+# (FireRed ace level minus the configured gap) caps all wild levels in that zone.  Zones are mapped
+# by progression position (the gym challenge they prepare for), not by route number or geography.
+ZONE_GYM = {
+    "route1": 1, "route2": 1, "route2n": 1, "mossmere": 1,
+    "route3": 2, "route4": 2, "route22": 2, "route11": 2,
+    "route5": 3, "route6": 3, "route7": 3, "route8": 3, "route9": 3,
+    "route10": 4, "route12": 4, "route13": 4, "route14": 4, "mt_crescent": 4,
+    "route15": 5, "route16": 5, "route17": 5, "route18": 5,
+    "route19": 5, "route20": 5, "route21": 5, "seaglass": 5, "hollowgate": 5,
+    "ascent": 7,                                                             # postgame zone
+}
+POSTGAME_ZONES = {"ascent"}                # explicit postgame designations (ceiling 50 after the boss)
+
+from encounters import GYM_REFERENCE, POSTGAME_WILD_CAP, POSTGAME_STORY_FLAG
+
+for _area, _zs in ENCOUNTER_ZONES.items():
+    for _z in _zs:
+        _gym = ZONE_GYM.get(_area, 1)
+        _z["gym_id"] = _gym
+        _z["gym_ceiling"] = GYM_REFERENCE[_gym]["ceiling"]
+        _z["postgame"] = _area in POSTGAME_ZONES
+
+
+def zone_at(area, x, y):
+    """The encounter zone covering tile (x, y) of an outdoor area, or None (safe ground / interiors)."""
+    rows = AREA_ROWS.get(area)
+    if not rows or not (0 <= y < len(rows)) or not (0 <= x < len(rows[0])):
+        return None
+    tile = rows[y][x]
+    for z in ENCOUNTER_ZONES.get(area, ()):
+        if tile in z["tiles"]:
+            if z["rects"] is None or any(r[0] <= x <= r[2] and r[1] <= y <= r[3] for r in z["rects"]):
+                return z
+    return None
+
+
 AREAS = {"route1": Area("route1", "Route 1", ROUTE1_ROWS, ROUTE1_SIGNS, ROUTE1_NPCS, start=ROUTE1_START),
          epi.AREA_ID: Area(epi.AREA_ID, epi.NAME, epi.ROWS, epi.SIGNS, epi.NPCS, epi.BUILDINGS, styled=True,
                            start=epi.START, ponds=epi.POND_REGIONS, jets=[epi.FOUNTAIN_REGION], cave=epi.CAVE)}
@@ -195,6 +255,8 @@ for _k, _r in kanto.AREAS.items():
 for _k, _v in kanto.LINKS.items():
     LINKS.setdefault(_k, {}).update(_v)
 HEALERS_EXTRA = towns.HEALERS + kanto.HEALERS
+
+AREA_ROWS = {TOWN: wm.MAP_ROWS, **{a.id: a.rows for a in AREAS.values()}}
 
 # Outdoor loot chests (layered_room.FieldChest), area id -> [dict(tile, key, loot)].  House rule, enforced in
 # validate(): at most ONE town and ONE route hide a chest, so what they hold stays special.
@@ -362,23 +424,35 @@ def validate():
         assert h["tile"] not in {(n["x"], n["y"]) for n in npcs_of(h["area"])}, f"healer {h['id']} warps onto an NPC"
         assert h["facing"] in ("up", "down", "left", "right"), f"healer {h['id']} has a bad facing"
 
-    # ---- wild encounters: every grass-bearing area has a valid table, tables only name real species,
-    # and the biome rule holds: outside Route 1 no species appears outside its home biome
-    assert set(AREA_ENCOUNTERS) <= {a.id for a in AREAS.values()}, "encounter table for an unknown area"
+    # ---- wild encounters: the zone registry.  Every grass-bearing area has at least one zone, zones sit on
+    # tiles their area actually has, every one of the 11 habitats and every family habitat is reachable, and
+    # every family with Thermal in either type slot is normal to volcanic only.
+    assert set(ENCOUNTER_ZONES) <= {a.id for a in AREAS.values()}, "encounter zone for an unknown area"
+    seen_habitats = set()
     for a in AREAS.values():
         if a.styled or not a.encounters:
+            assert a.id not in ENCOUNTER_ZONES, f"{a.id} should have no encounter zones"
             continue
-        table = AREA_ENCOUNTERS.get(a.id)
-        assert table, f"{a.id} has wild encounters but no table"
-        for sid, w, lo, hi in table:
-            assert sid in SPECIES and w > 0 and 1 <= lo <= hi <= 40, (a.id, sid, w, lo, hi)
-            if a.id != "route1":
-                assert WILD_HOME.get(sid, a.id) in AREA_BIOMES.get(a.id, set()), \
-                    f"{a.id}: {sid} ({WILD_HOME.get(sid)}) is outside its biome"
-                _base = sid.replace("-baby", "").replace("-mid", "").replace("-final", "")
-                assert _base not in {"sporelet", "dewbit", "cindermite", "sparkit", "pebblon", "nanolyte"}, \
-                    f"{a.id}: classic cast member {sid} escaped Route 1"
-                assert _base not in STARTER_IDS, f"{a.id}: starter {sid} is never wild"
+        zones = ENCOUNTER_ZONES.get(a.id)
+        assert zones, f"{a.id} has wild encounters but no zones"
+        for z in zones:
+            lo, hi = z["band"]
+            assert 1 <= lo <= hi <= 100, f"{z['zone_id']}: bad band {z['band']}"
+            assert z["habitat_id"] in _HABITATS, f"{z['zone_id']}: unknown habitat"
+            tiles = {a.rows[y][x] for y in range(a.h) for x in range(a.w)
+                     if a.rows[y][x] in z["tiles"]
+                     and (z["rects"] is None or any(r[0] <= x <= r[2] and r[1] <= y <= r[3] for r in z["rects"]))}
+            assert tiles, f"{z['zone_id']}: no matching tiles on the map"
+            if "g" in z["tiles"]:
+                assert "g" in tiles, f"{z['zone_id']}: grass zone rect matches no tall grass"
+            seen_habitats.add(z["habitat_id"])
+    assert seen_habitats == set(_HABITATS), f"habitats without any zone: {sorted(set(_HABITATS) - seen_habitats)}"
+    for f in _DB["families"]:
+        for h in f["normal_habitats"]:
+            assert h in seen_habitats, f"family {f['id']}: habitat {h} has no encounter zone"
+    for sid, sp in SPECIES.items():
+        if "Thermal" in sp.types:
+            assert WILD_HOME.get(sid) == "volcanic", f"{sid}: Thermal species outside volcanic ({WILD_HOME.get(sid)})"
 
     # ---- chests: at most one town + one route, each on an X tile with a reachable approach
     chest_areas = {area for area, chests in CHESTS.items() if chests}

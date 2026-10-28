@@ -1,0 +1,130 @@
+{
+  "collection": 2,
+  "family_count": 51,
+  "stage_designs_per_view": 153,
+  "pages": [
+    {
+      "sheet": 1,
+      "families": [
+        "mistfin",
+        "mosswing",
+        "mycelid",
+        "nanoclit",
+        "nanolyte",
+        "nebulon"
+      ],
+      "front_file": "FRONT_VIEWS/C02_Sheet_01_FRONT.png",
+      "back_file": "BACK_VIEWS/C02_Sheet_01_BACK.png",
+      "back_sha256": "fa1be88a2786944fb4e984cd11e8b1cc2919db185b5cf041a25c1548d63aabb1"
+    },
+    {
+      "sheet": 2,
+      "families": [
+        "noctulite",
+        "ohmite",
+        "orbitling",
+        "organitron",
+        "packetot",
+        "pebblon"
+      ],
+      "front_file": "FRONT_VIEWS/C02_Sheet_02_FRONT.png",
+      "back_file": "BACK_VIEWS/C02_Sheet_02_BACK.png",
+      "back_sha256": "f8957e012b5f085623854b06993067f5502e5ecf83ea170b205cdc79d01e2c96"
+    },
+    {
+      "sheet": 3,
+      "families": [
+        "petalug",
+        "phaseling",
+        "pixelot",
+        "prismoth",
+        "puddlit",
+        "quartzot"
+      ],
+      "front_file": "FRONT_VIEWS/C02_Sheet_03_FRONT.png",
+      "back_file": "BACK_VIEWS/C02_Sheet_03_BACK.png",
+      "back_sha256": "443ca94e78f0dc7c51b797187afa480cbffda1b233880bc4e45b10194c62fc20"
+    },
+    {
+      "sheet": 4,
+      "families": [
+        "reagentot",
+        "rimelet",
+        "riveton",
+        "scorchit",
+        "shadebot",
+        "shalebit"
+      ],
+      "front_file": "FRONT_VIEWS/C02_Sheet_04_FRONT.png",
+      "back_file": "BACK_VIEWS/C02_Sheet_04_BACK.png",
+      "back_sha256": "d2eb443ce8c341a47887614685ea17d0b86f02f3f12effa5ab478d1804415cc6"
+    },
+    {
+      "sheet": 5,
+      "families": [
+        "slagmite",
+        "sludgebot",
+        "snovite",
+        "solburst",
+        "solvexel",
+        "sparkit"
+      ],
+      "front_file": "FRONT_VIEWS/C02_Sheet_05_FRONT.png",
+      "back_file": "BACK_VIEWS/C02_Sheet_05_BACK.png",
+      "back_sha256": "6f4b76e9f03343cdbde7c679cec9cf7160bb199bf3a7b358b2ef1abae1c88ece"
+    },
+    {
+      "sheet": 6,
+      "families": [
+        "splicewisp",
+        "sporelet",
+        "springbit",
+        "sproutle",
+        "starlit",
+        "steelot"
+      ],
+      "front_file": "FRONT_VIEWS/C02_Sheet_06_FRONT.png",
+      "back_file": "BACK_VIEWS/C02_Sheet_06_BACK.png",
+      "back_sha256": "4b56d3bc2783c98b70adf63d551a282ae71d674dc154ecb253bd7511e980da11"
+    },
+    {
+      "sheet": 7,
+      "families": [
+        "stratowing",
+        "swarmlet",
+        "terrabot",
+        "thistledrone",
+        "tidefin",
+        "toxigerm"
+      ],
+      "front_file": "FRONT_VIEWS/C02_Sheet_07_FRONT.png",
+      "back_file": "BACK_VIEWS/C02_Sheet_07_BACK.png",
+      "back_sha256": "54311eec5a2373cd0d7488790726f55df9099ef1d7869267e66c30b4718244fa"
+    },
+    {
+      "sheet": 8,
+      "families": [
+        "umbralet",
+        "vapomite",
+        "vinelatch",
+        "visceroid",
+        "voidling",
+        "vortexling"
+      ],
+      "front_file": "FRONT_VIEWS/C02_Sheet_08_FRONT.png",
+      "back_file": "BACK_VIEWS/C02_Sheet_08_BACK.png",
+      "back_sha256": "2c74ca83256a5c23f93d6b1d4aeb4220fa2f538c7f477bde0ee721023b464112"
+    },
+    {
+      "sheet": 9,
+      "families": [
+        "wavicle",
+        "wraithex",
+        "zephyrit"
+      ],
+      "front_file": "FRONT_VIEWS/C02_Sheet_09_FRONT.png",
+      "back_file": "BACK_VIEWS/C02_Sheet_09_BACK.png",
+      "back_sha256": "8b3a3f838a4eea8bdf56833baa247b122df07004aec8e7b94d48bbce9edd5012"
+    }
+  ]
+}

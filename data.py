@@ -1,7 +1,10 @@
-"""SCI-MON static data: types, techniques, species, items, shop prices.
+"""SCI-MON static data: types, techniques, species, evolutions, habitats, items, shop prices.
 
-Merged from Version 34's lib/game/data.ts (the complete catalogue: held items, key items,
-item categories, rarity) and scimon_py's data.py (sprite file names)."""
+The scimon_database.json package is the authoritative species catalog (109 families, 327 forms,
+habitats, encounter policy); everything else (held items, key items, item categories, rarity,
+the Corrupt Bandits) is merged from Version 34's lib/game/data.ts and scimon_py's data.py."""
+import json
+import os
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -208,6 +211,10 @@ _t("verdantstorm", "Verdant Storm", "Botanic", "special", 75, 90,
 
 
 # --------------------------------------------------------------------------- species
+# The scimon_database.json package (assets/scimon_database.json, mirrored in scimon_db_data.py for browser
+# builds) is the authoritative catalog: 109 families, 327 forms, evolutions, habitats and the encounter
+# policy.  All 268 previously registered IDs, dex numbers, names, stats and evolution thresholds are preserved
+# inside it; the 59 first forms marked "proposed_new_art_stage" complete every family to three stages.
 @dataclass
 class Species:
     id: str
@@ -224,6 +231,17 @@ class Species:
     ability: str
     desc: str
     rarity: str
+    family_id: str = ""
+    stage_ordinal: int = 0           # 1 first / 2 middle / 3 final
+    stage_role: str = ""
+    normal_habitats: tuple = ()      # authoritative normal-encounter habitats (species_expanded.WILD_HOME successor)
+    min_wild_level: int = 1
+    max_wild_level: int = 100
+    wild_unlock_phase: int = 0
+    evolves_to: Optional[str] = None
+    evolution_level: Optional[int] = None
+    wild_enabled: bool = True
+    source_registered: bool = True
 
     @property
     def b_hp(self): return self.base[0]
@@ -244,159 +262,82 @@ class Species:
 SPECIES = {}
 
 
-def _s(*a):
-    s = Species(*a)
+def _s(*a, **k):
+    s = Species(*a, **k)
     SPECIES[s.id] = s
 
 
-_s("florabot", 1, "Florabot", "Ecological Drone", ["Botanic", "Bio"], (50, 42, 52, 50, 55, 40, 55), 45, 64,
-   "florabot-front.png", "florabot-back.png",
-   [(1, "sysram"), (1, "leafcut"), (6, "biodrain"), (10, "sporecloud"), (14, "photosurge"), (20, "verdant")],
-   "Photosynthesis", "An ecological maintenance robot. Curious and friendly, it excels at defense and disruption.", "rare")
-_s("pyrodrive", 2, "Pyrodrive", "Thermal Engine", ["Thermal", "Mechanical"], (48, 60, 45, 52, 40, 50, 45), 45, 64,
-   "pyrodrive-front.png", "pyrodrive-back.png",
-   [(1, "sysram"), (1, "embervent"), (6, "pistonpunch"), (10, "thermalburst"), (14, "overclock"), (20, "magmasurge")],
-   "Overdrive", "A high-temperature engineering machine. Energetic and aggressive, it hits extremely hard.", "rare")
-_s("aquabit", 3, "Aquabit", "Research Drone", ["Hydro", "Digital"], (44, 40, 42, 58, 46, 62, 48), 45, 64,
-   "aquabit-front.png", "aquabit-back.png",
-   [(1, "sysram"), (1, "waterjet"), (6, "dataspike"), (10, "pressurewave"), (14, "glitchpulse"), (20, "overflow")],
-   "Coolant Flow", "A playful aquatic research drone. Fast and clever, it overwhelms foes with special techniques.", "rare")
-_s("sporelet", 11, "Sporelet", "Fungal Nanobot", ["Botanic"], (40, 34, 40, 38, 40, 30, 45), 160, 40,
-   "sporelet-front.png", None, [(1, "leafcut"), (4, "sporecloud"), (8, "biodrain")],
-   "Spore Vent", "A tiny fungus-inspired nanobot that drifts through meadows dispersing spores.", "common")
-_s("cindermite", 12, "Cindermite", "Ember Drone", ["Thermal"], (36, 45, 32, 42, 30, 52, 38), 150, 44,
-   "cindermite-front.png", None, [(1, "embervent"), (5, "sysram"), (9, "thermalburst")],
-   "Ember Body", "A skittish ember drone whose chassis glows with residual heat.", "common")
-_s("dewbit", 13, "Dewbit", "Droplet Drone", ["Hydro"], (42, 32, 40, 44, 42, 40, 46), 160, 42,
-   "dewbit-front.png", None, [(1, "waterjet"), (5, "sysram"), (9, "pressurewave")],
-   "Condensation", "A gentle droplet-shaped drone that patrols streams and puddles.", "common")
-_s("sparkit", 14, "Sparkit", "Cell Bot", ["Electric"], (34, 36, 34, 46, 34, 55, 40), 150, 44,
-   "sparkit-front.png", None, [(1, "staticjab"), (4, "magshock"), (8, "arcdis")],
-   "Static Charge", "A restless battery-cell bot that crackles with stored current.", "uncommon")
-_s("pebblon", 15, "Pebblon", "Rock Crawler", ["Geologic"], (52, 46, 58, 30, 40, 22, 60), 140, 50,
-   "pebblon-front.png", None, [(1, "rocktoss"), (1, "sysram"), (8, "pistonpunch")],
-   "Sturdy Plating", "A slow, heavily-armored crawler that grinds minerals from the earth.", "uncommon")
-_s("nanolyte", 16, "Nanolyte", "Microbot Swarm", ["Nano", "Digital"], (38, 40, 36, 48, 40, 48, 30), 120, 52,
-   "nanolyte-front.png", None, [(1, "naniteswarm"), (1, "dataspike"), (8, "glitchpulse")],
-   "Swarm Logic", "A rare cluster of nanobots bound by an unstable shared consciousness.", "rare")
-
-STARTER_IDS = ["florabot", "pyrodrive", "aquabit"]
-
-# ---- the wider region's wild Scimons (species_expanded.py: 100 curated entries; stats and learnsets derive
-# from the species' archetype and type pool, the art from tools/build_scimon_art.py) -------------------------------
-from species_expanded import expanded_species
-
-WILD_HOME = {}                         # species id -> home biome (routes.py builds the encounter tables from it)
-for _i, _row in enumerate(expanded_species(), 17):
-    WILD_HOME[_row[0]] = _row[13]
-    _s(_row[0], _i, _row[1], _row[2], _row[3], _row[4], _row[5], _row[6], _row[7], _row[8], _row[9], _row[10],
-       _row[11], _row[12])
-
-# --------------------------------------------------------------------------- evolutions
-# Every Sci-Mon evolves.  The three starters climb a full three-stage line (dex 4-9); wild lines have either two
-# stages (base -> final) or three (baby -> base -> final) -- the seeded split is ~40% three-stage.  Stage stats
-# derive from the base species' archetype (babies smaller and easier to catch, finals larger and rarer), and every
-# stage inherits its line's habitat (WILD_HOME) so the biome rule holds for the whole family.
-EVOLUTIONS = {}                        # species id -> (target id, level)
-CHAIN_OF = {}                          # every member id -> [stage ids, first..last]
-CURATED_STARTER_STAGES = [
-    # (base, mid name, mid level, final name, final level)
-    ("florabot", "Floravine", 16, "Floratitan", 32),
-    ("pyrodrive", "Pyroblaze", 16, "Pyrodrake", 32),
-    ("aquabit", "Aquafin", 16, "Aquarex", 32),
-]
-_FINAL_SUFFIXES = ("Prime", "Rex", "Max", "Nova", "King", "Zero")
-_next_dex = [4]                        # the reserved dex slots 4-9 go to the starters' evolved stages
+def _load_db():
+    """The database JSON is the source of truth; scimon_db_data.py (generated from it) is the import-time
+    fallback for browser builds, where assets are preloaded after the module imports."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    for rel in (os.path.join("assets", "scimon_database.json"), "scimon_database.json"):
+        try:
+            with open(os.path.join(here, rel), "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            continue
+    try:
+        import scimon_db_data
+        return scimon_db_data.DB
+    except Exception:
+        raise ImportError("scimon database not found (assets/scimon_database.json / scimon_db_data.py)")
 
 
-def _build_evolutions():
-    _seen_names = {s.name for s in SPECIES.values()}
-    wild_ids = [s.id for s in SPECIES.values()
-                if s.id not in STARTER_IDS and not (s.id.endswith("-mid") or s.id.endswith("-final")
-                                                     or s.id.endswith("-baby"))]
+import json as _json
+import os as _os
 
-    def baby_name(base):
-        stem = base[:-2] if len(base) > 6 else base
-        for cand in (stem + "ling", stem + "let", stem + "iling"):
-            if cand not in _seen_names and not cand.endswith("lling"):
-                return cand
-        return base + " Jr"
+DB = _load_db()
 
-    def final_name(base):
-        for cand in (base + " " + suf for suf in _FINAL_SUFFIXES):
-            if cand not in _seen_names:
-                return cand
-        return base + " Prime II"
+# ---- types: colours and matchups come from the database (it completes the missing Quantum/Plasma/Shadow/Cosmic
+# weakness lists the hand-written table was missing)
+TYPE_COLORS = {t["id"]: t["color"] for t in DB["types"]}
+STRONG = {t["id"]: list(t["strong_against"]) for t in DB["types"]}
+WEAK = {t["id"]: list(t["weak_against"]) for t in DB["types"]}
 
-    # ---- starters: curated three-stage lines, dex 4-9
-    for base, mid_name, mid_lv, final_name_, final_lv in CURATED_STARTER_STAGES:
-        sp = SPECIES[base]
-        chain = [base]
-        for sid, name, lv, scale in ((f"{base}-mid", mid_name, mid_lv, 1.28),
-                                     (f"{base}-final", final_name_, final_lv, 1.55)):
-            b = tuple(max(20, round(v * scale)) for v in sp.base)
-            _s(sid, _next_dex[0], name, sp.classification, list(sp.types), b,
-               45, int(sp.xp_yield * 1.5), f"{sid}-front.png", None,
-               list(sp.learnset), sp.ability,
-               f"The evolved form of {sp.name}. {sp.desc}", sp.rarity)
-            _next_dex[0] += 1
-            EVOLUTIONS[chain[-1]] = (sid, lv)
-            chain.append(sid)
-            _seen_names.add(name)
-        for member in chain:
-            CHAIN_OF[member] = list(chain)
+# ---- techniques: identical ids/fields to the hand-written table (verified), kept in sync from the database
+for _tr in DB["techniques"]:
+    _t(**{k: v for k, v in _tr.items() if k in Technique.__dataclass_fields__})
 
-    # ---- wild lines: seeded two/three-stage split (dex 117+)
-    _next_dex[0] = max(_next_dex[0], 117)
-    for base in wild_ids:
-        sp = SPECIES[base]
-        r = __import__("zlib").crc32(("evo:" + base).encode())
-        three = (r % 100) < 40
-        chain = [base]
-        if three:                                       # a baby pre-stage before the known species
-            bid = f"{base}-baby"
-            b = tuple(max(20, round(v * 0.62)) for v in sp.base)
-            bn = baby_name(sp.name)
-            first_move = sp.learnset[0][1]
-            _s(bid, _next_dex[0], bn, sp.classification, list(sp.types), b,
-               190, max(20, int(sp.xp_yield * 0.6)), f"{bid}-front.png", None,
-               [(1, first_move), (1, "sysram") if first_move != "sysram" else (1, first_move)],
-               sp.ability, f"A young {sp.name}. {sp.desc}", "common")
-            _next_dex[0] += 1
-            EVOLUTIONS[bid] = (base, 10 + r % 5)
-            chain.insert(0, bid)
-            _seen_names.add(bn)
-        fid = f"{base}-final"
-        f = tuple(max(20, round(v * (1.4 if three else 1.45))) for v in sp.base)
-        fn = final_name(sp.name)
-        _s(fid, _next_dex[0], fn, sp.classification, list(sp.types), f,
-           max(35, sp.catch_rate // 3), int(sp.xp_yield * 1.6),
-           f"{fid}-front.png", None,
-           list(sp.learnset) + [(26, sp.learnset[-1][1]), (32, sp.learnset[min(2, len(sp.learnset) - 1)][1])],
-           sp.ability, f"The final form of {sp.name}. {sp.desc}", "rare")
-        _next_dex[0] += 1
-        EVOLUTIONS[chain[-1]] = (fid, (24 + r % 10) if three else (14 + r % 9))
-        chain.append(fid)
-        _seen_names.add(fn)
-        for member in chain:
-            CHAIN_OF[member] = list(chain)
+# ---- families and the encounter policy
+FAMILIES = {f["id"]: f for f in DB["families"]}
+HABITATS = {h["id"]: h for h in DB["habitats"]}
+ENCOUNTER_POLICY = DB["encounter_policy"]
+PHASES = ENCOUNTER_POLICY["phases"]
+MIGRATION_PROBABILITY = ENCOUNTER_POLICY["global_migration_probability"]
+LEVEL_CAP = ENCOUNTER_POLICY["level_cap"]
 
-    # stages inherit the line's habitat (the base species' biome)
-    for sid, chain in CHAIN_OF.items():
-        if sid not in WILD_HOME:
-            home_chain = [c for c in chain if c in WILD_HOME]
-            WILD_HOME[sid] = WILD_HOME[home_chain[0]] if home_chain else "meadow"
+STARTER_IDS = [f["id"] for f in DB["families"] if f.get("starter_gift_eligible")]
 
+for _rec in DB["species"]:
+    _learnset = [(int(_m["level"]), _m["technique_id"]) for _m in _rec.get("learnset", ())]
+    _base = tuple(int(_rec["base_stats"][k]) for k in
+                  ("hp", "power", "defense", "sp_power", "sp_defense", "speed", "stability"))
+    _front = _rec.get("front_sprite") or ""
+    _back = _rec.get("back_sprite") or None
+    _s(_rec["id"], int(_rec["dex"]), _rec["name"], _rec.get("classification", ""), list(_rec["types"]), _base,
+       int(_rec["catch_rate"]), int(_rec["xp_yield"]),
+       _front.split("/")[-1] if _front else "", _back.split("/")[-1] if _back else None,
+       _learnset, _rec.get("ability", ""), _rec.get("description", ""), _rec.get("rarity", "common"),
+       family_id=_rec.get("family_id", ""), stage_ordinal=int(_rec.get("stage_ordinal", 0)),
+       stage_role=_rec.get("stage_role", ""), normal_habitats=tuple(_rec.get("normal_habitats", ())),
+       min_wild_level=int(_rec.get("minimum_wild_level", 1)), max_wild_level=int(_rec.get("maximum_wild_level", 100)),
+       wild_unlock_phase=int(_rec.get("wild_unlock_phase", 0)), evolves_to=_rec.get("evolves_to"),
+       evolution_level=_rec.get("evolution_level"), wild_enabled=bool(_rec.get("wild_enabled", True)),
+       source_registered=bool(_rec.get("source_registered", True)))
 
-_build_evolutions()
+# ---- evolutions and chains straight from the database (the old CRC-seeded registration is gone)
+EVOLUTIONS = {sid: (rec["evolves_to"], int(rec["evolution_level"]))
+              for sid, rec in ((s["id"], s) for s in DB["species"]) if rec.get("evolves_to")}
+CHAIN_OF = {}
+FAMILY_OF = {}
+for _f in DB["families"]:
+    for _sid in _f["chain_ids"]:
+        CHAIN_OF[_sid] = list(_f["chain_ids"])
+        FAMILY_OF[_sid] = _f["id"]
+WILD_HOME = {sid: FAMILIES[fid]["normal_habitats"][0] for sid, fid in FAMILY_OF.items()}
 
 SPECIES_COUNT = len(SPECIES)
-
-# (species, weight, min level, max level)
-ROUTE_ENCOUNTERS = [
-    ("sporelet", 30, 2, 5), ("dewbit", 25, 2, 5), ("cindermite", 20, 3, 5),
-    ("sparkit", 13, 3, 6), ("pebblon", 8, 4, 6), ("nanolyte", 4, 4, 6),
-]
 
 
 # --------------------------------------------------------------------------- items
@@ -527,6 +468,29 @@ CATALOG["epipass"] = ItemDef("epipass", "Epidimy Town Pass", "EP",
 
 # key items that live in the Pack's PASSES folder, sorted ahead of the other key items
 PASSES = ("townpass", "epipass")
+
+# --------------------------------------------------------------------------- fishing rods
+_probe_desc = "A basic sampling probe. Casts into shallow water for young Scimons."
+_field_desc = "A field-grade capture rod. Casts into deeper water for developed Scimons."
+_deep_desc = "A deep-water sampling rig. Casts into the open sea for apex Scimons."
+CATALOG["probe_rod"] = ItemDef("probe_rod", "Probe Rod", "PR", _probe_desc, "#3d84c6", "key", permanent=True)
+CATALOG["field_rod"] = ItemDef("field_rod", "Field Rod", "FR", _field_desc, "#2fbfae", "key", permanent=True)
+CATALOG["deep_rod"] = ItemDef("deep_rod", "Deep Rod", "DR", _deep_desc, "#5b5bd6", "key", permanent=True)
+FISHING_RODS = ("probe_rod", "field_rod", "deep_rod")
+
+# --------------------------------------------------------------------------- field ability modules
+CATALOG["abl_aquaboard"] = ItemDef("abl_aquaboard", "Aquaboard Module", "AB",
+                                   "A field module. Ride a Hydro-type Scimon across open water.",
+                                   "#3d84c6", "key", permanent=True)
+CATALOG["abl_aerolift"] = ItemDef("abl_aerolift", "Aerolift Module", "AL",
+                                  "A field module. Fast-travel to visited rest points with an Atmospheric-type.",
+                                  "#8fb8d6", "key", permanent=True)
+CATALOG["abl_lumen"] = ItemDef("abl_lumen", "Lumen Module", "LM",
+                               "A field module. Illuminate dark spaces with Radiant energy.",
+                               "#f0d76a", "key", permanent=True)
+CATALOG["abl_excavator"] = ItemDef("abl_excavator", "Excavator Module", "EX",
+                                   "A field module. Burrow out of caves with a Geologic-type Scimon.",
+                                   "#a98150", "key", permanent=True)
 
 # --------------------------------------------------------------------------- the Corrupt Bandits (story)
 # Items the villain arc hands out.  The Shadow Module is never obtainable - it appears in cutscenes only.

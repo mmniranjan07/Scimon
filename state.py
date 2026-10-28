@@ -57,6 +57,7 @@ class GameState:
         self.items = {k: v for k, v in INITIAL_ITEMS.items()}
         self.credits = STARTING_CREDITS
         self.captured = set()                # species ids for the Sci-Dex
+        self.seen = set()                    # species ids encountered (dex "seen" state)
         self.rival_species = None
         self.intro_done = False
         self.rival_beaten = False
@@ -69,6 +70,7 @@ class GameState:
         self.look = None                     # player look code (sprites.make_look); None = the default look
         self.stamps = set()                  # gym stamps earned (ids into GYM_STAMPS)
         self.story = set()                   # Corrupt Bandits arc flags: bandit1, bandit2, snatch_done, exposed, boss_beaten
+        self.abilities = set()               # field ability ids: aquaboard, aerolift, lumen, excavator, hydroclimb
         self.snatched = None                 # a party Sci-Mon taken by the Bandits (Act 2 loss) until it is recovered
         self.playtime = 0.0                  # seconds of play, ticked by Engine.step
 
@@ -80,6 +82,13 @@ class GameState:
             return None
         self.stamps.add(gym_id)
         return d
+
+    def unlock_ability(self, ability_id):
+        """Record a field ability the first time it is unlocked. Returns True on new unlocks."""
+        if ability_id in self.abilities:
+            return False
+        self.abilities.add(ability_id)
+        return True
 
 
     # ---- bag ----------------------------------------------------------------------
@@ -159,6 +168,7 @@ class GameState:
             m.heal_full()
 
     def receive_scimon(self, mon):
+        self.seen.add(mon.species_id)
         self.captured.add(mon.species_id)
         if len(self.party) < PARTY_LIMIT:
             self.party.append(mon)
@@ -315,6 +325,11 @@ class GameState:
             return False, f"No {d.name} to discard."
         self.remove_item(item_id, qty)
         return True, f"Discarded {d.name}."
+
+    def mark_seen(self, species_id):
+        """Record a dex sighting (wild encounter, evolution, gift...).  Caught implies seen."""
+        if species_id in SPECIES:
+            self.seen.add(species_id)
 
     @property
     def dex_progress(self):

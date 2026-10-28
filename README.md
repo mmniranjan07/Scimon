@@ -1,15 +1,20 @@
 # SCI-MON - Python / Pygame edition
 
 The `scimon_py` look (transparent, game-ready sprites and building art) merged with everything in
-`SCIMON VERSION - 34` (interiors, Sci-Database, held items, key items, pack, full story flow).
+`SCIMON VERSION - 34` (interiors, Sci-Database, held items, key items, pack, full story flow),
+now running on the audited **scimon_database.json** catalog: 109 families / 327 forms (every family
+first → middle → final), explicit habitat zones per map patch (F3 highlights the active zone), phased
+wild-stage unlocks (100/0/0 → 85/15/0 → 80/17/3 as stamps and story flags land) and the 0.1% global
+migration branch — see `encounters.py` and the Sci-Dex catalog (D in the Sci-Database terminal).
 
     pip install -r requirements.txt     # pygame >= 2.5 (pygame-ce also works)
     python main.py
 
 
 ## MPW art overhaul (this build)
-> **Sprite revert (py19 + py18 art).** Buildings and Scimon creatures use the original py18 art again; everything else in this
-> section (foliage, characters, battle backgrounds / effects, UI icons) is unchanged.
+> **Sprite revert (py19 + py18 art).** Buildings use the original py18 art again; everything else in this
+> section (foliage, characters, battle backgrounds / effects, UI icons) is unchanged.  Scimon creatures were
+> since redrawn from the design collections -- see *Scimon art redesign* below.
 > * Buildings: `assets/town/bld_*.png` (lab, hall, cush, library, mart, farm, house_0/1/2), including Epidimy's houses, Scimon Center
 >   and Supply Mart, plus the chimney smoke and lab beacon that belong to those sprites.  Only the Epidimy Green Gym keeps its MPW sprite
 >   (py18 had no gym); to use the old library sprite instead, set its sprite to `"town/bld_library.png"` in `epidimy.py`.
@@ -18,6 +23,19 @@ The `scimon_py` look (transparent, game-ready sprites and building art) merged w
 > * Characters are smaller: `settings.CHAR_PX = 2` (was 3), so a 32x32 frame is drawn at 64x64.  Set it to 3 for the previous size.
 >   The battle trainer is rescaled to stay the same size.
 > * `worldmap.native_size()` measures `town/` building PNGs so footprint trimming works for them.
+
+## Scimon art redesign (collections 01 + 02)
+All 103 wild Scimon families (the classic Route 1 cast + 97 of the wider region's species) were redrawn from the
+`Scimon_Collection_01/02_Front_and_Back` design atlases: proper **front views and rear three-quarter back views**
+for every stage (baby / middle / final).  The atlases live in `source_art/scimon_collections/` and are imported with
+
+    python tools/import_scimon_collections.py          # -> assets/scimon/<species>-front|back.png
+
+The tool keys out the atlases' painted gradient backdrop (region grow + pocket keying), hands every creature to its
+atlas cell (splitting designs that overlap their neighbours by watershed), trims, normalises the alpha and downscales
+onto the game's ~256 px canvas.  The three starter families and the earlier glacibit / qubit / voltling lines are not
+part of the collections and keep their original art.  Battles pick the back views up automatically
+(`assets.back_path`), and the Sci-Database preview (F) flips to them too.
 
 All art that people see in play now comes from three packs; run `python tools/build_mpw_assets.py` (needs `pillow numpy scipy`) to
 rebuild `assets/mpw/` and `mpw_sizes.py` from `source_art/`.

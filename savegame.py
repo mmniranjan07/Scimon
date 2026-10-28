@@ -50,7 +50,7 @@ def serialize(st):
         "party": [dataclasses.asdict(m) for m in st.party],
         "storage": [dataclasses.asdict(m) for m in st.storage],
         "items": st.items, "credits": st.credits,
-        "captured": sorted(st.captured), "rival_species": st.rival_species,
+        "captured": sorted(st.captured), "seen": sorted(getattr(st, "seen", ())), "rival_species": st.rival_species,
         "intro_done": st.intro_done, "rival_beaten": st.rival_beaten,
         "opened_chests": sorted(str(k) for k in st.opened_chests),
         "visited_healers": sorted(str(k) for k in getattr(st, "visited_healers", ())),
@@ -58,6 +58,7 @@ def serialize(st):
         "beaten_trainers": sorted(str(k) for k in getattr(st, "beaten_trainers", ())),
         "stamps": sorted(str(k) for k in getattr(st, "stamps", ())),
         "story": sorted(str(k) for k in getattr(st, "story", ())),
+        "abilities": sorted(str(k) for k in getattr(st, "abilities", ())),
         "snatched": dataclasses.asdict(st.snatched) if getattr(st, "snatched", None) else None,
         "playtime": round(float(getattr(st, "playtime", 0.0)), 1),
         "location": getattr(st, "location", None) if isinstance(getattr(st, "location", None), dict) else {},
@@ -107,6 +108,10 @@ def load(st):
         st.items = {k: int(v) for k, v in d["items"].items()}
         st.credits = int(d["credits"])
         st.captured = set(d["captured"])
+        # version-1 migration: saves written before the dex "seen" set initialize it from every
+        # creature the player already owns (caught + party + storage), never losing state
+        st.seen = set(d.get("seen", ())) | st.captured | {m.species_id for m in st.party} \
+            | {m.species_id for m in st.storage}
         st.rival_species = d.get("rival_species")
         st.intro_done = bool(d.get("intro_done"))
         st.rival_beaten = bool(d.get("rival_beaten"))
@@ -116,8 +121,11 @@ def load(st):
         st.beaten_trainers = set(d.get("beaten_trainers", []))
         st.stamps = {s for s in d.get("stamps", []) if stamp_by_id(s)}
         st.story = set(d.get("story", []))
+        st.abilities = set(d.get("abilities", []))
         sn = d.get("snatched")
         st.snatched = Scimon(**{k: v for k, v in sn.items() if k in fields}) if sn and sn.get("species_id") in SPECIES else None
+        if st.snatched:
+            st.seen.add(st.snatched.species_id)
         st.playtime = float(d.get("playtime", 0.0) or 0.0)
         loc = d.get("location")
         st.location = loc if isinstance(loc, dict) else {}

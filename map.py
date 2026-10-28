@@ -233,6 +233,7 @@ class TileMap:
         self.w, self.h = len(rows[0]), len(rows)
         self.px_w, self.px_h = self.w * TILE, self.h * TILE
         self.solid_set = wm.OVERWORLD_SOLID if kind == "overworld" else wm.INTERIOR_SOLID
+        self.walkable_override = set()         # tiles made walkable by field abilities (e.g. Aquaboard)
         self.npc_defs = npc_defs
         self.baked = baked
         # Rect-based collision world: one Rect per solid tile, merged into horizontal runs for debug drawing.
@@ -263,7 +264,10 @@ class TileMap:
         return self.rows[y][x]
 
     def is_solid(self, x, y):
-        return self.tile_at(x, y) in self.solid_set
+        t = self.tile_at(x, y)
+        if t in self.walkable_override:
+            return False
+        return t in self.solid_set
 
     def is_tall_grass(self, x, y):
         return self.kind == "overworld" and self.tile_at(x, y) == "g"
@@ -275,11 +279,12 @@ class TileMap:
         return self.kind == "interior" and self.tile_at(x, y) == "@"
 
     def blocked(self, tx, ty, npc_rects=()):
-        """Bounding-box test for stepping onto tile (tx, ty): solid tile, outside the map, or an NPC rect."""
+        """Bounding-box test for stepping onto tile (tx, ty): solid tile, outside the map, or an NPC rect.
+        Tiles in walkable_override (e.g. water with Aquaboard) skip the solid-tile check."""
         if tx < 0 or ty < 0 or tx >= self.w or ty >= self.h:
             return True
         box = pygame.Rect(tx * TILE, ty * TILE, TILE, TILE)
-        if box.collidelist(self.solid_rects) != -1:
+        if self.tile_at(tx, ty) not in self.walkable_override and box.collidelist(self.solid_rects) != -1:
             return True
         return box.collidelist(list(npc_rects)) != -1
 

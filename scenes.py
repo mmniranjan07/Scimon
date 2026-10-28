@@ -679,6 +679,7 @@ class StarterScene(Scene):
         st = eng.state
         st.party = [create_scimon(sid, 5)]
         st.captured = {sid}
+        st.seen = {sid}
         st.rival_species = RIVAL_COUNTER[sid]
         audio.play("capture")
         eng.fade_to(lambda: eng.replace(make_rival_scene(eng, sid, st.rival_species)))

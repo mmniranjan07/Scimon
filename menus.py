@@ -17,6 +17,7 @@ from sprites import LOOKS, character_frame
 from state import BOX_SIZE, BOX_COUNT, GYM_STAMPS, playtime_str
 from ui import (Button, ButtonGrid, bar, dim, draw_button, hp_color, is_back, is_click, is_confirm, label_chip,
                 nav_dir, panel, render_text, text, type_chip, status_chip, wrap_text)
+from dex import DexScene
 
 
 def _icon(surf, species_id, center, size):
@@ -753,6 +754,9 @@ class DatabaseScene(Scene):
             if e.key == pygame.K_f:
                 self.back = not self.back
                 return
+            if e.key == pygame.K_d:                        # the full Sci-Dex catalog (all 327 forms)
+                self.engine.push(DexScene())
+                return
         d = nav_dir(e)
         if d:
             self._move(*d)
@@ -895,7 +899,7 @@ class DatabaseScene(Scene):
         shadow = pygame.Surface((90, 16), pygame.SRCALPHA)
         pygame.draw.ellipse(shadow, (0, 0, 0, 55), shadow.get_rect())
         surf.blit(shadow, shadow.get_rect(midbottom=(area.x + 70, top.bottom - 6)))
-        back = self.back and mon.species.back
+        back = self.back and assets.back_path(mon.species_id)
         img = assets.mon_image(mon.species_id, 96, 92, back=bool(back))
         bob = math.sin(self.t * 2.6) * 3
         surf.blit(img, img.get_rect(midbottom=(area.x + 70, top.bottom - 10 + bob)))
@@ -1129,5 +1133,5 @@ class HelpScene(Scene):
         self._draw_grid(surf)
         self._draw_detail(surf)
         self._draw_gear(surf)
-        text(surf, "Tip: weaken a wild Scimon (low HP, a status fault) before throwing a module.",
+        text(surf, "Tip: weaken a wild Scimon before throwing a module.  D: Sci-Dex catalog (all forms).",
              (r.x + 28, r.bottom - 30), "ui", 13, (110, 116, 110))

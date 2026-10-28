@@ -119,10 +119,27 @@ def _opaque_bbox(rel):
 
 
 # --- Scimon sprites (assets/scimon/<species>-front.png / -back.png, the original art) -----------------------------
+_back_cache = {}
+
+
+def back_path(species_id):
+    """Asset path of the species' back-view art, or None when only a front still exists.  Data keeps
+    `back` None for the wild cast (tests/specimens pins that), so art presence is checked on disk once
+    per species and cached: every species of the collection import gets a real back view this way."""
+    if species_id not in _back_cache:
+        sp = SPECIES[species_id]
+        cand = "scimon/" + (sp.back or f"{species_id}-back.png")
+        _back_cache[species_id] = cand if (sp.back or has(cand)) else None
+    return _back_cache[species_id]
+
+
 def mon_path(species_id, back=False):
     sp = SPECIES[species_id]
-    name = sp.back if (back and sp.back) else sp.front
-    return "scimon/" + name
+    if back:
+        cand = back_path(species_id)
+        if cand:
+            return cand
+    return "scimon/" + sp.front
 
 
 def mon_image(species_id, max_w, max_h, back=False):

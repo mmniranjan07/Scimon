@@ -160,7 +160,7 @@ BUILDINGS = [
                  _trainer("gym-sora", 4, 7, "Coach Sora", [
                      "Sora: Welcome to the ring, {name}!",
                      "Sora: I hold the west gate, and this gate opens for battles only. Show me your form!",
-                 ], ("sporelet", 7),
+                 ], [("sporelet-baby", 10)],
                      post=["Sora: Solid footwork out there.",
                            "Sora: The east gate is Rook's - and he doesn't move for anyone."],
                      facing="down", aside=(5, 9)),
@@ -168,7 +168,7 @@ BUILDINGS = [
                      "Rook: So you're climbing the ring. Bold.",
                      "Rook: Gym rules, though - Sora takes you first, always.",
                      "Rook: Beat her, then bring it on!",
-                 ], ("dewbit", 8),
+                 ], [("sproutle-baby", 11)],
                      post=["Rook: Hah! Clean win.",
                            "Rook: Fern's waiting at the top of the ring. Don't keep her waiting."],
                      facing="down", requires=("gym-sora",),
@@ -179,8 +179,8 @@ BUILDINGS = [
                  _trainer("epi-leader", 7, 4, "Leader Fern", [
                       "Fern: You made it around the ring, {name} - most never do.",
                       "Fern: The Green Gym grows its champions slowly... and roots out the rest.",
-                      "Fern: My Florabot and I will do exactly that. Let's battle!",
-                  ], ("florabot", 10),
+                      "Fern: My Petalug and Florabot will do exactly that. Let's battle!",
+                  ], [("petalug", 12), ("florabot", 14)],
                       post=["Fern: Magnificent, {name}!",
                             "Fern: The Green Gym is proud to have rooted for you. Come back any time."],
                       facing="down", stamp="green", disc="verdantdisc",

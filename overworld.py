@@ -6,14 +6,16 @@ import random
 import pygame
 
 import audio
+import abilities
+import encounters
 import villain
 from battle import BG_FOR_AREA, BattleScene, new_battle
-from data import KAEL_RETEAM2, ROUTE_ENCOUNTERS, SPECIES_COUNT, item_def
+from data import KAEL_RETEAM2, SPECIES_COUNT, item_def
 from engine import Scene, StateId
 from map import Camera, TileMap
 from menus import DatabaseScene, HelpScene, InventoryScene, ShopScene
 from monsters import PARTY_LIMIT, check_evolutions, create_scimon
-from routes import AREAS, AREA_ENCOUNTERS, HEALERS, LINKS, ROUTE1_START, TOWN, building_at, travel_cost
+from routes import AREAS, HEALERS, LINKS, ROUTE1_START, TOWN, building_at, travel_cost, zone_at
 from sprites import black_look
 
 _contact = None
@@ -34,20 +36,12 @@ from ui import is_click, is_confirm, label_chip, panel, render_text, text
 from worldmap import PLAYER_START, building_at_door, BUILDINGS
 
 
-def pick_encounter(area=None):
-    """One weighted roll from the area's biome table (routes.py builds AREA_ENCOUNTERS); without an area or a
-    table (a grass tile outside the network, say) the classic Route 1 table answers."""
-    table = AREA_ENCOUNTERS.get(area) if area else None
-    if not table:
-        table = ROUTE_ENCOUNTERS
-    total = sum(e[1] for e in table)
-    r = random.random() * total
-    for sid, w, lo, hi in table:
-        r -= w
-        if r <= 0:
-            return sid, random.randint(lo, hi)
-    sid, _, lo, _ = table[0]
-    return sid, lo
+def pick_encounter(state, area, tile):
+    """One triggered wild encounter at a concrete tile of an outdoor area: the tile's zone (routes.zone_at)
+    decides the habitat; encounters.select_encounter applies the branch/stage/family/level policy.  A tile
+    outside every zone (or a zone with no eligible pool) yields None -- there is no legacy fallback."""
+    zone = zone_at(area, *tile) if (area and tile) else None
+    return encounters.select_encounter(state, zone)
 
 
 _OPPOSITE = {"up": "down", "down": "up", "left": "right", "right": "left"}
@@ -304,6 +298,7 @@ class OverworldScene(Scene):
         """Apply pending evolutions after a battle's level-ups; returns the announcement lines."""
         lines = []
         for mon, old, new in check_evolutions(self.engine.state.party):
+            self.engine.state.mark_seen(mon.species_id)   # the dex records the newly obtained form
             lines += [f"{old} is evolving!", f"Congratulations! Your {old} evolved into {new}!"]
             audio.play("heal")
         return lines
@@ -475,6 +470,9 @@ class OverworldScene(Scene):
             if e.key == pygame.K_h:
                 self.open_help()
                 return
+            if e.key == pygame.K_f and abilities.can_use(self.engine.state, "aerolift"):
+                self.open_fly()
+                return
         if is_confirm(e):
             if not self.player.moving:
                 self.interact()
@@ -483,6 +481,38 @@ class OverworldScene(Scene):
                 self.open_pack()
             elif self.help_rect.collidepoint(e.pos):
                 self.open_help()
+
+    def open_fly(self):
+        """Aerolift: fast-travel to any visited town/rest point."""
+        eng = self.engine
+        st = eng.state
+        targets = []
+        for area_id in sorted(st.visited_areas):
+            if area_id == TOWN:
+                targets.append(("Riven Town", TOWN, PLAYER_START))
+            elif area_id in AREAS and AREAS[area_id].styled:
+                a = AREAS[area_id]
+                targets.append((a.name, area_id, a.start))
+        if not targets:
+            return
+        eng.push(abilities.FlyMenu(targets, lambda t, tile: self._fly_to(t, tile)))
+
+    def _fly_to(self, area_id, tile):
+        st = self.engine.state
+        st.location = {"area": area_id, "tile": list(tile), "facing": "down"}
+        audio.play("heal")
+        eng.transitioning = True
+        import math as _m
+
+        def apply():
+            self.map = self._get_map(area_id)
+            self.player.tile = tile
+            self.player.pos = pygame.Vector2(tile[0] * 48, tile[1] * 48)
+            self.player.facing = "down"
+            self.player.moving = False
+            self._sync_abilities()
+            eng.transitioning = False
+        eng.fade_to(apply, color=(180, 220, 240))
 
     def open_help(self):
         self.engine.push(HelpScene())
@@ -507,6 +537,7 @@ class OverworldScene(Scene):
         self.npcs.update(dt)
         self.map.update(dt)
         eng = self.engine
+        self._sync_abilities()
         self._trainers_think(dt)
         self._approach_step(dt)
         if eng.top is self and not eng.transitioning:
@@ -555,12 +586,53 @@ class OverworldScene(Scene):
                 if b:
                     self.enter_building(b)
                     return
-            if m.is_tall_grass(x, y) and not self.approacher and random.random() < ENCOUNTER_CHANCE:
-                self.start_wild_battle(*pick_encounter(m.area))
+            st = self.engine.state
+            if (st.party and not self.approacher and not self.building
+                    and random.random() < ENCOUNTER_CHANCE):
+                rolled = pick_encounter(st, m.area, (x, y))
+                if rolled:
+                    self.start_wild_battle(*rolled)
+            # fishing: facing a water tile with a rod → casting encounter
+            if (not self.approacher and not self.building and self._facing_water(m, x, y)
+                    and random.random() < ENCOUNTER_CHANCE * 0.5):
+                self._fishing(m, x, y)
         elif t == "E" and self.building:
             self.exit_building()
         self._sync_location()
         self._check_ambush()
+
+    def _facing_water(self, m, x, y):
+        """True when the tile the player faces is water (W) — a fishing spot."""
+        d = self.player.facing
+        dx, dy = {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)}.get(d, (0, 0))
+        nx, ny = x + dx, y + dy
+        if not (0 <= ny < m.h and 0 <= nx < m.w):
+            return False
+        return m.tile_at(nx, ny) == "W"
+
+    def _fishing(self, m, x, y):
+        """Roll a fishing encounter based on the best rod the player holds.  Uses the water/sea
+        habitat pool with rod-tier level ranges; the gym ceiling and 50 cap still apply."""
+        st = self.engine.state
+        rod = None
+        for rid in ("deep_rod", "field_rod", "probe_rod"):
+            if st.qty(rid) > 0:
+                rod = rid
+                break
+        if rod is None:
+            return
+        r = abilities.fishing_encounter(st, m.area, rod)
+        if r:
+            self.start_wild_battle(*r)
+
+    def _sync_abilities(self):
+        """Update map walkability and party checks from the current field abilities."""
+        m = self.map
+        if hasattr(m, 'walkable_override'):
+            if abilities.can_use(self.engine.state, "aquaboard"):
+                m.walkable_override.add("W")
+            else:
+                m.walkable_override.discard("W")
 
     # ---- the Corrupt Bandits (villain arc) ---------------------------------------------------
     def _check_ambush(self):
@@ -759,6 +831,15 @@ class OverworldScene(Scene):
             pygame.draw.rect(surf, (0, 255, 255), cam.apply(self.player.rect), 2)
             for c in (*self.npcs, self.player):          # sprite extent vs hitbox: blue box = art, magenta/cyan = hitbox
                 pygame.draw.rect(surf, (80, 120, 255), pygame.Rect(c.draw_pos, c.image.get_size()).move(-cam.x, -cam.y), 1)
+            z = zone_at(self.map.area, *self.player.tile) if self.map.kind == "overworld" else None
+            if z:
+                for y in range(self.map.h):
+                    for x in range(self.map.w):
+                        zz = zone_at(self.map.area, x, y)
+                        if zz is z:
+                            pygame.draw.rect(surf, (255, 210, 60), cam.apply(pygame.Rect(x * TILE, y * TILE, TILE, TILE)), 1)
+                text(surf, f"zone {z['zone_id']}  habitat {z['habitat_id']}  band {z['band']}",
+                     (W // 2, H - 36), "display", 8, (255, 210, 60), anchor="midbottom", shadow=(0, 0, 0))
             text(surf, f"tile {self.player.tile}  fps {self.engine.clock.get_fps():.0f}", (W // 2, H - 24), "display",
                  8, (255, 255, 255), anchor="midbottom", shadow=(0, 0, 0))
         self._hud(surf)

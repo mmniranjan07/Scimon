@@ -12,6 +12,7 @@ import pygame
 
 import animation
 import assets
+import battle_sizing
 from settings import CHAR_PX, CREATURE_HOVER, CREATURE_SHEETS, PX, TILE, WALK_TILES_PER_SEC, hexc
 
 DIRS = {"up": (0, -1), "down": (0, 1), "left": (-1, 0), "right": (1, 0)}
@@ -431,9 +432,12 @@ class ScimonSprite(pygame.sprite.Sprite):
     def __init__(self, species_id, midbottom, max_size, back=False, appear=False):
         super().__init__()
         self.species_id, self.back = species_id, back
-        self.base = assets.mon_image(species_id, *max_size, back=back)
-        self.idle = [self.base] if back else assets.mon_anim(species_id, "idle", *max_size)
-        self.attack_frames = None if back else assets.mon_anim(species_id, "attack", *max_size)
+        # centralized sizing (battle_sizing.py): stage factor x family reference, body-normalized,
+        # nearest-neighbour, clamped to the side's layout caps -- never scaled twice here
+        self.base = battle_sizing.battle_surface(species_id, back)
+        self.idle = [self.base]
+        self.attack_frames = None if back else [self.base]
+        self.hover = battle_sizing.hover_of(species_id)
         self.midbottom = midbottom
         self.t = random.random() * 3
         self.shake_t = self.flash_t = self.atk_t = 0.0
@@ -493,7 +497,7 @@ class ScimonSprite(pygame.sprite.Sprite):
         if self.atk_t > 0:                                             # lunge towards the target and back
             shake += math.sin(math.pi * (1 - self.atk_t / self.ATTACK)) * 34 * self.atk_dir
         x = self.midbottom[0] + shake - size[0] / 2
-        y = self.midbottom[1] - size[1] - h * lift + (1 - e) * 30 + (1 - self.fade) * 16
+        y = self.midbottom[1] - self.hover - size[1] - h * lift + (1 - e) * 30 + (1 - self.fade) * 16
         self.rect = pygame.Rect(int(x), int(y), size[0], size[1])
         # contact shadow, pulsing with the idle cycle
         sw = int(w * 0.62 * (1 - 0.14 * max(0.0, idle)) * k)

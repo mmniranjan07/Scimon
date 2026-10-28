@@ -1,0 +1,131 @@
+{
+  "collection": 1,
+  "family_count": 52,
+  "stage_designs_per_view": 156,
+  "pages": [
+    {
+      "sheet": 1,
+      "families": [
+        "abyssling",
+        "aerochit",
+        "alloyling",
+        "amperit",
+        "arcwisp",
+        "ashling"
+      ],
+      "front_file": "FRONT_VIEWS/C01_Sheet_01_FRONT.png",
+      "back_file": "BACK_VIEWS/C01_Sheet_01_BACK.png",
+      "back_sha256": "92b54838289bcf7af80d44b5adaa44c03ceeff3f0cf99842f102dd7ec4964746"
+    },
+    {
+      "sheet": 2,
+      "families": [
+        "assembit",
+        "automit",
+        "basaltot",
+        "biteling",
+        "bloomxell",
+        "boulderon"
+      ],
+      "front_file": "FRONT_VIEWS/C01_Sheet_02_FRONT.png",
+      "back_file": "BACK_VIEWS/C01_Sheet_02_BACK.png",
+      "back_sha256": "3c501b112f65e9fa0c22a6013772418f0f80d6993dff2c20417986b107010103"
+    },
+    {
+      "sheet": 3,
+      "families": [
+        "brineling",
+        "cactopod",
+        "catalyxt",
+        "cellling",
+        "chillmite",
+        "chromelet"
+      ],
+      "front_file": "FRONT_VIEWS/C01_Sheet_03_FRONT.png",
+      "back_file": "BACK_VIEWS/C01_Sheet_03_BACK.png",
+      "back_sha256": "943d180ef43463cd057d622584364ee40866e0997054ba507ed6d50d02aa56ba"
+    },
+    {
+      "sheet": 4,
+      "families": [
+        "cindermite",
+        "codeling",
+        "cogmite",
+        "cometling",
+        "coralbit",
+        "coronalet"
+      ],
+      "front_file": "FRONT_VIEWS/C01_Sheet_04_FRONT.png",
+      "back_file": "BACK_VIEWS/C01_Sheet_04_BACK.png",
+      "back_sha256": "f60c994bd99bb9e005ce471ad73bf695407a96c3ae6d5587fa40e35e18a9fe95"
+    },
+    {
+      "sheet": 5,
+      "families": [
+        "cragling",
+        "crankling",
+        "cumulob",
+        "dewbit",
+        "droplite",
+        "duskling"
+      ],
+      "front_file": "FRONT_VIEWS/C01_Sheet_05_FRONT.png",
+      "back_file": "BACK_VIEWS/C01_Sheet_05_BACK.png",
+      "back_sha256": "86471bee09b5f038cfd4cd9061065d8c2c4700ce5940fda0be15158a9c6c9b84"
+    },
+    {
+      "sheet": 6,
+      "families": [
+        "emberling",
+        "entanglit",
+        "enzymite",
+        "faradot",
+        "ferrite",
+        "flarebit"
+      ],
+      "front_file": "FRONT_VIEWS/C01_Sheet_06_FRONT.png",
+      "back_file": "BACK_VIEWS/C01_Sheet_06_BACK.png",
+      "back_sha256": "e17a654a78a62227ed088e639b7fe6b937d7b9727dbc67c35869f132755e2260"
+    },
+    {
+      "sheet": 7,
+      "families": [
+        "frostrit",
+        "fusor",
+        "galepod",
+        "gearhulk",
+        "gleamlet",
+        "gloombat"
+      ],
+      "front_file": "FRONT_VIEWS/C01_Sheet_07_FRONT.png",
+      "back_file": "BACK_VIEWS/C01_Sheet_07_BACK.png",
+      "back_sha256": "4ca4079befd3c9656cc7588e23ce0880947022c0fc1076230db2f8b8ce0a64ac"
+    },
+    {
+      "sheet": 8,
+      "families": [
+        "gravelmut",
+        "icelyte",
+        "ingotot",
+        "ionling",
+        "joulebot",
+        "kelpbot"
+      ],
+      "front_file": "FRONT_VIEWS/C01_Sheet_08_FRONT.png",
+      "back_file": "BACK_VIEWS/C01_Sheet_08_BACK.png",
+      "back_sha256": "d068d06e4bd594425112025c6d19f59317fac6a313eb0a72b4f2c1e1cbaade2e"
+    },
+    {
+      "sheet": 9,
+      "families": [
+        "larvaburn",
+        "lumibot",
+        "magmite",
+        "micromite"
+      ],
+      "front_file": "FRONT_VIEWS/C01_Sheet_09_FRONT.png",
+      "back_file": "BACK_VIEWS/C01_Sheet_09_BACK.png",
+      "back_sha256": "62253bfd74f6d088ca46a8c299b58feec5fe633aa5ce18d580de23193e627e00"
+    }
+  ]
+}
