@@ -423,7 +423,8 @@ class OverworldScene(Scene):
         self._fighting = n
         st = self.engine.state
         tb = n.trainer_battle
-        enemy = [create_scimon(sid, lv) for sid, lv in tb] if isinstance(tb, list) else create_scimon(*tb)
+        team = list(tb) if isinstance(tb, (list, tuple)) and tb and isinstance(tb[0], (list, tuple)) else [tb]
+        enemy = [create_scimon(sid, lv) for sid, lv in team]
         b = new_battle(st.party, enemy, st.battle_bag(), st.battle_modules(), trainer=n.name)
         bg = BG_FOR_AREA.get(getattr(self.map, "area", "overworld"), 1)
 
