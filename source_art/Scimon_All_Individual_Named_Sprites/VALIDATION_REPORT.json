@@ -1,0 +1,13 @@
+{
+  "families": 109,
+  "named_forms": 327,
+  "front_pngs": 327,
+  "back_pngs": 327,
+  "individual_pngs": 654,
+  "image_decoding": "passed",
+  "transparency_and_padding": "passed",
+  "names_and_evolution_links": "passed",
+  "checksums": "passed",
+  "visual_review": "All 327 front/back pairs reviewed in internal preview pages; touching-design boundaries and starter labels were corrected.",
+  "scope": "Asset pack and name patch only. Live game import, in-battle sizing and nickname/save migration remain for the game agent."
+}

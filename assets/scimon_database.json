@@ -6545,7 +6545,7 @@
     {
       "id": "sporelet-baby",
       "dex": 117,
-      "name": "Sporellet",
+      "name": "Sporelet",
       "family_id": "sporelet",
       "types": [
         "Botanic"
@@ -6607,12 +6607,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sporellet"
     },
     {
       "id": "sporelet",
       "dex": 11,
-      "name": "Sporelet",
+      "name": "Sporehop",
       "family_id": "sporelet",
       "types": [
         "Botanic"
@@ -6678,12 +6679,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sporelet"
     },
     {
       "id": "sporelet-final",
       "dex": 118,
-      "name": "Sporelet Prime",
+      "name": "Mycotoad",
       "family_id": "sporelet",
       "types": [
         "Botanic"
@@ -6757,12 +6759,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sporelet Prime"
     },
     {
       "id": "cindermite-baby",
       "dex": 119,
-      "name": "Cindermiling",
+      "name": "Cindermite",
       "family_id": "cindermite",
       "types": [
         "Thermal"
@@ -6824,12 +6827,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cindermiling"
     },
     {
       "id": "cindermite",
       "dex": 12,
-      "name": "Cindermite",
+      "name": "Cinderant",
       "family_id": "cindermite",
       "types": [
         "Thermal"
@@ -6895,12 +6899,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cindermite"
     },
     {
       "id": "cindermite-final",
       "dex": 120,
-      "name": "Cindermite Prime",
+      "name": "Furnacina",
       "family_id": "cindermite",
       "types": [
         "Thermal"
@@ -6974,12 +6979,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cindermite Prime"
     },
     {
       "id": "dewbit-baby",
       "dex": 270,
-      "name": "Baby Dewbit",
+      "name": "Dewbit",
       "family_id": "dewbit",
       "types": [
         "Hydro"
@@ -7041,12 +7047,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Dewbit"
     },
     {
       "id": "dewbit",
       "dex": 13,
-      "name": "Dewbit",
+      "name": "Dewleap",
       "family_id": "dewbit",
       "types": [
         "Hydro"
@@ -7112,12 +7119,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Dewbit"
     },
     {
       "id": "dewbit-final",
       "dex": 121,
-      "name": "Dewbit Prime",
+      "name": "Hygrofrog",
       "family_id": "dewbit",
       "types": [
         "Hydro"
@@ -7191,12 +7199,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Dewbit Prime"
     },
     {
       "id": "sparkit-baby",
       "dex": 271,
-      "name": "Baby Sparkit",
+      "name": "Sparkit",
       "family_id": "sparkit",
       "types": [
         "Electric"
@@ -7258,12 +7267,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Sparkit"
     },
     {
       "id": "sparkit",
       "dex": 14,
-      "name": "Sparkit",
+      "name": "Sparkcoil",
       "family_id": "sparkit",
       "types": [
         "Electric"
@@ -7329,12 +7339,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sparkit"
     },
     {
       "id": "sparkit-final",
       "dex": 122,
-      "name": "Sparkit Prime",
+      "name": "Teslarrel",
       "family_id": "sparkit",
       "types": [
         "Electric"
@@ -7408,12 +7419,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sparkit Prime"
     },
     {
       "id": "pebblon-baby",
       "dex": 272,
-      "name": "Baby Pebblon",
+      "name": "Pebblon",
       "family_id": "pebblon",
       "types": [
         "Geologic"
@@ -7475,12 +7487,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Pebblon"
     },
     {
       "id": "pebblon",
       "dex": 15,
-      "name": "Pebblon",
+      "name": "Pebblescale",
       "family_id": "pebblon",
       "types": [
         "Geologic"
@@ -7546,12 +7559,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Pebblon"
     },
     {
       "id": "pebblon-final",
       "dex": 123,
-      "name": "Pebblon Prime",
+      "name": "Lithoguana",
       "family_id": "pebblon",
       "types": [
         "Geologic"
@@ -7625,12 +7639,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Pebblon Prime"
     },
     {
       "id": "nanolyte-baby",
       "dex": 273,
-      "name": "Baby Nanolyte",
+      "name": "Nanolyte",
       "family_id": "nanolyte",
       "types": [
         "Nano",
@@ -7693,12 +7708,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Nanolyte"
     },
     {
       "id": "nanolyte",
       "dex": 16,
-      "name": "Nanolyte",
+      "name": "Nanoflit",
       "family_id": "nanolyte",
       "types": [
         "Nano",
@@ -7765,12 +7781,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Nanolyte"
     },
     {
       "id": "nanolyte-final",
       "dex": 124,
-      "name": "Nanolyte Prime",
+      "name": "Femtowing",
       "family_id": "nanolyte",
       "types": [
         "Nano",
@@ -7845,12 +7862,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Nanolyte Prime"
     },
     {
       "id": "vinelatch-baby",
       "dex": 125,
-      "name": "Vinelatling",
+      "name": "Vinelatch",
       "family_id": "vinelatch",
       "types": [
         "Botanic"
@@ -7912,12 +7930,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Vinelatling"
     },
     {
       "id": "vinelatch",
       "dex": 17,
-      "name": "Vinelatch",
+      "name": "Vineleap",
       "family_id": "vinelatch",
       "types": [
         "Botanic"
@@ -7987,12 +8006,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Vinelatch"
     },
     {
       "id": "vinelatch-final",
       "dex": 126,
-      "name": "Vinelatch Prime",
+      "name": "Lianalord",
       "family_id": "vinelatch",
       "types": [
         "Botanic"
@@ -8070,12 +8090,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Vinelatch Prime"
     },
     {
       "id": "sproutle-baby",
       "dex": 127,
-      "name": "Sproutling",
+      "name": "Sproutle",
       "family_id": "sproutle",
       "types": [
         "Botanic"
@@ -8137,12 +8158,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sproutling"
     },
     {
       "id": "sproutle",
       "dex": 18,
-      "name": "Sproutle",
+      "name": "Sproutshell",
       "family_id": "sproutle",
       "types": [
         "Botanic"
@@ -8212,12 +8234,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sproutle"
     },
     {
       "id": "sproutle-final",
       "dex": 128,
-      "name": "Sproutle Prime",
+      "name": "Arbortuga",
       "family_id": "sproutle",
       "types": [
         "Botanic"
@@ -8295,12 +8318,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sproutle Prime"
     },
     {
       "id": "thistledrone-baby",
       "dex": 274,
-      "name": "Baby Thistledrone",
+      "name": "Thistledrone",
       "family_id": "thistledrone",
       "types": [
         "Botanic"
@@ -8358,12 +8382,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Thistledrone"
     },
     {
       "id": "thistledrone",
       "dex": 19,
-      "name": "Thistledrone",
+      "name": "Thistlewing",
       "family_id": "thistledrone",
       "types": [
         "Botanic"
@@ -8437,12 +8462,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Thistledrone"
     },
     {
       "id": "thistledrone-final",
       "dex": 129,
-      "name": "Thistledrone Prime",
+      "name": "Spinadrone",
       "family_id": "thistledrone",
       "types": [
         "Botanic"
@@ -8524,12 +8550,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Thistledrone Prime"
     },
     {
       "id": "petalug-baby",
       "dex": 130,
-      "name": "Petallet",
+      "name": "Petalug",
       "family_id": "petalug",
       "types": [
         "Botanic"
@@ -8591,12 +8618,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Petallet"
     },
     {
       "id": "petalug",
       "dex": 20,
-      "name": "Petalug",
+      "name": "Petalume",
       "family_id": "petalug",
       "types": [
         "Botanic"
@@ -8666,12 +8694,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Petalug"
     },
     {
       "id": "petalug-final",
       "dex": 131,
-      "name": "Petalug Prime",
+      "name": "Floribranch",
       "family_id": "petalug",
       "types": [
         "Botanic"
@@ -8749,12 +8778,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Petalug Prime"
     },
     {
       "id": "cactopod-baby",
       "dex": 132,
-      "name": "Cactopling",
+      "name": "Cactopod",
       "family_id": "cactopod",
       "types": [
         "Botanic",
@@ -8817,12 +8847,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cactopling"
     },
     {
       "id": "cactopod",
       "dex": 21,
-      "name": "Cactopod",
+      "name": "Cactarmor",
       "family_id": "cactopod",
       "types": [
         "Botanic",
@@ -8897,12 +8928,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cactopod"
     },
     {
       "id": "cactopod-final",
       "dex": 133,
-      "name": "Cactopod Prime",
+      "name": "Xeroshield",
       "family_id": "cactopod",
       "types": [
         "Botanic",
@@ -8985,12 +9017,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cactopod Prime"
     },
     {
       "id": "bloomxell-baby",
       "dex": 275,
-      "name": "Baby Bloomxell",
+      "name": "Bloomxell",
       "family_id": "bloomxell",
       "types": [
         "Botanic",
@@ -9049,12 +9082,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Bloomxell"
     },
     {
       "id": "bloomxell",
       "dex": 22,
-      "name": "Bloomxell",
+      "name": "Bloomhart",
       "family_id": "bloomxell",
       "types": [
         "Botanic",
@@ -9133,12 +9167,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Bloomxell"
     },
     {
       "id": "bloomxell-final",
       "dex": 134,
-      "name": "Bloomxell Prime",
+      "name": "Floracervus",
       "family_id": "bloomxell",
       "types": [
         "Botanic",
@@ -9225,12 +9260,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Bloomxell Prime"
     },
     {
       "id": "mosswing-baby",
       "dex": 276,
-      "name": "Baby Mosswing",
+      "name": "Mosswing",
       "family_id": "mosswing",
       "types": [
         "Botanic",
@@ -9289,12 +9325,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Mosswing"
     },
     {
       "id": "mosswing",
       "dex": 23,
-      "name": "Mosswing",
+      "name": "Mossflutter",
       "family_id": "mosswing",
       "types": [
         "Botanic",
@@ -9365,12 +9402,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Mosswing"
     },
     {
       "id": "mosswing-final",
       "dex": 135,
-      "name": "Mosswing Prime",
+      "name": "Bryomoth",
       "family_id": "mosswing",
       "types": [
         "Botanic",
@@ -9449,12 +9487,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Mosswing Prime"
     },
     {
       "id": "splicewisp-baby",
       "dex": 136,
-      "name": "Splicewiling",
+      "name": "Splicewisp",
       "family_id": "splicewisp",
       "types": [
         "Bio"
@@ -9516,12 +9555,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Splicewiling"
     },
     {
       "id": "splicewisp",
       "dex": 24,
-      "name": "Splicewisp",
+      "name": "Splicewing",
       "family_id": "splicewisp",
       "types": [
         "Bio"
@@ -9595,12 +9635,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Splicewisp"
     },
     {
       "id": "splicewisp-final",
       "dex": 137,
-      "name": "Splicewisp Prime",
+      "name": "Helixara",
       "family_id": "splicewisp",
       "types": [
         "Bio"
@@ -9682,12 +9723,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Splicewisp Prime"
     },
     {
       "id": "mycelid-baby",
       "dex": 277,
-      "name": "Baby Mycelid",
+      "name": "Mycelid",
       "family_id": "mycelid",
       "types": [
         "Bio"
@@ -9745,12 +9787,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Mycelid"
     },
     {
       "id": "mycelid",
       "dex": 25,
-      "name": "Mycelid",
+      "name": "Mycelhart",
       "family_id": "mycelid",
       "types": [
         "Bio"
@@ -9820,12 +9863,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Mycelid"
     },
     {
       "id": "mycelid-final",
       "dex": 138,
-      "name": "Mycelid Prime",
+      "name": "Mycervus",
       "family_id": "mycelid",
       "types": [
         "Bio"
@@ -9903,12 +9947,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Mycelid Prime"
     },
     {
       "id": "enzymite-baby",
       "dex": 278,
-      "name": "Baby Enzymite",
+      "name": "Enzymite",
       "family_id": "enzymite",
       "types": [
         "Bio",
@@ -9967,12 +10012,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Enzymite"
     },
     {
       "id": "enzymite",
       "dex": 26,
-      "name": "Enzymite",
+      "name": "Enzycle",
       "family_id": "enzymite",
       "types": [
         "Bio",
@@ -10043,12 +10089,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Enzymite"
     },
     {
       "id": "enzymite-final",
       "dex": 139,
-      "name": "Enzymite Prime",
+      "name": "Catalytron",
       "family_id": "enzymite",
       "types": [
         "Bio",
@@ -10127,12 +10174,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Enzymite Prime"
     },
     {
       "id": "organitron-baby",
       "dex": 279,
-      "name": "Baby Organitron",
+      "name": "Organitron",
       "family_id": "organitron",
       "types": [
         "Bio",
@@ -10191,12 +10239,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Organitron"
     },
     {
       "id": "organitron",
       "dex": 27,
-      "name": "Organitron",
+      "name": "Organhart",
       "family_id": "organitron",
       "types": [
         "Bio",
@@ -10271,12 +10320,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Organitron"
     },
     {
       "id": "organitron-final",
       "dex": 140,
-      "name": "Organitron Prime",
+      "name": "Biocervion",
       "family_id": "organitron",
       "types": [
         "Bio",
@@ -10359,12 +10409,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Organitron Prime"
     },
     {
       "id": "cellling-baby",
       "dex": 280,
-      "name": "Baby Cellling",
+      "name": "Cellling",
       "family_id": "cellling",
       "types": [
         "Bio"
@@ -10422,12 +10473,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Cellling"
     },
     {
       "id": "cellling",
       "dex": 28,
-      "name": "Cellling",
+      "name": "Cellulo",
       "family_id": "cellling",
       "types": [
         "Bio"
@@ -10497,12 +10549,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cellling"
     },
     {
       "id": "cellling-final",
       "dex": 141,
-      "name": "Cellling Prime",
+      "name": "Organella",
       "family_id": "cellling",
       "types": [
         "Bio"
@@ -10580,12 +10633,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cellling Prime"
     },
     {
       "id": "visceroid-baby",
       "dex": 281,
-      "name": "Baby Visceroid",
+      "name": "Visceroid",
       "family_id": "visceroid",
       "types": [
         "Bio",
@@ -10644,12 +10698,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Visceroid"
     },
     {
       "id": "visceroid",
       "dex": 29,
-      "name": "Visceroid",
+      "name": "Viscotl",
       "family_id": "visceroid",
       "types": [
         "Bio",
@@ -10724,12 +10779,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Visceroid"
     },
     {
       "id": "visceroid-final",
       "dex": 142,
-      "name": "Visceroid Prime",
+      "name": "Rheolotl",
       "family_id": "visceroid",
       "types": [
         "Bio",
@@ -10812,12 +10868,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Visceroid Prime"
     },
     {
       "id": "zephyrit-baby",
       "dex": 282,
-      "name": "Baby Zephyrit",
+      "name": "Zephyrit",
       "family_id": "zephyrit",
       "types": [
         "Atmospheric"
@@ -10875,12 +10932,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_09_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Zephyrit"
     },
     {
       "id": "zephyrit",
       "dex": 30,
-      "name": "Zephyrit",
+      "name": "Zephyrhart",
       "family_id": "zephyrit",
       "types": [
         "Atmospheric"
@@ -10950,12 +11008,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_09_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Zephyrit"
     },
     {
       "id": "zephyrit-final",
       "dex": 143,
-      "name": "Zephyrit Prime",
+      "name": "Anemocerv",
       "family_id": "zephyrit",
       "types": [
         "Atmospheric"
@@ -11033,12 +11092,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_09_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Zephyrit Prime"
     },
     {
       "id": "galepod-baby",
       "dex": 283,
-      "name": "Baby Galepod",
+      "name": "Galepod",
       "family_id": "galepod",
       "types": [
         "Atmospheric"
@@ -11096,12 +11156,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Galepod"
     },
     {
       "id": "galepod",
       "dex": 31,
-      "name": "Galepod",
+      "name": "Galecoil",
       "family_id": "galepod",
       "types": [
         "Atmospheric"
@@ -11175,12 +11236,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Galepod"
     },
     {
       "id": "galepod-final",
       "dex": 144,
-      "name": "Galepod Prime",
+      "name": "Anemospire",
       "family_id": "galepod",
       "types": [
         "Atmospheric"
@@ -11262,12 +11324,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Galepod Prime"
     },
     {
       "id": "cumulob-baby",
       "dex": 145,
-      "name": "Cumullet",
+      "name": "Cumulob",
       "family_id": "cumulob",
       "types": [
         "Atmospheric",
@@ -11330,12 +11393,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cumullet"
     },
     {
       "id": "cumulob",
       "dex": 32,
-      "name": "Cumulob",
+      "name": "Cumulamb",
       "family_id": "cumulob",
       "types": [
         "Atmospheric",
@@ -11406,12 +11470,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cumulob"
     },
     {
       "id": "cumulob-final",
       "dex": 146,
-      "name": "Cumulob Prime",
+      "name": "Baroram",
       "family_id": "cumulob",
       "types": [
         "Atmospheric",
@@ -11490,12 +11555,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cumulob Prime"
     },
     {
       "id": "aerochit-baby",
       "dex": 147,
-      "name": "Aerochling",
+      "name": "Aerochit",
       "family_id": "aerochit",
       "types": [
         "Atmospheric"
@@ -11557,12 +11623,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Aerochling"
     },
     {
       "id": "aerochit",
       "dex": 33,
-      "name": "Aerochit",
+      "name": "Aerofoil",
       "family_id": "aerochit",
       "types": [
         "Atmospheric"
@@ -11632,12 +11699,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Aerochit"
     },
     {
       "id": "aerochit-final",
       "dex": 148,
-      "name": "Aerochit Prime",
+      "name": "Stratochitin",
       "family_id": "aerochit",
       "types": [
         "Atmospheric"
@@ -11715,12 +11783,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Aerochit Prime"
     },
     {
       "id": "vortexling-baby",
       "dex": 149,
-      "name": "Vortexliling",
+      "name": "Vortexling",
       "family_id": "vortexling",
       "types": [
         "Atmospheric",
@@ -11783,12 +11852,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Vortexliling"
     },
     {
       "id": "vortexling",
       "dex": 34,
-      "name": "Vortexling",
+      "name": "Vortexcoil",
       "family_id": "vortexling",
       "types": [
         "Atmospheric",
@@ -11863,12 +11933,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Vortexling"
     },
     {
       "id": "vortexling-final",
       "dex": 150,
-      "name": "Vortexling Prime",
+      "name": "Cyclonaga",
       "family_id": "vortexling",
       "types": [
         "Atmospheric",
@@ -11951,12 +12022,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Vortexling Prime"
     },
     {
       "id": "stratowing-baby",
       "dex": 151,
-      "name": "Stratowiling",
+      "name": "Stratowing",
       "family_id": "stratowing",
       "types": [
         "Atmospheric"
@@ -12018,12 +12090,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Stratowiling"
     },
     {
       "id": "stratowing",
       "dex": 35,
-      "name": "Stratowing",
+      "name": "Stratoglide",
       "family_id": "stratowing",
       "types": [
         "Atmospheric"
@@ -12097,12 +12170,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Stratowing"
     },
     {
       "id": "stratowing-final",
       "dex": 152,
-      "name": "Stratowing Prime",
+      "name": "Aeralbatross",
       "family_id": "stratowing",
       "types": [
         "Atmospheric"
@@ -12184,12 +12258,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Stratowing Prime"
     },
     {
       "id": "reagentot-baby",
       "dex": 284,
-      "name": "Baby Reagentot",
+      "name": "Reagentot",
       "family_id": "reagentot",
       "types": [
         "Chemical"
@@ -12247,12 +12322,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Reagentot"
     },
     {
       "id": "reagentot",
       "dex": 36,
-      "name": "Reagentot",
+      "name": "Reagentail",
       "family_id": "reagentot",
       "types": [
         "Chemical"
@@ -12322,12 +12398,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Reagentot"
     },
     {
       "id": "reagentot-final",
       "dex": 153,
-      "name": "Reagentot Prime",
+      "name": "Ampulander",
       "family_id": "reagentot",
       "types": [
         "Chemical"
@@ -12405,12 +12482,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Reagentot Prime"
     },
     {
       "id": "toxigerm-baby",
       "dex": 285,
-      "name": "Baby Toxigerm",
+      "name": "Toxigerm",
       "family_id": "toxigerm",
       "types": [
         "Chemical",
@@ -12469,12 +12547,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Toxigerm"
     },
     {
       "id": "toxigerm",
       "dex": 37,
-      "name": "Toxigerm",
+      "name": "Toxinewt",
       "family_id": "toxigerm",
       "types": [
         "Chemical",
@@ -12545,12 +12624,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Toxigerm"
     },
     {
       "id": "toxigerm-final",
       "dex": 154,
-      "name": "Toxigerm Prime",
+      "name": "Microbasil",
       "family_id": "toxigerm",
       "types": [
         "Chemical",
@@ -12629,12 +12709,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Toxigerm Prime"
     },
     {
       "id": "vapomite-baby",
       "dex": 286,
-      "name": "Baby Vapomite",
+      "name": "Vapomite",
       "family_id": "vapomite",
       "types": [
         "Chemical",
@@ -12693,12 +12774,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Vapomite"
     },
     {
       "id": "vapomite",
       "dex": 38,
-      "name": "Vapomite",
+      "name": "Vaporshell",
       "family_id": "vapomite",
       "types": [
         "Chemical",
@@ -12769,12 +12851,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Vapomite"
     },
     {
       "id": "vapomite-final",
       "dex": 155,
-      "name": "Vapomite Prime",
+      "name": "Boilerceros",
       "family_id": "vapomite",
       "types": [
         "Chemical",
@@ -12853,12 +12936,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Vapomite Prime"
     },
     {
       "id": "sludgebot-baby",
       "dex": 287,
-      "name": "Baby Sludgebot",
+      "name": "Sludgebot",
       "family_id": "sludgebot",
       "types": [
         "Chemical"
@@ -12916,12 +13000,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Sludgebot"
     },
     {
       "id": "sludgebot",
       "dex": 39,
-      "name": "Sludgebot",
+      "name": "Sludgefilter",
       "family_id": "sludgebot",
       "types": [
         "Chemical"
@@ -12991,12 +13076,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sludgebot"
     },
     {
       "id": "sludgebot-final",
       "dex": 156,
-      "name": "Sludgebot Prime",
+      "name": "Remedispire",
       "family_id": "sludgebot",
       "types": [
         "Chemical"
@@ -13074,12 +13160,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Sludgebot Prime"
     },
     {
       "id": "solvexel-baby",
       "dex": 288,
-      "name": "Baby Solvexel",
+      "name": "Solvexel",
       "family_id": "solvexel",
       "types": [
         "Hydro",
@@ -13138,12 +13225,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Solvexel"
     },
     {
       "id": "solvexel",
       "dex": 40,
-      "name": "Solvexel",
+      "name": "Solvoct",
       "family_id": "solvexel",
       "types": [
         "Hydro",
@@ -13222,12 +13310,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Solvexel"
     },
     {
       "id": "solvexel-final",
       "dex": 157,
-      "name": "Solvexel Prime",
+      "name": "Octoreagent",
       "family_id": "solvexel",
       "types": [
         "Hydro",
@@ -13314,12 +13403,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Solvexel Prime"
     },
     {
       "id": "catalyxt-baby",
       "dex": 289,
-      "name": "Baby Catalyxt",
+      "name": "Catalyxt",
       "family_id": "catalyxt",
       "types": [
         "Chemical"
@@ -13377,12 +13467,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Catalyxt"
     },
     {
       "id": "catalyxt",
       "dex": 41,
-      "name": "Catalyxt",
+      "name": "Catalynx",
       "family_id": "catalyxt",
       "types": [
         "Chemical"
@@ -13452,12 +13543,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Catalyxt"
     },
     {
       "id": "catalyxt-final",
       "dex": 158,
-      "name": "Catalyxt Prime",
+      "name": "Reactyger",
       "family_id": "catalyxt",
       "types": [
         "Chemical"
@@ -13535,12 +13627,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Catalyxt Prime"
     },
     {
       "id": "cogmite-baby",
       "dex": 290,
-      "name": "Baby Cogmite",
+      "name": "Cogmite",
       "family_id": "cogmite",
       "types": [
         "Mechanical"
@@ -13598,12 +13691,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Cogmite"
     },
     {
       "id": "cogmite",
       "dex": 42,
-      "name": "Cogmite",
+      "name": "Cogcrab",
       "family_id": "cogmite",
       "types": [
         "Mechanical"
@@ -13669,12 +13763,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cogmite"
     },
     {
       "id": "cogmite-final",
       "dex": 159,
-      "name": "Cogmite Prime",
+      "name": "Chronocarapace",
       "family_id": "cogmite",
       "types": [
         "Mechanical"
@@ -13748,12 +13843,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cogmite Prime"
     },
     {
       "id": "gearhulk-baby",
       "dex": 160,
-      "name": "Gearhuling",
+      "name": "Gearhulk",
       "family_id": "gearhulk",
       "types": [
         "Mechanical",
@@ -13816,12 +13912,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Gearhuling"
     },
     {
       "id": "gearhulk",
       "dex": 43,
-      "name": "Gearhulk",
+      "name": "Geargrizz",
       "family_id": "gearhulk",
       "types": [
         "Mechanical",
@@ -13892,12 +13989,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Gearhulk"
     },
     {
       "id": "gearhulk-final",
       "dex": 161,
-      "name": "Gearhulk Prime",
+      "name": "Ursamechan",
       "family_id": "gearhulk",
       "types": [
         "Mechanical",
@@ -13976,12 +14074,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Gearhulk Prime"
     },
     {
       "id": "riveton-baby",
       "dex": 291,
-      "name": "Baby Riveton",
+      "name": "Riveton",
       "family_id": "riveton",
       "types": [
         "Mechanical"
@@ -14039,12 +14138,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Riveton"
     },
     {
       "id": "riveton",
       "dex": 44,
-      "name": "Riveton",
+      "name": "Rivetusk",
       "family_id": "riveton",
       "types": [
         "Mechanical"
@@ -14110,12 +14210,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Riveton"
     },
     {
       "id": "riveton-final",
       "dex": 162,
-      "name": "Riveton Prime",
+      "name": "Pistoceros",
       "family_id": "riveton",
       "types": [
         "Mechanical"
@@ -14189,12 +14290,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Riveton Prime"
     },
     {
       "id": "springbit-baby",
       "dex": 163,
-      "name": "Springbling",
+      "name": "Springbit",
       "family_id": "springbit",
       "types": [
         "Mechanical"
@@ -14256,12 +14358,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Springbling"
     },
     {
       "id": "springbit",
       "dex": 45,
-      "name": "Springbit",
+      "name": "Springhopper",
       "family_id": "springbit",
       "types": [
         "Mechanical"
@@ -14327,12 +14430,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Springbit"
     },
     {
       "id": "springbit-final",
       "dex": 164,
-      "name": "Springbit Prime",
+      "name": "Tensionyx",
       "family_id": "springbit",
       "types": [
         "Mechanical"
@@ -14406,12 +14510,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Springbit Prime"
     },
     {
       "id": "crankling-baby",
       "dex": 292,
-      "name": "Baby Crankling",
+      "name": "Crankling",
       "family_id": "crankling",
       "types": [
         "Mechanical"
@@ -14469,12 +14574,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Crankling"
     },
     {
       "id": "crankling",
       "dex": 46,
-      "name": "Crankling",
+      "name": "Crankaroo",
       "family_id": "crankling",
       "types": [
         "Mechanical"
@@ -14544,12 +14650,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Crankling"
     },
     {
       "id": "crankling-final",
       "dex": 165,
-      "name": "Crankling Prime",
+      "name": "Kinetaroo",
       "family_id": "crankling",
       "types": [
         "Mechanical"
@@ -14627,12 +14734,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Crankling Prime"
     },
     {
       "id": "automit-baby",
       "dex": 293,
-      "name": "Baby Automit",
+      "name": "Automit",
       "family_id": "automit",
       "types": [
         "Mechanical",
@@ -14691,12 +14799,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Automit"
     },
     {
       "id": "automit",
       "dex": 47,
-      "name": "Automit",
+      "name": "Autolimb",
       "family_id": "automit",
       "types": [
         "Mechanical",
@@ -14771,12 +14880,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Automit"
     },
     {
       "id": "automit-final",
       "dex": 166,
-      "name": "Automit Prime",
+      "name": "Mantimech",
       "family_id": "automit",
       "types": [
         "Mechanical",
@@ -14859,12 +14969,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Automit Prime"
     },
     {
       "id": "lumibot-baby",
       "dex": 167,
-      "name": "Lumibling",
+      "name": "Lumibot",
       "family_id": "lumibot",
       "types": [
         "Radiant"
@@ -14926,12 +15037,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Lumibling"
     },
     {
       "id": "lumibot",
       "dex": 48,
-      "name": "Lumibot",
+      "name": "Lumowl",
       "family_id": "lumibot",
       "types": [
         "Radiant"
@@ -15001,12 +15113,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Lumibot"
     },
     {
       "id": "lumibot-final",
       "dex": 168,
-      "name": "Lumibot Prime",
+      "name": "Luminarch",
       "family_id": "lumibot",
       "types": [
         "Radiant"
@@ -15084,12 +15197,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Lumibot Prime"
     },
     {
       "id": "prismoth-baby",
       "dex": 169,
-      "name": "Prismoling",
+      "name": "Prismoth",
       "family_id": "prismoth",
       "types": [
         "Radiant",
@@ -15152,12 +15266,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Prismoling"
     },
     {
       "id": "prismoth",
       "dex": 49,
-      "name": "Prismoth",
+      "name": "Prismwing",
       "family_id": "prismoth",
       "types": [
         "Radiant",
@@ -15228,12 +15343,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Prismoth"
     },
     {
       "id": "prismoth-final",
       "dex": 170,
-      "name": "Prismoth Prime",
+      "name": "Spectramoth",
       "family_id": "prismoth",
       "types": [
         "Radiant",
@@ -15312,12 +15428,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Prismoth Prime"
     },
     {
       "id": "gleamlet-baby",
       "dex": 294,
-      "name": "Baby Gleamlet",
+      "name": "Gleamlet",
       "family_id": "gleamlet",
       "types": [
         "Radiant"
@@ -15375,12 +15492,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Gleamlet"
     },
     {
       "id": "gleamlet",
       "dex": 50,
-      "name": "Gleamlet",
+      "name": "Gleamhart",
       "family_id": "gleamlet",
       "types": [
         "Radiant"
@@ -15450,12 +15568,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Gleamlet"
     },
     {
       "id": "gleamlet-final",
       "dex": 171,
-      "name": "Gleamlet Prime",
+      "name": "Opticerv",
       "family_id": "gleamlet",
       "types": [
         "Radiant"
@@ -15533,12 +15652,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Gleamlet Prime"
     },
     {
       "id": "solburst-baby",
       "dex": 295,
-      "name": "Baby Solburst",
+      "name": "Solburst",
       "family_id": "solburst",
       "types": [
         "Radiant",
@@ -15597,12 +15717,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Solburst"
     },
     {
       "id": "solburst",
       "dex": 51,
-      "name": "Solburst",
+      "name": "Solwing",
       "family_id": "solburst",
       "types": [
         "Radiant",
@@ -15673,12 +15794,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Solburst"
     },
     {
       "id": "solburst-final",
       "dex": 172,
-      "name": "Solburst Prime",
+      "name": "Heliophane",
       "family_id": "solburst",
       "types": [
         "Radiant",
@@ -15757,12 +15879,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Solburst Prime"
     },
     {
       "id": "droplite-baby",
       "dex": 173,
-      "name": "Dropliling",
+      "name": "Droplite",
       "family_id": "droplite",
       "types": [
         "Hydro"
@@ -15824,12 +15947,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Dropliling"
     },
     {
       "id": "droplite",
       "dex": 52,
-      "name": "Droplite",
+      "name": "Droplume",
       "family_id": "droplite",
       "types": [
         "Hydro"
@@ -15899,12 +16023,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Droplite"
     },
     {
       "id": "droplite-final",
       "dex": 174,
-      "name": "Droplite Prime",
+      "name": "Hydromedusa",
       "family_id": "droplite",
       "types": [
         "Hydro"
@@ -15982,12 +16107,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Droplite Prime"
     },
     {
       "id": "tidefin-baby",
       "dex": 296,
-      "name": "Baby Tidefin",
+      "name": "Tidefin",
       "family_id": "tidefin",
       "types": [
         "Hydro"
@@ -16045,12 +16171,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Tidefin"
     },
     {
       "id": "tidefin",
       "dex": 53,
-      "name": "Tidefin",
+      "name": "Tideshear",
       "family_id": "tidefin",
       "types": [
         "Hydro"
@@ -16120,12 +16247,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Tidefin"
     },
     {
       "id": "tidefin-final",
       "dex": 175,
-      "name": "Tidefin Prime",
+      "name": "Hydrohammer",
       "family_id": "tidefin",
       "types": [
         "Hydro"
@@ -16203,12 +16331,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Tidefin Prime"
     },
     {
       "id": "brineling-baby",
       "dex": 176,
-      "name": "Brineliling",
+      "name": "Brineling",
       "family_id": "brineling",
       "types": [
         "Hydro",
@@ -16271,12 +16400,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Brineliling"
     },
     {
       "id": "brineling",
       "dex": 54,
-      "name": "Brineling",
+      "name": "Brinescale",
       "family_id": "brineling",
       "types": [
         "Hydro",
@@ -16347,12 +16477,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Brineling"
     },
     {
       "id": "brineling-final",
       "dex": 177,
-      "name": "Brineling Prime",
+      "name": "Halodrake",
       "family_id": "brineling",
       "types": [
         "Hydro",
@@ -16431,12 +16562,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Brineling Prime"
     },
     {
       "id": "kelpbot-baby",
       "dex": 297,
-      "name": "Baby Kelpbot",
+      "name": "Kelpbot",
       "family_id": "kelpbot",
       "types": [
         "Hydro",
@@ -16495,12 +16627,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Kelpbot"
     },
     {
       "id": "kelpbot",
       "dex": 55,
-      "name": "Kelpbot",
+      "name": "Kelptide",
       "family_id": "kelpbot",
       "types": [
         "Hydro",
@@ -16575,12 +16708,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Kelpbot"
     },
     {
       "id": "kelpbot-final",
       "dex": 178,
-      "name": "Kelpbot Prime",
+      "name": "Thalassurge",
       "family_id": "kelpbot",
       "types": [
         "Hydro",
@@ -16663,12 +16797,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Kelpbot Prime"
     },
     {
       "id": "mistfin-baby",
       "dex": 298,
-      "name": "Baby Mistfin",
+      "name": "Mistfin",
       "family_id": "mistfin",
       "types": [
         "Hydro",
@@ -16727,12 +16862,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Mistfin"
     },
     {
       "id": "mistfin",
       "dex": 56,
-      "name": "Mistfin",
+      "name": "Mistglide",
       "family_id": "mistfin",
       "types": [
         "Hydro",
@@ -16803,12 +16939,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Mistfin"
     },
     {
       "id": "mistfin-final",
       "dex": 179,
-      "name": "Mistfin Prime",
+      "name": "Nebulafin",
       "family_id": "mistfin",
       "types": [
         "Hydro",
@@ -16887,12 +17024,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Mistfin Prime"
     },
     {
       "id": "puddlit-baby",
       "dex": 180,
-      "name": "Puddllet",
+      "name": "Puddlit",
       "family_id": "puddlit",
       "types": [
         "Hydro"
@@ -16954,12 +17092,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Puddllet"
     },
     {
       "id": "puddlit",
       "dex": 57,
-      "name": "Puddlit",
+      "name": "Puddleplat",
       "family_id": "puddlit",
       "types": [
         "Hydro"
@@ -17029,12 +17168,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Puddlit"
     },
     {
       "id": "puddlit-final",
       "dex": 181,
-      "name": "Puddlit Prime",
+      "name": "Reservatypus",
       "family_id": "puddlit",
       "types": [
         "Hydro"
@@ -17112,12 +17252,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Puddlit Prime"
     },
     {
       "id": "coralbit-baby",
       "dex": 299,
-      "name": "Baby Coralbit",
+      "name": "Coralbit",
       "family_id": "coralbit",
       "types": [
         "Hydro",
@@ -17176,12 +17317,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Coralbit"
     },
     {
       "id": "coralbit",
       "dex": 58,
-      "name": "Coralbit",
+      "name": "Coralclaw",
       "family_id": "coralbit",
       "types": [
         "Hydro",
@@ -17256,12 +17398,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Coralbit"
     },
     {
       "id": "coralbit-final",
       "dex": 182,
-      "name": "Coralbit Prime",
+      "name": "Reefortress",
       "family_id": "coralbit",
       "types": [
         "Hydro",
@@ -17344,12 +17487,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Coralbit Prime"
     },
     {
       "id": "abyssling-baby",
       "dex": 183,
-      "name": "Abyssliling",
+      "name": "Abyssling",
       "family_id": "abyssling",
       "types": [
         "Hydro",
@@ -17412,12 +17556,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Abyssliling"
     },
     {
       "id": "abyssling",
       "dex": 59,
-      "name": "Abyssling",
+      "name": "Abyssail",
       "family_id": "abyssling",
       "types": [
         "Hydro",
@@ -17496,12 +17641,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Abyssling"
     },
     {
       "id": "abyssling-final",
       "dex": 184,
-      "name": "Abyssling Prime",
+      "name": "Bathyray",
       "family_id": "abyssling",
       "types": [
         "Hydro",
@@ -17588,12 +17734,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Abyssling Prime"
     },
     {
       "id": "frostrit-baby",
       "dex": 185,
-      "name": "Frostrling",
+      "name": "Frostrit",
       "family_id": "frostrit",
       "types": [
         "Cryo"
@@ -17655,12 +17802,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Frostrling"
     },
     {
       "id": "frostrit",
       "dex": 60,
-      "name": "Frostrit",
+      "name": "Frostruff",
       "family_id": "frostrit",
       "types": [
         "Cryo"
@@ -17730,12 +17878,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Frostrit"
     },
     {
       "id": "frostrit-final",
       "dex": 186,
-      "name": "Frostrit Prime",
+      "name": "Glaciovulp",
       "family_id": "frostrit",
       "types": [
         "Cryo"
@@ -17813,12 +17962,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Frostrit Prime"
     },
     {
       "id": "glacibit-baby",
       "dex": 300,
-      "name": "Baby Glacibit",
+      "name": "Glacibit",
       "family_id": "glacibit",
       "types": [
         "Cryo",
@@ -17877,12 +18027,13 @@
         "back_sheet": "separately supplied labelled back sheet",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Glacibit"
     },
     {
       "id": "glacibit",
       "dex": 61,
-      "name": "Glacibit",
+      "name": "Glacigon",
       "family_id": "glacibit",
       "types": [
         "Cryo",
@@ -17953,12 +18104,13 @@
         "back_sheet": "separately supplied labelled back sheet",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Glacibit"
     },
     {
       "id": "glacibit-final",
       "dex": 187,
-      "name": "Glacibit Prime",
+      "name": "Cryotitan",
       "family_id": "glacibit",
       "types": [
         "Cryo",
@@ -18037,12 +18189,13 @@
         "back_sheet": "separately supplied labelled back sheet",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Glacibit Prime"
     },
     {
       "id": "icelyte-baby",
       "dex": 301,
-      "name": "Baby Icelyte",
+      "name": "Icelyte",
       "family_id": "icelyte",
       "types": [
         "Cryo",
@@ -18101,12 +18254,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Icelyte"
     },
     {
       "id": "icelyte",
       "dex": 62,
-      "name": "Icelyte",
+      "name": "Icestride",
       "family_id": "icelyte",
       "types": [
         "Cryo",
@@ -18177,12 +18331,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Icelyte"
     },
     {
       "id": "icelyte-final",
       "dex": 188,
-      "name": "Icelyte Prime",
+      "name": "Prismalop",
       "family_id": "icelyte",
       "types": [
         "Cryo",
@@ -18261,12 +18416,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Icelyte Prime"
     },
     {
       "id": "rimelet-baby",
       "dex": 189,
-      "name": "Rimellet",
+      "name": "Rimelet",
       "family_id": "rimelet",
       "types": [
         "Cryo"
@@ -18328,12 +18484,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Rimellet"
     },
     {
       "id": "rimelet",
       "dex": 63,
-      "name": "Rimelet",
+      "name": "Rimewing",
       "family_id": "rimelet",
       "types": [
         "Cryo"
@@ -18403,12 +18560,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Rimelet"
     },
     {
       "id": "rimelet-final",
       "dex": 190,
-      "name": "Rimelet Prime",
+      "name": "Cryostriga",
       "family_id": "rimelet",
       "types": [
         "Cryo"
@@ -18486,12 +18644,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Rimelet Prime"
     },
     {
       "id": "chillmite-baby",
       "dex": 191,
-      "name": "Chillmiling",
+      "name": "Chillmite",
       "family_id": "chillmite",
       "types": [
         "Cryo"
@@ -18553,12 +18712,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Chillmiling"
     },
     {
       "id": "chillmite",
       "dex": 64,
-      "name": "Chillmite",
+      "name": "Chillclaw",
       "family_id": "chillmite",
       "types": [
         "Cryo"
@@ -18628,12 +18788,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Chillmite"
     },
     {
       "id": "chillmite-final",
       "dex": 192,
-      "name": "Chillmite Prime",
+      "name": "Cryoarach",
       "family_id": "chillmite",
       "types": [
         "Cryo"
@@ -18711,12 +18872,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Chillmite Prime"
     },
     {
       "id": "snovite-baby",
       "dex": 302,
-      "name": "Baby Snovite",
+      "name": "Snovite",
       "family_id": "snovite",
       "types": [
         "Cryo",
@@ -18775,12 +18937,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Snovite"
     },
     {
       "id": "snovite",
       "dex": 65,
-      "name": "Snovite",
+      "name": "Snovail",
       "family_id": "snovite",
       "types": [
         "Cryo",
@@ -18851,12 +19014,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Snovite"
     },
     {
       "id": "snovite-final",
       "dex": 193,
-      "name": "Snovite Prime",
+      "name": "Nivermine",
       "family_id": "snovite",
       "types": [
         "Cryo",
@@ -18935,12 +19099,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Snovite Prime"
     },
     {
       "id": "emberling-baby",
       "dex": 194,
-      "name": "Emberliling",
+      "name": "Emberling",
       "family_id": "emberling",
       "types": [
         "Thermal"
@@ -19002,12 +19167,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Emberliling"
     },
     {
       "id": "emberling",
       "dex": 66,
-      "name": "Emberling",
+      "name": "Emberfox",
       "family_id": "emberling",
       "types": [
         "Thermal"
@@ -19077,12 +19243,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Emberling"
     },
     {
       "id": "emberling-final",
       "dex": 195,
-      "name": "Emberling Prime",
+      "name": "Vulcaruff",
       "family_id": "emberling",
       "types": [
         "Thermal"
@@ -19160,12 +19327,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Emberling Prime"
     },
     {
       "id": "slagmite-baby",
       "dex": 196,
-      "name": "Slagmiling",
+      "name": "Slagmite",
       "family_id": "slagmite",
       "types": [
         "Thermal",
@@ -19228,12 +19396,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Slagmiling"
     },
     {
       "id": "slagmite",
       "dex": 67,
-      "name": "Slagmite",
+      "name": "Slagboar",
       "family_id": "slagmite",
       "types": [
         "Thermal",
@@ -19308,12 +19477,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Slagmite"
     },
     {
       "id": "slagmite-final",
       "dex": 197,
-      "name": "Slagmite Prime",
+      "name": "Smeltusk",
       "family_id": "slagmite",
       "types": [
         "Thermal",
@@ -19396,12 +19566,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Slagmite Prime"
     },
     {
       "id": "magmite-baby",
       "dex": 198,
-      "name": "Magmiling",
+      "name": "Magmite",
       "family_id": "magmite",
       "types": [
         "Thermal"
@@ -19463,12 +19634,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Magmiling"
     },
     {
       "id": "magmite",
       "dex": 68,
-      "name": "Magmite",
+      "name": "Magnihorn",
       "family_id": "magmite",
       "types": [
         "Thermal"
@@ -19538,12 +19710,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Magmite"
     },
     {
       "id": "magmite-final",
       "dex": 199,
-      "name": "Magmite Prime",
+      "name": "Polaritusk",
       "family_id": "magmite",
       "types": [
         "Thermal"
@@ -19621,12 +19794,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Magmite Prime"
     },
     {
       "id": "flarebit-baby",
       "dex": 200,
-      "name": "Flarebling",
+      "name": "Flarebit",
       "family_id": "flarebit",
       "types": [
         "Thermal"
@@ -19688,12 +19862,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Flarebling"
     },
     {
       "id": "flarebit",
       "dex": 69,
-      "name": "Flarebit",
+      "name": "Flarewing",
       "family_id": "flarebit",
       "types": [
         "Thermal"
@@ -19767,12 +19942,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Flarebit"
     },
     {
       "id": "flarebit-final",
       "dex": 201,
-      "name": "Flarebit Prime",
+      "name": "Radiavolt",
       "family_id": "flarebit",
       "types": [
         "Thermal"
@@ -19854,12 +20030,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Flarebit Prime"
     },
     {
       "id": "ashling-baby",
       "dex": 303,
-      "name": "Baby Ashling",
+      "name": "Ashling",
       "family_id": "ashling",
       "types": [
         "Thermal",
@@ -19918,12 +20095,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Ashling"
     },
     {
       "id": "ashling",
       "dex": 70,
-      "name": "Ashling",
+      "name": "Ashowl",
       "family_id": "ashling",
       "types": [
         "Thermal",
@@ -19994,12 +20172,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ashling"
     },
     {
       "id": "ashling-final",
       "dex": 202,
-      "name": "Ashling Prime",
+      "name": "Cineroc",
       "family_id": "ashling",
       "types": [
         "Thermal",
@@ -20078,12 +20257,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ashling Prime"
     },
     {
       "id": "scorchit-baby",
       "dex": 203,
-      "name": "Scorchling",
+      "name": "Scorchit",
       "family_id": "scorchit",
       "types": [
         "Thermal"
@@ -20145,12 +20325,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Scorchling"
     },
     {
       "id": "scorchit",
       "dex": 71,
-      "name": "Scorchit",
+      "name": "Scorchclaw",
       "family_id": "scorchit",
       "types": [
         "Thermal"
@@ -20224,12 +20405,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Scorchit"
     },
     {
       "id": "scorchit-final",
       "dex": 204,
-      "name": "Scorchit Prime",
+      "name": "Combustinger",
       "family_id": "scorchit",
       "types": [
         "Thermal"
@@ -20311,12 +20493,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Scorchit Prime"
     },
     {
       "id": "larvaburn-baby",
       "dex": 304,
-      "name": "Baby Larvaburn",
+      "name": "Larvaburn",
       "family_id": "larvaburn",
       "types": [
         "Thermal",
@@ -20375,12 +20558,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Larvaburn"
     },
     {
       "id": "larvaburn",
       "dex": 72,
-      "name": "Larvaburn",
+      "name": "Larvaflare",
       "family_id": "larvaburn",
       "types": [
         "Thermal",
@@ -20459,12 +20643,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Larvaburn"
     },
     {
       "id": "larvaburn-final",
       "dex": 205,
-      "name": "Larvaburn Prime",
+      "name": "Radiapillar",
       "family_id": "larvaburn",
       "types": [
         "Thermal",
@@ -20551,12 +20736,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Larvaburn Prime"
     },
     {
       "id": "boulderon-baby",
       "dex": 305,
-      "name": "Baby Boulderon",
+      "name": "Boulderon",
       "family_id": "boulderon",
       "types": [
         "Geologic"
@@ -20614,12 +20800,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Boulderon"
     },
     {
       "id": "boulderon",
       "dex": 73,
-      "name": "Boulderon",
+      "name": "Boulderback",
       "family_id": "boulderon",
       "types": [
         "Geologic"
@@ -20693,12 +20880,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Boulderon"
     },
     {
       "id": "boulderon-final",
       "dex": 206,
-      "name": "Boulderon Prime",
+      "name": "Monolithor",
       "family_id": "boulderon",
       "types": [
         "Geologic"
@@ -20780,12 +20968,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Boulderon Prime"
     },
     {
       "id": "shalebit-baby",
       "dex": 306,
-      "name": "Baby Shalebit",
+      "name": "Shalebit",
       "family_id": "shalebit",
       "types": [
         "Geologic"
@@ -20843,12 +21032,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Shalebit"
     },
     {
       "id": "shalebit",
       "dex": 74,
-      "name": "Shalebit",
+      "name": "Shaleplate",
       "family_id": "shalebit",
       "types": [
         "Geologic"
@@ -20918,12 +21108,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Shalebit"
     },
     {
       "id": "shalebit-final",
       "dex": 207,
-      "name": "Shalebit Prime",
+      "name": "Stratosteg",
       "family_id": "shalebit",
       "types": [
         "Geologic"
@@ -21001,12 +21192,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Shalebit Prime"
     },
     {
       "id": "cragling-baby",
       "dex": 208,
-      "name": "Cragliling",
+      "name": "Cragling",
       "family_id": "cragling",
       "types": [
         "Geologic"
@@ -21068,12 +21260,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cragliling"
     },
     {
       "id": "cragling",
       "dex": 75,
-      "name": "Cragling",
+      "name": "Craghorn",
       "family_id": "cragling",
       "types": [
         "Geologic"
@@ -21143,12 +21336,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cragling"
     },
     {
       "id": "cragling-final",
       "dex": 209,
-      "name": "Cragling Prime",
+      "name": "Stratoceros",
       "family_id": "cragling",
       "types": [
         "Geologic"
@@ -21226,12 +21420,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cragling Prime"
     },
     {
       "id": "quartzot-baby",
       "dex": 307,
-      "name": "Baby Quartzot",
+      "name": "Quartzot",
       "family_id": "quartzot",
       "types": [
         "Geologic",
@@ -21290,12 +21485,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Quartzot"
     },
     {
       "id": "quartzot",
       "dex": 76,
-      "name": "Quartzot",
+      "name": "Quartzorn",
       "family_id": "quartzot",
       "types": [
         "Geologic",
@@ -21370,12 +21566,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Quartzot"
     },
     {
       "id": "quartzot-final",
       "dex": 210,
-      "name": "Quartzot Prime",
+      "name": "Piezoceros",
       "family_id": "quartzot",
       "types": [
         "Geologic",
@@ -21458,12 +21655,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Quartzot Prime"
     },
     {
       "id": "gravelmut-baby",
       "dex": 308,
-      "name": "Baby Gravelmut",
+      "name": "Gravelmut",
       "family_id": "gravelmut",
       "types": [
         "Geologic",
@@ -21522,12 +21720,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Gravelmut"
     },
     {
       "id": "gravelmut",
       "dex": 77,
-      "name": "Gravelmut",
+      "name": "Gravelhound",
       "family_id": "gravelmut",
       "types": [
         "Geologic",
@@ -21602,12 +21801,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Gravelmut"
     },
     {
       "id": "gravelmut-final",
       "dex": 211,
-      "name": "Gravelmut Prime",
+      "name": "Conglomast",
       "family_id": "gravelmut",
       "types": [
         "Geologic",
@@ -21690,12 +21890,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Gravelmut Prime"
     },
     {
       "id": "terrabot-baby",
       "dex": 212,
-      "name": "Terrabling",
+      "name": "Terrabot",
       "family_id": "terrabot",
       "types": [
         "Geologic"
@@ -21757,12 +21958,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Terrabling"
     },
     {
       "id": "terrabot",
       "dex": 78,
-      "name": "Terrabot",
+      "name": "Terratusk",
       "family_id": "terrabot",
       "types": [
         "Geologic"
@@ -21836,12 +22038,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Terrabot"
     },
     {
       "id": "terrabot-final",
       "dex": 213,
-      "name": "Terrabot Prime",
+      "name": "Tectophant",
       "family_id": "terrabot",
       "types": [
         "Geologic"
@@ -21923,12 +22126,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Terrabot Prime"
     },
     {
       "id": "basaltot-baby",
       "dex": 309,
-      "name": "Baby Basaltot",
+      "name": "Basaltot",
       "family_id": "basaltot",
       "types": [
         "Geologic",
@@ -21987,12 +22191,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Basaltot"
     },
     {
       "id": "basaltot",
       "dex": 79,
-      "name": "Basaltot",
+      "name": "Basalton",
       "family_id": "basaltot",
       "types": [
         "Geologic",
@@ -22067,12 +22272,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Basaltot"
     },
     {
       "id": "basaltot-final",
       "dex": 214,
-      "name": "Basaltot Prime",
+      "name": "Caldero",
       "family_id": "basaltot",
       "types": [
         "Geologic",
@@ -22155,12 +22361,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Basaltot Prime"
     },
     {
       "id": "ferrite-baby",
       "dex": 215,
-      "name": "Ferriling",
+      "name": "Ferrite",
       "family_id": "ferrite",
       "types": [
         "Metallic"
@@ -22222,12 +22429,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ferriling"
     },
     {
       "id": "ferrite",
       "dex": 80,
-      "name": "Ferrite",
+      "name": "Ferroclaw",
       "family_id": "ferrite",
       "types": [
         "Metallic"
@@ -22293,12 +22501,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ferrite"
     },
     {
       "id": "ferrite-final",
       "dex": 216,
-      "name": "Ferrite Prime",
+      "name": "Magnetusk",
       "family_id": "ferrite",
       "types": [
         "Metallic"
@@ -22372,12 +22581,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ferrite Prime"
     },
     {
       "id": "alloyling-baby",
       "dex": 310,
-      "name": "Baby Alloyling",
+      "name": "Alloyling",
       "family_id": "alloyling",
       "types": [
         "Metallic"
@@ -22435,12 +22645,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Alloyling"
     },
     {
       "id": "alloyling",
       "dex": 81,
-      "name": "Alloyling",
+      "name": "Alloyscale",
       "family_id": "alloyling",
       "types": [
         "Metallic"
@@ -22506,12 +22717,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Alloyling"
     },
     {
       "id": "alloyling-final",
       "dex": 217,
-      "name": "Alloyling Prime",
+      "name": "Metallodon",
       "family_id": "alloyling",
       "types": [
         "Metallic"
@@ -22585,12 +22797,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Alloyling Prime"
     },
     {
       "id": "chromelet-baby",
       "dex": 218,
-      "name": "Chromellet",
+      "name": "Chromelet",
       "family_id": "chromelet",
       "types": [
         "Metallic",
@@ -22653,12 +22866,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Chromellet"
     },
     {
       "id": "chromelet",
       "dex": 82,
-      "name": "Chromelet",
+      "name": "Chromafowl",
       "family_id": "chromelet",
       "types": [
         "Metallic",
@@ -22729,12 +22943,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Chromelet"
     },
     {
       "id": "chromelet-final",
       "dex": 219,
-      "name": "Chromelet Prime",
+      "name": "Chromavane",
       "family_id": "chromelet",
       "types": [
         "Metallic",
@@ -22813,12 +23028,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Chromelet Prime"
     },
     {
       "id": "steelot-baby",
       "dex": 220,
-      "name": "Steellet",
+      "name": "Steelot",
       "family_id": "steelot",
       "types": [
         "Metallic"
@@ -22880,12 +23096,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Steellet"
     },
     {
       "id": "steelot",
       "dex": 83,
-      "name": "Steelot",
+      "name": "Steelstream",
       "family_id": "steelot",
       "types": [
         "Metallic"
@@ -22955,12 +23172,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Steelot"
     },
     {
       "id": "steelot-final",
       "dex": 221,
-      "name": "Steelot Prime",
+      "name": "Ferrutrine",
       "family_id": "steelot",
       "types": [
         "Metallic"
@@ -23038,12 +23256,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Steelot Prime"
     },
     {
       "id": "ingotot-baby",
       "dex": 311,
-      "name": "Baby Ingotot",
+      "name": "Ingotot",
       "family_id": "ingotot",
       "types": [
         "Metallic",
@@ -23102,12 +23321,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Ingotot"
     },
     {
       "id": "ingotot",
       "dex": 84,
-      "name": "Ingotot",
+      "name": "Ingotank",
       "family_id": "ingotot",
       "types": [
         "Metallic",
@@ -23178,12 +23398,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ingotot"
     },
     {
       "id": "ingotot-final",
       "dex": 222,
-      "name": "Ingotot Prime",
+      "name": "Crucibulk",
       "family_id": "ingotot",
       "types": [
         "Metallic",
@@ -23262,12 +23483,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ingotot Prime"
     },
     {
       "id": "voltling-baby",
       "dex": 312,
-      "name": "Baby Voltling",
+      "name": "Voltling",
       "family_id": "voltling",
       "types": [
         "Electric"
@@ -23325,12 +23547,13 @@
         "back_sheet": "separately supplied labelled back sheet",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Voltling"
     },
     {
       "id": "voltling",
       "dex": 85,
-      "name": "Voltling",
+      "name": "Voltrix",
       "family_id": "voltling",
       "types": [
         "Electric"
@@ -23400,12 +23623,13 @@
         "back_sheet": "separately supplied labelled back sheet",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Voltling"
     },
     {
       "id": "voltling-final",
       "dex": 223,
-      "name": "Voltling Prime",
+      "name": "Teslarch",
       "family_id": "voltling",
       "types": [
         "Electric"
@@ -23483,12 +23707,13 @@
         "back_sheet": "separately supplied labelled back sheet",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Voltling Prime"
     },
     {
       "id": "amperit-baby",
       "dex": 224,
-      "name": "Amperling",
+      "name": "Amperit",
       "family_id": "amperit",
       "types": [
         "Electric"
@@ -23550,12 +23775,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Amperling"
     },
     {
       "id": "amperit",
       "dex": 86,
-      "name": "Amperit",
+      "name": "Amperam",
       "family_id": "amperit",
       "types": [
         "Electric"
@@ -23625,12 +23851,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Amperit"
     },
     {
       "id": "amperit-final",
       "dex": 225,
-      "name": "Amperit Prime",
+      "name": "Inductaur",
       "family_id": "amperit",
       "types": [
         "Electric"
@@ -23708,12 +23935,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Amperit Prime"
     },
     {
       "id": "ohmite-baby",
       "dex": 226,
-      "name": "Ohmiteling",
+      "name": "Ohmite",
       "family_id": "ohmite",
       "types": [
         "Electric"
@@ -23775,12 +24003,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ohmiteling"
     },
     {
       "id": "ohmite",
       "dex": 87,
-      "name": "Ohmite",
+      "name": "Ohmquill",
       "family_id": "ohmite",
       "types": [
         "Electric"
@@ -23854,12 +24083,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ohmite"
     },
     {
       "id": "ohmite-final",
       "dex": 227,
-      "name": "Ohmite Prime",
+      "name": "Resistadon",
       "family_id": "ohmite",
       "types": [
         "Electric"
@@ -23941,12 +24171,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ohmite Prime"
     },
     {
       "id": "faradot-baby",
       "dex": 228,
-      "name": "Faradling",
+      "name": "Faradot",
       "family_id": "faradot",
       "types": [
         "Electric",
@@ -24009,12 +24240,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Faradling"
     },
     {
       "id": "faradot",
       "dex": 88,
-      "name": "Faradot",
+      "name": "Farafrog",
       "family_id": "faradot",
       "types": [
         "Electric",
@@ -24089,12 +24321,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Faradot"
     },
     {
       "id": "faradot-final",
       "dex": 229,
-      "name": "Faradot Prime",
+      "name": "Capacitoad",
       "family_id": "faradot",
       "types": [
         "Electric",
@@ -24177,12 +24410,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Faradot Prime"
     },
     {
       "id": "joulebot-baby",
       "dex": 313,
-      "name": "Baby Joulebot",
+      "name": "Joulebot",
       "family_id": "joulebot",
       "types": [
         "Electric"
@@ -24240,12 +24474,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Joulebot"
     },
     {
       "id": "joulebot",
       "dex": 89,
-      "name": "Joulebot",
+      "name": "Jouleape",
       "family_id": "joulebot",
       "types": [
         "Electric"
@@ -24323,12 +24558,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Joulebot"
     },
     {
       "id": "joulebot-final",
       "dex": 230,
-      "name": "Joulebot Prime",
+      "name": "Dynamorilla",
       "family_id": "joulebot",
       "types": [
         "Electric"
@@ -24414,12 +24650,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Joulebot Prime"
     },
     {
       "id": "ionling-baby",
       "dex": 314,
-      "name": "Baby Ionling",
+      "name": "Ionling",
       "family_id": "ionling",
       "types": [
         "Plasma"
@@ -24477,12 +24714,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Ionling"
     },
     {
       "id": "ionling",
       "dex": 90,
-      "name": "Ionling",
+      "name": "Ionwing",
       "family_id": "ionling",
       "types": [
         "Plasma"
@@ -24552,12 +24790,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ionling"
     },
     {
       "id": "ionling-final",
       "dex": 231,
-      "name": "Ionling Prime",
+      "name": "Electrofly",
       "family_id": "ionling",
       "types": [
         "Plasma"
@@ -24635,12 +24874,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Ionling Prime"
     },
     {
       "id": "arcwisp-baby",
       "dex": 315,
-      "name": "Baby Arcwisp",
+      "name": "Arcwisp",
       "family_id": "arcwisp",
       "types": [
         "Plasma",
@@ -24699,12 +24939,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Arcwisp"
     },
     {
       "id": "arcwisp",
       "dex": 91,
-      "name": "Arcwisp",
+      "name": "Arcflutter",
       "family_id": "arcwisp",
       "types": [
         "Plasma",
@@ -24775,12 +25016,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Arcwisp"
     },
     {
       "id": "arcwisp-final",
       "dex": 232,
-      "name": "Arcwisp Prime",
+      "name": "Plasmariel",
       "family_id": "arcwisp",
       "types": [
         "Plasma",
@@ -24859,12 +25101,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Arcwisp Prime"
     },
     {
       "id": "fusor-baby",
       "dex": 316,
-      "name": "Baby Fusor",
+      "name": "Fusor",
       "family_id": "fusor",
       "types": [
         "Plasma",
@@ -24923,12 +25166,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Fusor"
     },
     {
       "id": "fusor",
       "dex": 92,
-      "name": "Fusor",
+      "name": "Fusalam",
       "family_id": "fusor",
       "types": [
         "Plasma",
@@ -24999,12 +25243,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Fusor"
     },
     {
       "id": "fusor-final",
       "dex": 233,
-      "name": "Fusor Prime",
+      "name": "Tokamander",
       "family_id": "fusor",
       "types": [
         "Plasma",
@@ -25083,12 +25328,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Fusor Prime"
     },
     {
       "id": "coronalet-baby",
       "dex": 317,
-      "name": "Baby Coronalet",
+      "name": "Coronalet",
       "family_id": "coronalet",
       "types": [
         "Plasma",
@@ -25147,12 +25393,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Coronalet"
     },
     {
       "id": "coronalet",
       "dex": 93,
-      "name": "Coronalet",
+      "name": "Coronion",
       "family_id": "coronalet",
       "types": [
         "Plasma",
@@ -25223,12 +25470,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Coronalet"
     },
     {
       "id": "coronalet-final",
       "dex": 234,
-      "name": "Coronalet Prime",
+      "name": "Heliomane",
       "family_id": "coronalet",
       "types": [
         "Plasma",
@@ -25307,12 +25555,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Coronalet Prime"
     },
     {
       "id": "qubit-baby",
       "dex": 235,
-      "name": "Qubitling",
+      "name": "Qubit",
       "family_id": "qubit",
       "types": [
         "Quantum"
@@ -25374,12 +25623,13 @@
         "back_sheet": "separately supplied labelled back sheet",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Qubitling"
     },
     {
       "id": "qubit",
       "dex": 94,
-      "name": "Qubit",
+      "name": "Qubiton",
       "family_id": "qubit",
       "types": [
         "Quantum"
@@ -25449,12 +25699,13 @@
         "back_sheet": "separately supplied labelled back sheet",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Qubit"
     },
     {
       "id": "qubit-final",
       "dex": 236,
-      "name": "Qubit Prime",
+      "name": "Quantarch",
       "family_id": "qubit",
       "types": [
         "Quantum"
@@ -25532,12 +25783,13 @@
         "back_sheet": "separately supplied labelled back sheet",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Qubit Prime"
     },
     {
       "id": "entanglit-baby",
       "dex": 318,
-      "name": "Baby Entanglit",
+      "name": "Entanglit",
       "family_id": "entanglit",
       "types": [
         "Quantum"
@@ -25595,12 +25847,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Entanglit"
     },
     {
       "id": "entanglit",
       "dex": 95,
-      "name": "Entanglit",
+      "name": "Entangcoil",
       "family_id": "entanglit",
       "types": [
         "Quantum"
@@ -25670,12 +25923,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Entanglit"
     },
     {
       "id": "entanglit-final",
       "dex": 237,
-      "name": "Entanglit Prime",
+      "name": "Duantum",
       "family_id": "entanglit",
       "types": [
         "Quantum"
@@ -25753,12 +26007,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Entanglit Prime"
     },
     {
       "id": "phaseling-baby",
       "dex": 238,
-      "name": "Phaseliling",
+      "name": "Phaseling",
       "family_id": "phaseling",
       "types": [
         "Quantum",
@@ -25821,12 +26076,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Phaseliling"
     },
     {
       "id": "phaseling",
       "dex": 96,
-      "name": "Phaseling",
+      "name": "Phasepelt",
       "family_id": "phaseling",
       "types": [
         "Quantum",
@@ -25897,12 +26153,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Phaseling"
     },
     {
       "id": "phaseling-final",
       "dex": 239,
-      "name": "Phaseling Prime",
+      "name": "Phasmaris",
       "family_id": "phaseling",
       "types": [
         "Quantum",
@@ -25981,12 +26238,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Phaseling Prime"
     },
     {
       "id": "wavicle-baby",
       "dex": 240,
-      "name": "Wavicling",
+      "name": "Wavicle",
       "family_id": "wavicle",
       "types": [
         "Quantum",
@@ -26049,12 +26307,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_09_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Wavicling"
     },
     {
       "id": "wavicle",
       "dex": 97,
-      "name": "Wavicle",
+      "name": "Wavecrest",
       "family_id": "wavicle",
       "types": [
         "Quantum",
@@ -26125,12 +26384,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_09_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Wavicle"
     },
     {
       "id": "wavicle-final",
       "dex": 241,
-      "name": "Wavicle Prime",
+      "name": "Interferin",
       "family_id": "wavicle",
       "types": [
         "Quantum",
@@ -26209,12 +26469,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_09_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Wavicle Prime"
     },
     {
       "id": "nanoclit-baby",
       "dex": 319,
-      "name": "Baby Nanoclit",
+      "name": "Nanoclit",
       "family_id": "nanoclit",
       "types": [
         "Nano"
@@ -26272,12 +26533,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Nanoclit"
     },
     {
       "id": "nanoclit",
       "dex": 98,
-      "name": "Nanoclit",
+      "name": "Nanocloak",
       "family_id": "nanoclit",
       "types": [
         "Nano"
@@ -26347,12 +26609,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Nanoclit"
     },
     {
       "id": "nanoclit-final",
       "dex": 242,
-      "name": "Nanoclit Prime",
+      "name": "Chromanite",
       "family_id": "nanoclit",
       "types": [
         "Nano"
@@ -26430,12 +26693,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Nanoclit Prime"
     },
     {
       "id": "micromite-baby",
       "dex": 243,
-      "name": "Micromiling",
+      "name": "Micromite",
       "family_id": "micromite",
       "types": [
         "Nano",
@@ -26498,12 +26762,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Micromiling"
     },
     {
       "id": "micromite",
       "dex": 99,
-      "name": "Micromite",
+      "name": "Microdome",
       "family_id": "micromite",
       "types": [
         "Nano",
@@ -26574,12 +26839,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Micromite"
     },
     {
       "id": "micromite-final",
       "dex": 244,
-      "name": "Micromite Prime",
+      "name": "Tardiscope",
       "family_id": "micromite",
       "types": [
         "Nano",
@@ -26658,12 +26924,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_09_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Micromite Prime"
     },
     {
       "id": "swarmlet-baby",
       "dex": 245,
-      "name": "Swarmllet",
+      "name": "Swarmlet",
       "family_id": "swarmlet",
       "types": [
         "Nano"
@@ -26725,12 +26992,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Swarmllet"
     },
     {
       "id": "swarmlet",
       "dex": 100,
-      "name": "Swarmlet",
+      "name": "Swarmatrix",
       "family_id": "swarmlet",
       "types": [
         "Nano"
@@ -26804,12 +27072,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Swarmlet"
     },
     {
       "id": "swarmlet-final",
       "dex": 246,
-      "name": "Swarmlet Prime",
+      "name": "Hexacoccin",
       "family_id": "swarmlet",
       "types": [
         "Nano"
@@ -26891,12 +27160,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Swarmlet Prime"
     },
     {
       "id": "assembit-baby",
       "dex": 320,
-      "name": "Baby Assembit",
+      "name": "Assembit",
       "family_id": "assembit",
       "types": [
         "Nano",
@@ -26955,12 +27225,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Assembit"
     },
     {
       "id": "assembit",
       "dex": 101,
-      "name": "Assembit",
+      "name": "Assemclaw",
       "family_id": "assembit",
       "types": [
         "Nano",
@@ -27035,12 +27306,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Assembit"
     },
     {
       "id": "assembit-final",
       "dex": 247,
-      "name": "Assembit Prime",
+      "name": "Fabricrux",
       "family_id": "assembit",
       "types": [
         "Nano",
@@ -27123,12 +27395,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Assembit Prime"
     },
     {
       "id": "biteling-baby",
       "dex": 321,
-      "name": "Baby Biteling",
+      "name": "Biteling",
       "family_id": "biteling",
       "types": [
         "Digital"
@@ -27186,12 +27459,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Biteling"
     },
     {
       "id": "biteling",
       "dex": 102,
-      "name": "Biteling",
+      "name": "Bitmander",
       "family_id": "biteling",
       "types": [
         "Digital"
@@ -27261,12 +27535,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Biteling"
     },
     {
       "id": "biteling-final",
       "dex": 248,
-      "name": "Biteling Prime",
+      "name": "Megabitle",
       "family_id": "biteling",
       "types": [
         "Digital"
@@ -27344,12 +27619,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Biteling Prime"
     },
     {
       "id": "codeling-baby",
       "dex": 322,
-      "name": "Baby Codeling",
+      "name": "Codeling",
       "family_id": "codeling",
       "types": [
         "Digital"
@@ -27407,12 +27683,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Codeling"
     },
     {
       "id": "codeling",
       "dex": 103,
-      "name": "Codeling",
+      "name": "Codetail",
       "family_id": "codeling",
       "types": [
         "Digital"
@@ -27482,12 +27759,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Codeling"
     },
     {
       "id": "codeling-final",
       "dex": 249,
-      "name": "Codeling Prime",
+      "name": "Algoryx",
       "family_id": "codeling",
       "types": [
         "Digital"
@@ -27565,12 +27843,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Codeling Prime"
     },
     {
       "id": "pixelot-baby",
       "dex": 323,
-      "name": "Baby Pixelot",
+      "name": "Pixelot",
       "family_id": "pixelot",
       "types": [
         "Digital",
@@ -27629,12 +27908,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Pixelot"
     },
     {
       "id": "pixelot",
       "dex": 104,
-      "name": "Pixelot",
+      "name": "Pixelclaw",
       "family_id": "pixelot",
       "types": [
         "Digital",
@@ -27709,12 +27989,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Pixelot"
     },
     {
       "id": "pixelot-final",
       "dex": 250,
-      "name": "Pixelot Prime",
+      "name": "Rasteryx",
       "family_id": "pixelot",
       "types": [
         "Digital",
@@ -27797,12 +28078,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_03_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Pixelot Prime"
     },
     {
       "id": "packetot-baby",
       "dex": 324,
-      "name": "Baby Packetot",
+      "name": "Packetot",
       "family_id": "packetot",
       "types": [
         "Digital"
@@ -27860,12 +28142,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Packetot"
     },
     {
       "id": "packetot",
       "dex": 105,
-      "name": "Packetot",
+      "name": "Packetwing",
       "family_id": "packetot",
       "types": [
         "Digital"
@@ -27943,12 +28226,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Packetot"
     },
     {
       "id": "packetot-final",
       "dex": 251,
-      "name": "Packetot Prime",
+      "name": "Routigeon",
       "family_id": "packetot",
       "types": [
         "Digital"
@@ -28034,12 +28318,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Packetot Prime"
     },
     {
       "id": "starlit-baby",
       "dex": 252,
-      "name": "Starllet",
+      "name": "Starlit",
       "family_id": "starlit",
       "types": [
         "Cosmic"
@@ -28101,12 +28386,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Starllet"
     },
     {
       "id": "starlit",
       "dex": 106,
-      "name": "Starlit",
+      "name": "Starlynx",
       "family_id": "starlit",
       "types": [
         "Cosmic"
@@ -28176,12 +28462,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Starlit"
     },
     {
       "id": "starlit-final",
       "dex": 253,
-      "name": "Starlit Prime",
+      "name": "Constellion",
       "family_id": "starlit",
       "types": [
         "Cosmic"
@@ -28259,12 +28546,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_06_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Starlit Prime"
     },
     {
       "id": "cometling-baby",
       "dex": 254,
-      "name": "Cometliling",
+      "name": "Cometling",
       "family_id": "cometling",
       "types": [
         "Cosmic",
@@ -28327,12 +28615,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cometliling"
     },
     {
       "id": "cometling",
       "dex": 107,
-      "name": "Cometling",
+      "name": "Comethare",
       "family_id": "cometling",
       "types": [
         "Cosmic",
@@ -28403,12 +28692,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cometling"
     },
     {
       "id": "cometling-final",
       "dex": 255,
-      "name": "Cometling Prime",
+      "name": "Astralop",
       "family_id": "cometling",
       "types": [
         "Cosmic",
@@ -28487,12 +28777,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Cometling Prime"
     },
     {
       "id": "nebulon-baby",
       "dex": 256,
-      "name": "Nebullet",
+      "name": "Nebulon",
       "family_id": "nebulon",
       "types": [
         "Cosmic"
@@ -28554,12 +28845,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Nebullet"
     },
     {
       "id": "nebulon",
       "dex": 108,
-      "name": "Nebulon",
+      "name": "Nebulora",
       "family_id": "nebulon",
       "types": [
         "Cosmic"
@@ -28629,12 +28921,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Nebulon"
     },
     {
       "id": "nebulon-final",
       "dex": 257,
-      "name": "Nebulon Prime",
+      "name": "Cosmocetus",
       "family_id": "nebulon",
       "types": [
         "Cosmic"
@@ -28712,12 +29005,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_01_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Nebulon Prime"
     },
     {
       "id": "orbitling-baby",
       "dex": 325,
-      "name": "Baby Orbitling",
+      "name": "Orbitling",
       "family_id": "orbitling",
       "types": [
         "Cosmic",
@@ -28776,12 +29070,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Orbitling"
     },
     {
       "id": "orbitling",
       "dex": 109,
-      "name": "Orbitling",
+      "name": "Orbitort",
       "family_id": "orbitling",
       "types": [
         "Cosmic",
@@ -28852,12 +29147,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Orbitling"
     },
     {
       "id": "orbitling-final",
       "dex": 258,
-      "name": "Orbitling Prime",
+      "name": "Gravitorto",
       "family_id": "orbitling",
       "types": [
         "Cosmic",
@@ -28936,12 +29232,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Orbitling Prime"
     },
     {
       "id": "voidling-baby",
       "dex": 259,
-      "name": "Voidliling",
+      "name": "Voidling",
       "family_id": "voidling",
       "types": [
         "Cosmic",
@@ -29004,12 +29301,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Voidliling"
     },
     {
       "id": "voidling",
       "dex": 110,
-      "name": "Voidling",
+      "name": "Voidpelt",
       "family_id": "voidling",
       "types": [
         "Cosmic",
@@ -29080,12 +29378,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Voidling"
     },
     {
       "id": "voidling-final",
       "dex": 260,
-      "name": "Voidling Prime",
+      "name": "Singulynx",
       "family_id": "voidling",
       "types": [
         "Cosmic",
@@ -29164,12 +29463,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Voidling Prime"
     },
     {
       "id": "duskling-baby",
       "dex": 326,
-      "name": "Baby Duskling",
+      "name": "Duskling",
       "family_id": "duskling",
       "types": [
         "Shadow"
@@ -29227,12 +29527,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Duskling"
     },
     {
       "id": "duskling",
       "dex": 111,
-      "name": "Duskling",
+      "name": "Dusklynx",
       "family_id": "duskling",
       "types": [
         "Shadow"
@@ -29302,12 +29603,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Duskling"
     },
     {
       "id": "duskling-final",
       "dex": 261,
-      "name": "Duskling Prime",
+      "name": "Lunafelin",
       "family_id": "duskling",
       "types": [
         "Shadow"
@@ -29385,12 +29687,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_05_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Duskling Prime"
     },
     {
       "id": "gloombat-baby",
       "dex": 327,
-      "name": "Baby Gloombat",
+      "name": "Gloombat",
       "family_id": "gloombat",
       "types": [
         "Shadow",
@@ -29449,12 +29752,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Gloombat"
     },
     {
       "id": "gloombat",
       "dex": 112,
-      "name": "Gloombat",
+      "name": "Gloomecho",
       "family_id": "gloombat",
       "types": [
         "Shadow",
@@ -29525,12 +29829,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Gloombat"
     },
     {
       "id": "gloombat-final",
       "dex": 262,
-      "name": "Gloombat Prime",
+      "name": "Sonarion",
       "family_id": "gloombat",
       "types": [
         "Shadow",
@@ -29609,12 +29914,13 @@
         "back_sheet": "BACK_VIEWS/C01_Sheet_07_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Gloombat Prime"
     },
     {
       "id": "umbralet-baby",
       "dex": 328,
-      "name": "Baby Umbralet",
+      "name": "Umbralet",
       "family_id": "umbralet",
       "types": [
         "Shadow"
@@ -29672,12 +29978,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold."
+      "new_stage_balance_note": "Proposed: evolves at level 10; stats use source baby scale 0.62. Preserve the old middle-to-final threshold.",
+      "previous_name": "Baby Umbralet"
     },
     {
       "id": "umbralet",
       "dex": 113,
-      "name": "Umbralet",
+      "name": "Umbrawing",
       "family_id": "umbralet",
       "types": [
         "Shadow"
@@ -29747,12 +30054,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Umbralet"
     },
     {
       "id": "umbralet-final",
       "dex": 263,
-      "name": "Umbralet Prime",
+      "name": "Noctiloom",
       "family_id": "umbralet",
       "types": [
         "Shadow"
@@ -29830,12 +30138,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_08_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Umbralet Prime"
     },
     {
       "id": "shadebot-baby",
       "dex": 264,
-      "name": "Shadebling",
+      "name": "Shadebot",
       "family_id": "shadebot",
       "types": [
         "Shadow",
@@ -29898,12 +30207,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Shadebling"
     },
     {
       "id": "shadebot",
       "dex": 114,
-      "name": "Shadebot",
+      "name": "Shadewing",
       "family_id": "shadebot",
       "types": [
         "Shadow",
@@ -29974,12 +30284,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Shadebot"
     },
     {
       "id": "shadebot-final",
       "dex": 265,
-      "name": "Shadebot Prime",
+      "name": "Stealthraven",
       "family_id": "shadebot",
       "types": [
         "Shadow",
@@ -30058,12 +30369,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_04_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Shadebot Prime"
     },
     {
       "id": "wraithex-baby",
       "dex": 266,
-      "name": "Wraithling",
+      "name": "Wraithex",
       "family_id": "wraithex",
       "types": [
         "Shadow",
@@ -30126,12 +30438,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_09_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Wraithling"
     },
     {
       "id": "wraithex",
       "dex": 115,
-      "name": "Wraithex",
+      "name": "Wraithwing",
       "family_id": "wraithex",
       "types": [
         "Shadow",
@@ -30202,12 +30515,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_09_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Wraithex"
     },
     {
       "id": "wraithex-final",
       "dex": 267,
-      "name": "Wraithex Prime",
+      "name": "Hexacorvus",
       "family_id": "wraithex",
       "types": [
         "Shadow",
@@ -30286,12 +30600,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_09_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Wraithex Prime"
     },
     {
       "id": "noctulite-baby",
       "dex": 268,
-      "name": "Noctuliling",
+      "name": "Noctulite",
       "family_id": "noctulite",
       "types": [
         "Shadow",
@@ -30354,12 +30669,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 1
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Noctuliling"
     },
     {
       "id": "noctulite",
       "dex": 116,
-      "name": "Noctulite",
+      "name": "Noctowl",
       "family_id": "noctulite",
       "types": [
         "Shadow",
@@ -30430,12 +30746,13 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 2
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Noctulite"
     },
     {
       "id": "noctulite-final",
       "dex": 269,
-      "name": "Noctulite Prime",
+      "name": "Obsidianox",
       "family_id": "noctulite",
       "types": [
         "Shadow",
@@ -30514,7 +30831,8 @@
         "back_sheet": "BACK_VIEWS/C02_Sheet_02_BACK.png",
         "column": 3
       },
-      "new_stage_balance_note": null
+      "new_stage_balance_note": null,
+      "previous_name": "Noctulite Prime"
     }
   ],
   "habitat_changes": [
@@ -30592,5 +30910,11 @@
     }
   ],
   "migration_policy": "Preserve all 268 species IDs, dex values, stats, techniques and existing evolution edges. Add 59 first forms with new dex 270–328; do not downgrade saved creatures.",
-  "art_integration_note": "Front/back files flagged present were found by filename in the supplied source ZIP, not visually certified. Missing files must be extracted from matching approved atlases; no front-image mirroring for back art."
+  "art_integration_note": "Front/back files flagged present were found by filename in the supplied source ZIP, not visually certified. Missing files must be extracted from matching approved atlases; no front-image mirroring for back art.",
+  "display_name_patch": {
+    "source": "Scimon_All_Individual_Named_Sprites",
+    "applied": "2026-10-29",
+    "renamed_forms": 318,
+    "note": "Canonical display names from the individually named sprite pack: first form carries the family's familiar name, mid and final forms use their unique evolution names. IDs, dex values, stats, techniques, evolution thresholds and the encounter policy are unchanged; previous_name supports nickname-safe save migration."
+  }
 }

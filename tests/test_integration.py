@@ -235,7 +235,7 @@ m = create_scimon("voltling-baby", 10)
 old_uid = m.uid
 res = evolve(m)
 check(res and m.species_id == "voltling" and m.uid == old_uid, "evolution kept identity")
-check(m.name == "Voltling", "evolution renamed to the species name")
+check(m.name == "Voltrix", "evolution renamed to the species name")
 m.name = "Zappy"
 m.level = 30
 res = evolve(m)

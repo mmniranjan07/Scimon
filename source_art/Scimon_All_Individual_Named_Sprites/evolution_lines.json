@@ -1,0 +1,3214 @@
+[
+  {
+    "family_id": "abyssling",
+    "types": [
+      "Hydro",
+      "Shadow"
+    ],
+    "forms": [
+      {
+        "species_id": "abyssling-baby",
+        "name": "Abyssling",
+        "evolution_level": 11,
+        "front": "sprites/front/Abyssling.png",
+        "back": "sprites/back/Abyssling.png"
+      },
+      {
+        "species_id": "abyssling",
+        "name": "Abyssail",
+        "evolution_level": 25,
+        "front": "sprites/front/Abyssail.png",
+        "back": "sprites/back/Abyssail.png"
+      },
+      {
+        "species_id": "abyssling-final",
+        "name": "Bathyray",
+        "evolution_level": null,
+        "front": "sprites/front/Bathyray.png",
+        "back": "sprites/back/Bathyray.png"
+      }
+    ]
+  },
+  {
+    "family_id": "aerochit",
+    "types": [
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "aerochit-baby",
+        "name": "Aerochit",
+        "evolution_level": 13,
+        "front": "sprites/front/Aerochit.png",
+        "back": "sprites/back/Aerochit.png"
+      },
+      {
+        "species_id": "aerochit",
+        "name": "Aerofoil",
+        "evolution_level": 27,
+        "front": "sprites/front/Aerofoil.png",
+        "back": "sprites/back/Aerofoil.png"
+      },
+      {
+        "species_id": "aerochit-final",
+        "name": "Stratochitin",
+        "evolution_level": null,
+        "front": "sprites/front/Stratochitin.png",
+        "back": "sprites/back/Stratochitin.png"
+      }
+    ]
+  },
+  {
+    "family_id": "alloyling",
+    "types": [
+      "Metallic"
+    ],
+    "forms": [
+      {
+        "species_id": "alloyling-baby",
+        "name": "Alloyling",
+        "evolution_level": 10,
+        "front": "sprites/front/Alloyling.png",
+        "back": "sprites/back/Alloyling.png"
+      },
+      {
+        "species_id": "alloyling",
+        "name": "Alloyscale",
+        "evolution_level": 17,
+        "front": "sprites/front/Alloyscale.png",
+        "back": "sprites/back/Alloyscale.png"
+      },
+      {
+        "species_id": "alloyling-final",
+        "name": "Metallodon",
+        "evolution_level": null,
+        "front": "sprites/front/Metallodon.png",
+        "back": "sprites/back/Metallodon.png"
+      }
+    ]
+  },
+  {
+    "family_id": "amperit",
+    "types": [
+      "Electric"
+    ],
+    "forms": [
+      {
+        "species_id": "amperit-baby",
+        "name": "Amperit",
+        "evolution_level": 11,
+        "front": "sprites/front/Amperit.png",
+        "back": "sprites/back/Amperit.png"
+      },
+      {
+        "species_id": "amperit",
+        "name": "Amperam",
+        "evolution_level": 25,
+        "front": "sprites/front/Amperam.png",
+        "back": "sprites/back/Amperam.png"
+      },
+      {
+        "species_id": "amperit-final",
+        "name": "Inductaur",
+        "evolution_level": null,
+        "front": "sprites/front/Inductaur.png",
+        "back": "sprites/back/Inductaur.png"
+      }
+    ]
+  },
+  {
+    "family_id": "aquabit",
+    "types": [
+      "Hydro",
+      "Digital"
+    ],
+    "forms": [
+      {
+        "species_id": "aquabit",
+        "name": "Aquabit",
+        "evolution_level": 16,
+        "front": "sprites/front/Aquabit.png",
+        "back": "sprites/back/Aquabit.png"
+      },
+      {
+        "species_id": "aquabit-mid",
+        "name": "Aquafin",
+        "evolution_level": 32,
+        "front": "sprites/front/Aquafin.png",
+        "back": "sprites/back/Aquafin.png"
+      },
+      {
+        "species_id": "aquabit-final",
+        "name": "Aquarex",
+        "evolution_level": null,
+        "front": "sprites/front/Aquarex.png",
+        "back": "sprites/back/Aquarex.png"
+      }
+    ]
+  },
+  {
+    "family_id": "arcwisp",
+    "types": [
+      "Plasma",
+      "Electric"
+    ],
+    "forms": [
+      {
+        "species_id": "arcwisp-baby",
+        "name": "Arcwisp",
+        "evolution_level": 10,
+        "front": "sprites/front/Arcwisp.png",
+        "back": "sprites/back/Arcwisp.png"
+      },
+      {
+        "species_id": "arcwisp",
+        "name": "Arcflutter",
+        "evolution_level": 18,
+        "front": "sprites/front/Arcflutter.png",
+        "back": "sprites/back/Arcflutter.png"
+      },
+      {
+        "species_id": "arcwisp-final",
+        "name": "Plasmariel",
+        "evolution_level": null,
+        "front": "sprites/front/Plasmariel.png",
+        "back": "sprites/back/Plasmariel.png"
+      }
+    ]
+  },
+  {
+    "family_id": "ashling",
+    "types": [
+      "Thermal",
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "ashling-baby",
+        "name": "Ashling",
+        "evolution_level": 10,
+        "front": "sprites/front/Ashling.png",
+        "back": "sprites/back/Ashling.png"
+      },
+      {
+        "species_id": "ashling",
+        "name": "Ashowl",
+        "evolution_level": 20,
+        "front": "sprites/front/Ashowl.png",
+        "back": "sprites/back/Ashowl.png"
+      },
+      {
+        "species_id": "ashling-final",
+        "name": "Cineroc",
+        "evolution_level": null,
+        "front": "sprites/front/Cineroc.png",
+        "back": "sprites/back/Cineroc.png"
+      }
+    ]
+  },
+  {
+    "family_id": "assembit",
+    "types": [
+      "Nano",
+      "Mechanical"
+    ],
+    "forms": [
+      {
+        "species_id": "assembit-baby",
+        "name": "Assembit",
+        "evolution_level": 10,
+        "front": "sprites/front/Assembit.png",
+        "back": "sprites/back/Assembit.png"
+      },
+      {
+        "species_id": "assembit",
+        "name": "Assemclaw",
+        "evolution_level": 17,
+        "front": "sprites/front/Assemclaw.png",
+        "back": "sprites/back/Assemclaw.png"
+      },
+      {
+        "species_id": "assembit-final",
+        "name": "Fabricrux",
+        "evolution_level": null,
+        "front": "sprites/front/Fabricrux.png",
+        "back": "sprites/back/Fabricrux.png"
+      }
+    ]
+  },
+  {
+    "family_id": "automit",
+    "types": [
+      "Mechanical",
+      "Digital"
+    ],
+    "forms": [
+      {
+        "species_id": "automit-baby",
+        "name": "Automit",
+        "evolution_level": 10,
+        "front": "sprites/front/Automit.png",
+        "back": "sprites/back/Automit.png"
+      },
+      {
+        "species_id": "automit",
+        "name": "Autolimb",
+        "evolution_level": 17,
+        "front": "sprites/front/Autolimb.png",
+        "back": "sprites/back/Autolimb.png"
+      },
+      {
+        "species_id": "automit-final",
+        "name": "Mantimech",
+        "evolution_level": null,
+        "front": "sprites/front/Mantimech.png",
+        "back": "sprites/back/Mantimech.png"
+      }
+    ]
+  },
+  {
+    "family_id": "basaltot",
+    "types": [
+      "Geologic",
+      "Thermal"
+    ],
+    "forms": [
+      {
+        "species_id": "basaltot-baby",
+        "name": "Basaltot",
+        "evolution_level": 10,
+        "front": "sprites/front/Basaltot.png",
+        "back": "sprites/back/Basaltot.png"
+      },
+      {
+        "species_id": "basaltot",
+        "name": "Basalton",
+        "evolution_level": 19,
+        "front": "sprites/front/Basalton.png",
+        "back": "sprites/back/Basalton.png"
+      },
+      {
+        "species_id": "basaltot-final",
+        "name": "Caldero",
+        "evolution_level": null,
+        "front": "sprites/front/Caldero.png",
+        "back": "sprites/back/Caldero.png"
+      }
+    ]
+  },
+  {
+    "family_id": "biteling",
+    "types": [
+      "Digital"
+    ],
+    "forms": [
+      {
+        "species_id": "biteling-baby",
+        "name": "Biteling",
+        "evolution_level": 10,
+        "front": "sprites/front/Biteling.png",
+        "back": "sprites/back/Biteling.png"
+      },
+      {
+        "species_id": "biteling",
+        "name": "Bitmander",
+        "evolution_level": 20,
+        "front": "sprites/front/Bitmander.png",
+        "back": "sprites/back/Bitmander.png"
+      },
+      {
+        "species_id": "biteling-final",
+        "name": "Megabitle",
+        "evolution_level": null,
+        "front": "sprites/front/Megabitle.png",
+        "back": "sprites/back/Megabitle.png"
+      }
+    ]
+  },
+  {
+    "family_id": "bloomxell",
+    "types": [
+      "Botanic",
+      "Radiant"
+    ],
+    "forms": [
+      {
+        "species_id": "bloomxell-baby",
+        "name": "Bloomxell",
+        "evolution_level": 10,
+        "front": "sprites/front/Bloomxell.png",
+        "back": "sprites/back/Bloomxell.png"
+      },
+      {
+        "species_id": "bloomxell",
+        "name": "Bloomhart",
+        "evolution_level": 17,
+        "front": "sprites/front/Bloomhart.png",
+        "back": "sprites/back/Bloomhart.png"
+      },
+      {
+        "species_id": "bloomxell-final",
+        "name": "Floracervus",
+        "evolution_level": null,
+        "front": "sprites/front/Floracervus.png",
+        "back": "sprites/back/Floracervus.png"
+      }
+    ]
+  },
+  {
+    "family_id": "boulderon",
+    "types": [
+      "Geologic"
+    ],
+    "forms": [
+      {
+        "species_id": "boulderon-baby",
+        "name": "Boulderon",
+        "evolution_level": 10,
+        "front": "sprites/front/Boulderon.png",
+        "back": "sprites/back/Boulderon.png"
+      },
+      {
+        "species_id": "boulderon",
+        "name": "Boulderback",
+        "evolution_level": 14,
+        "front": "sprites/front/Boulderback.png",
+        "back": "sprites/back/Boulderback.png"
+      },
+      {
+        "species_id": "boulderon-final",
+        "name": "Monolithor",
+        "evolution_level": null,
+        "front": "sprites/front/Monolithor.png",
+        "back": "sprites/back/Monolithor.png"
+      }
+    ]
+  },
+  {
+    "family_id": "brineling",
+    "types": [
+      "Hydro",
+      "Chemical"
+    ],
+    "forms": [
+      {
+        "species_id": "brineling-baby",
+        "name": "Brineling",
+        "evolution_level": 12,
+        "front": "sprites/front/Brineling.png",
+        "back": "sprites/back/Brineling.png"
+      },
+      {
+        "species_id": "brineling",
+        "name": "Brinescale",
+        "evolution_level": 26,
+        "front": "sprites/front/Brinescale.png",
+        "back": "sprites/back/Brinescale.png"
+      },
+      {
+        "species_id": "brineling-final",
+        "name": "Halodrake",
+        "evolution_level": null,
+        "front": "sprites/front/Halodrake.png",
+        "back": "sprites/back/Halodrake.png"
+      }
+    ]
+  },
+  {
+    "family_id": "cactopod",
+    "types": [
+      "Botanic",
+      "Chemical"
+    ],
+    "forms": [
+      {
+        "species_id": "cactopod-baby",
+        "name": "Cactopod",
+        "evolution_level": 14,
+        "front": "sprites/front/Cactopod.png",
+        "back": "sprites/back/Cactopod.png"
+      },
+      {
+        "species_id": "cactopod",
+        "name": "Cactarmor",
+        "evolution_level": 28,
+        "front": "sprites/front/Cactarmor.png",
+        "back": "sprites/back/Cactarmor.png"
+      },
+      {
+        "species_id": "cactopod-final",
+        "name": "Xeroshield",
+        "evolution_level": null,
+        "front": "sprites/front/Xeroshield.png",
+        "back": "sprites/back/Xeroshield.png"
+      }
+    ]
+  },
+  {
+    "family_id": "catalyxt",
+    "types": [
+      "Chemical"
+    ],
+    "forms": [
+      {
+        "species_id": "catalyxt-baby",
+        "name": "Catalyxt",
+        "evolution_level": 10,
+        "front": "sprites/front/Catalyxt.png",
+        "back": "sprites/back/Catalyxt.png"
+      },
+      {
+        "species_id": "catalyxt",
+        "name": "Catalynx",
+        "evolution_level": 16,
+        "front": "sprites/front/Catalynx.png",
+        "back": "sprites/back/Catalynx.png"
+      },
+      {
+        "species_id": "catalyxt-final",
+        "name": "Reactyger",
+        "evolution_level": null,
+        "front": "sprites/front/Reactyger.png",
+        "back": "sprites/back/Reactyger.png"
+      }
+    ]
+  },
+  {
+    "family_id": "cellling",
+    "types": [
+      "Bio"
+    ],
+    "forms": [
+      {
+        "species_id": "cellling-baby",
+        "name": "Cellling",
+        "evolution_level": 10,
+        "front": "sprites/front/Cellling.png",
+        "back": "sprites/back/Cellling.png"
+      },
+      {
+        "species_id": "cellling",
+        "name": "Cellulo",
+        "evolution_level": 17,
+        "front": "sprites/front/Cellulo.png",
+        "back": "sprites/back/Cellulo.png"
+      },
+      {
+        "species_id": "cellling-final",
+        "name": "Organella",
+        "evolution_level": null,
+        "front": "sprites/front/Organella.png",
+        "back": "sprites/back/Organella.png"
+      }
+    ]
+  },
+  {
+    "family_id": "chillmite",
+    "types": [
+      "Cryo"
+    ],
+    "forms": [
+      {
+        "species_id": "chillmite-baby",
+        "name": "Chillmite",
+        "evolution_level": 12,
+        "front": "sprites/front/Chillmite.png",
+        "back": "sprites/back/Chillmite.png"
+      },
+      {
+        "species_id": "chillmite",
+        "name": "Chillclaw",
+        "evolution_level": 26,
+        "front": "sprites/front/Chillclaw.png",
+        "back": "sprites/back/Chillclaw.png"
+      },
+      {
+        "species_id": "chillmite-final",
+        "name": "Cryoarach",
+        "evolution_level": null,
+        "front": "sprites/front/Cryoarach.png",
+        "back": "sprites/back/Cryoarach.png"
+      }
+    ]
+  },
+  {
+    "family_id": "chromelet",
+    "types": [
+      "Metallic",
+      "Radiant"
+    ],
+    "forms": [
+      {
+        "species_id": "chromelet-baby",
+        "name": "Chromelet",
+        "evolution_level": 10,
+        "front": "sprites/front/Chromelet.png",
+        "back": "sprites/back/Chromelet.png"
+      },
+      {
+        "species_id": "chromelet",
+        "name": "Chromafowl",
+        "evolution_level": 24,
+        "front": "sprites/front/Chromafowl.png",
+        "back": "sprites/back/Chromafowl.png"
+      },
+      {
+        "species_id": "chromelet-final",
+        "name": "Chromavane",
+        "evolution_level": null,
+        "front": "sprites/front/Chromavane.png",
+        "back": "sprites/back/Chromavane.png"
+      }
+    ]
+  },
+  {
+    "family_id": "cindermite",
+    "types": [
+      "Thermal"
+    ],
+    "forms": [
+      {
+        "species_id": "cindermite-baby",
+        "name": "Cindermite",
+        "evolution_level": 11,
+        "front": "sprites/front/Cindermite.png",
+        "back": "sprites/back/Cindermite.png"
+      },
+      {
+        "species_id": "cindermite",
+        "name": "Cinderant",
+        "evolution_level": 30,
+        "front": "sprites/front/Cinderant.png",
+        "back": "sprites/back/Cinderant.png"
+      },
+      {
+        "species_id": "cindermite-final",
+        "name": "Furnacina",
+        "evolution_level": null,
+        "front": "sprites/front/Furnacina.png",
+        "back": "sprites/back/Furnacina.png"
+      }
+    ]
+  },
+  {
+    "family_id": "codeling",
+    "types": [
+      "Digital"
+    ],
+    "forms": [
+      {
+        "species_id": "codeling-baby",
+        "name": "Codeling",
+        "evolution_level": 10,
+        "front": "sprites/front/Codeling.png",
+        "back": "sprites/back/Codeling.png"
+      },
+      {
+        "species_id": "codeling",
+        "name": "Codetail",
+        "evolution_level": 17,
+        "front": "sprites/front/Codetail.png",
+        "back": "sprites/back/Codetail.png"
+      },
+      {
+        "species_id": "codeling-final",
+        "name": "Algoryx",
+        "evolution_level": null,
+        "front": "sprites/front/Algoryx.png",
+        "back": "sprites/back/Algoryx.png"
+      }
+    ]
+  },
+  {
+    "family_id": "cogmite",
+    "types": [
+      "Mechanical"
+    ],
+    "forms": [
+      {
+        "species_id": "cogmite-baby",
+        "name": "Cogmite",
+        "evolution_level": 10,
+        "front": "sprites/front/Cogmite.png",
+        "back": "sprites/back/Cogmite.png"
+      },
+      {
+        "species_id": "cogmite",
+        "name": "Cogcrab",
+        "evolution_level": 21,
+        "front": "sprites/front/Cogcrab.png",
+        "back": "sprites/back/Cogcrab.png"
+      },
+      {
+        "species_id": "cogmite-final",
+        "name": "Chronocarapace",
+        "evolution_level": null,
+        "front": "sprites/front/Chronocarapace.png",
+        "back": "sprites/back/Chronocarapace.png"
+      }
+    ]
+  },
+  {
+    "family_id": "cometling",
+    "types": [
+      "Cosmic",
+      "Thermal"
+    ],
+    "forms": [
+      {
+        "species_id": "cometling-baby",
+        "name": "Cometling",
+        "evolution_level": 11,
+        "front": "sprites/front/Cometling.png",
+        "back": "sprites/back/Cometling.png"
+      },
+      {
+        "species_id": "cometling",
+        "name": "Comethare",
+        "evolution_level": 25,
+        "front": "sprites/front/Comethare.png",
+        "back": "sprites/back/Comethare.png"
+      },
+      {
+        "species_id": "cometling-final",
+        "name": "Astralop",
+        "evolution_level": null,
+        "front": "sprites/front/Astralop.png",
+        "back": "sprites/back/Astralop.png"
+      }
+    ]
+  },
+  {
+    "family_id": "coralbit",
+    "types": [
+      "Hydro",
+      "Geologic"
+    ],
+    "forms": [
+      {
+        "species_id": "coralbit-baby",
+        "name": "Coralbit",
+        "evolution_level": 10,
+        "front": "sprites/front/Coralbit.png",
+        "back": "sprites/back/Coralbit.png"
+      },
+      {
+        "species_id": "coralbit",
+        "name": "Coralclaw",
+        "evolution_level": 21,
+        "front": "sprites/front/Coralclaw.png",
+        "back": "sprites/back/Coralclaw.png"
+      },
+      {
+        "species_id": "coralbit-final",
+        "name": "Reefortress",
+        "evolution_level": null,
+        "front": "sprites/front/Reefortress.png",
+        "back": "sprites/back/Reefortress.png"
+      }
+    ]
+  },
+  {
+    "family_id": "coronalet",
+    "types": [
+      "Plasma",
+      "Radiant"
+    ],
+    "forms": [
+      {
+        "species_id": "coronalet-baby",
+        "name": "Coronalet",
+        "evolution_level": 10,
+        "front": "sprites/front/Coronalet.png",
+        "back": "sprites/back/Coronalet.png"
+      },
+      {
+        "species_id": "coronalet",
+        "name": "Coronion",
+        "evolution_level": 16,
+        "front": "sprites/front/Coronion.png",
+        "back": "sprites/back/Coronion.png"
+      },
+      {
+        "species_id": "coronalet-final",
+        "name": "Heliomane",
+        "evolution_level": null,
+        "front": "sprites/front/Heliomane.png",
+        "back": "sprites/back/Heliomane.png"
+      }
+    ]
+  },
+  {
+    "family_id": "cragling",
+    "types": [
+      "Geologic"
+    ],
+    "forms": [
+      {
+        "species_id": "cragling-baby",
+        "name": "Cragling",
+        "evolution_level": 11,
+        "front": "sprites/front/Cragling.png",
+        "back": "sprites/back/Cragling.png"
+      },
+      {
+        "species_id": "cragling",
+        "name": "Craghorn",
+        "evolution_level": 30,
+        "front": "sprites/front/Craghorn.png",
+        "back": "sprites/back/Craghorn.png"
+      },
+      {
+        "species_id": "cragling-final",
+        "name": "Stratoceros",
+        "evolution_level": null,
+        "front": "sprites/front/Stratoceros.png",
+        "back": "sprites/back/Stratoceros.png"
+      }
+    ]
+  },
+  {
+    "family_id": "crankling",
+    "types": [
+      "Mechanical"
+    ],
+    "forms": [
+      {
+        "species_id": "crankling-baby",
+        "name": "Crankling",
+        "evolution_level": 10,
+        "front": "sprites/front/Crankling.png",
+        "back": "sprites/back/Crankling.png"
+      },
+      {
+        "species_id": "crankling",
+        "name": "Crankaroo",
+        "evolution_level": 22,
+        "front": "sprites/front/Crankaroo.png",
+        "back": "sprites/back/Crankaroo.png"
+      },
+      {
+        "species_id": "crankling-final",
+        "name": "Kinetaroo",
+        "evolution_level": null,
+        "front": "sprites/front/Kinetaroo.png",
+        "back": "sprites/back/Kinetaroo.png"
+      }
+    ]
+  },
+  {
+    "family_id": "cumulob",
+    "types": [
+      "Atmospheric",
+      "Hydro"
+    ],
+    "forms": [
+      {
+        "species_id": "cumulob-baby",
+        "name": "Cumulob",
+        "evolution_level": 14,
+        "front": "sprites/front/Cumulob.png",
+        "back": "sprites/back/Cumulob.png"
+      },
+      {
+        "species_id": "cumulob",
+        "name": "Cumulamb",
+        "evolution_level": 33,
+        "front": "sprites/front/Cumulamb.png",
+        "back": "sprites/back/Cumulamb.png"
+      },
+      {
+        "species_id": "cumulob-final",
+        "name": "Baroram",
+        "evolution_level": null,
+        "front": "sprites/front/Baroram.png",
+        "back": "sprites/back/Baroram.png"
+      }
+    ]
+  },
+  {
+    "family_id": "dewbit",
+    "types": [
+      "Hydro"
+    ],
+    "forms": [
+      {
+        "species_id": "dewbit-baby",
+        "name": "Dewbit",
+        "evolution_level": 10,
+        "front": "sprites/front/Dewbit.png",
+        "back": "sprites/back/Dewbit.png"
+      },
+      {
+        "species_id": "dewbit",
+        "name": "Dewleap",
+        "evolution_level": 22,
+        "front": "sprites/front/Dewleap.png",
+        "back": "sprites/back/Dewleap.png"
+      },
+      {
+        "species_id": "dewbit-final",
+        "name": "Hygrofrog",
+        "evolution_level": null,
+        "front": "sprites/front/Hygrofrog.png",
+        "back": "sprites/back/Hygrofrog.png"
+      }
+    ]
+  },
+  {
+    "family_id": "droplite",
+    "types": [
+      "Hydro"
+    ],
+    "forms": [
+      {
+        "species_id": "droplite-baby",
+        "name": "Droplite",
+        "evolution_level": 14,
+        "front": "sprites/front/Droplite.png",
+        "back": "sprites/back/Droplite.png"
+      },
+      {
+        "species_id": "droplite",
+        "name": "Droplume",
+        "evolution_level": 28,
+        "front": "sprites/front/Droplume.png",
+        "back": "sprites/back/Droplume.png"
+      },
+      {
+        "species_id": "droplite-final",
+        "name": "Hydromedusa",
+        "evolution_level": null,
+        "front": "sprites/front/Hydromedusa.png",
+        "back": "sprites/back/Hydromedusa.png"
+      }
+    ]
+  },
+  {
+    "family_id": "duskling",
+    "types": [
+      "Shadow"
+    ],
+    "forms": [
+      {
+        "species_id": "duskling-baby",
+        "name": "Duskling",
+        "evolution_level": 10,
+        "front": "sprites/front/Duskling.png",
+        "back": "sprites/back/Duskling.png"
+      },
+      {
+        "species_id": "duskling",
+        "name": "Dusklynx",
+        "evolution_level": 19,
+        "front": "sprites/front/Dusklynx.png",
+        "back": "sprites/back/Dusklynx.png"
+      },
+      {
+        "species_id": "duskling-final",
+        "name": "Lunafelin",
+        "evolution_level": null,
+        "front": "sprites/front/Lunafelin.png",
+        "back": "sprites/back/Lunafelin.png"
+      }
+    ]
+  },
+  {
+    "family_id": "emberling",
+    "types": [
+      "Thermal"
+    ],
+    "forms": [
+      {
+        "species_id": "emberling-baby",
+        "name": "Emberling",
+        "evolution_level": 11,
+        "front": "sprites/front/Emberling.png",
+        "back": "sprites/back/Emberling.png"
+      },
+      {
+        "species_id": "emberling",
+        "name": "Emberfox",
+        "evolution_level": 25,
+        "front": "sprites/front/Emberfox.png",
+        "back": "sprites/back/Emberfox.png"
+      },
+      {
+        "species_id": "emberling-final",
+        "name": "Vulcaruff",
+        "evolution_level": null,
+        "front": "sprites/front/Vulcaruff.png",
+        "back": "sprites/back/Vulcaruff.png"
+      }
+    ]
+  },
+  {
+    "family_id": "entanglit",
+    "types": [
+      "Quantum"
+    ],
+    "forms": [
+      {
+        "species_id": "entanglit-baby",
+        "name": "Entanglit",
+        "evolution_level": 10,
+        "front": "sprites/front/Entanglit.png",
+        "back": "sprites/back/Entanglit.png"
+      },
+      {
+        "species_id": "entanglit",
+        "name": "Entangcoil",
+        "evolution_level": 17,
+        "front": "sprites/front/Entangcoil.png",
+        "back": "sprites/back/Entangcoil.png"
+      },
+      {
+        "species_id": "entanglit-final",
+        "name": "Duantum",
+        "evolution_level": null,
+        "front": "sprites/front/Duantum.png",
+        "back": "sprites/back/Duantum.png"
+      }
+    ]
+  },
+  {
+    "family_id": "enzymite",
+    "types": [
+      "Bio",
+      "Chemical"
+    ],
+    "forms": [
+      {
+        "species_id": "enzymite-baby",
+        "name": "Enzymite",
+        "evolution_level": 10,
+        "front": "sprites/front/Enzymite.png",
+        "back": "sprites/back/Enzymite.png"
+      },
+      {
+        "species_id": "enzymite",
+        "name": "Enzycle",
+        "evolution_level": 14,
+        "front": "sprites/front/Enzycle.png",
+        "back": "sprites/back/Enzycle.png"
+      },
+      {
+        "species_id": "enzymite-final",
+        "name": "Catalytron",
+        "evolution_level": null,
+        "front": "sprites/front/Catalytron.png",
+        "back": "sprites/back/Catalytron.png"
+      }
+    ]
+  },
+  {
+    "family_id": "faradot",
+    "types": [
+      "Electric",
+      "Metallic"
+    ],
+    "forms": [
+      {
+        "species_id": "faradot-baby",
+        "name": "Faradot",
+        "evolution_level": 11,
+        "front": "sprites/front/Faradot.png",
+        "back": "sprites/back/Faradot.png"
+      },
+      {
+        "species_id": "faradot",
+        "name": "Farafrog",
+        "evolution_level": 25,
+        "front": "sprites/front/Farafrog.png",
+        "back": "sprites/back/Farafrog.png"
+      },
+      {
+        "species_id": "faradot-final",
+        "name": "Capacitoad",
+        "evolution_level": null,
+        "front": "sprites/front/Capacitoad.png",
+        "back": "sprites/back/Capacitoad.png"
+      }
+    ]
+  },
+  {
+    "family_id": "ferrite",
+    "types": [
+      "Metallic"
+    ],
+    "forms": [
+      {
+        "species_id": "ferrite-baby",
+        "name": "Ferrite",
+        "evolution_level": 13,
+        "front": "sprites/front/Ferrite.png",
+        "back": "sprites/back/Ferrite.png"
+      },
+      {
+        "species_id": "ferrite",
+        "name": "Ferroclaw",
+        "evolution_level": 27,
+        "front": "sprites/front/Ferroclaw.png",
+        "back": "sprites/back/Ferroclaw.png"
+      },
+      {
+        "species_id": "ferrite-final",
+        "name": "Magnetusk",
+        "evolution_level": null,
+        "front": "sprites/front/Magnetusk.png",
+        "back": "sprites/back/Magnetusk.png"
+      }
+    ]
+  },
+  {
+    "family_id": "flarebit",
+    "types": [
+      "Thermal"
+    ],
+    "forms": [
+      {
+        "species_id": "flarebit-baby",
+        "name": "Flarebit",
+        "evolution_level": 14,
+        "front": "sprites/front/Flarebit.png",
+        "back": "sprites/back/Flarebit.png"
+      },
+      {
+        "species_id": "flarebit",
+        "name": "Flarewing",
+        "evolution_level": 33,
+        "front": "sprites/front/Flarewing.png",
+        "back": "sprites/back/Flarewing.png"
+      },
+      {
+        "species_id": "flarebit-final",
+        "name": "Radiavolt",
+        "evolution_level": null,
+        "front": "sprites/front/Radiavolt.png",
+        "back": "sprites/back/Radiavolt.png"
+      }
+    ]
+  },
+  {
+    "family_id": "florabot",
+    "types": [
+      "Botanic",
+      "Bio"
+    ],
+    "forms": [
+      {
+        "species_id": "florabot",
+        "name": "Florabot",
+        "evolution_level": 16,
+        "front": "sprites/front/Florabot.png",
+        "back": "sprites/back/Florabot.png"
+      },
+      {
+        "species_id": "florabot-mid",
+        "name": "Floravine",
+        "evolution_level": 32,
+        "front": "sprites/front/Floravine.png",
+        "back": "sprites/back/Floravine.png"
+      },
+      {
+        "species_id": "florabot-final",
+        "name": "Floratitan",
+        "evolution_level": null,
+        "front": "sprites/front/Floratitan.png",
+        "back": "sprites/back/Floratitan.png"
+      }
+    ]
+  },
+  {
+    "family_id": "frostrit",
+    "types": [
+      "Cryo"
+    ],
+    "forms": [
+      {
+        "species_id": "frostrit-baby",
+        "name": "Frostrit",
+        "evolution_level": 12,
+        "front": "sprites/front/Frostrit.png",
+        "back": "sprites/back/Frostrit.png"
+      },
+      {
+        "species_id": "frostrit",
+        "name": "Frostruff",
+        "evolution_level": 26,
+        "front": "sprites/front/Frostruff.png",
+        "back": "sprites/back/Frostruff.png"
+      },
+      {
+        "species_id": "frostrit-final",
+        "name": "Glaciovulp",
+        "evolution_level": null,
+        "front": "sprites/front/Glaciovulp.png",
+        "back": "sprites/back/Glaciovulp.png"
+      }
+    ]
+  },
+  {
+    "family_id": "fusor",
+    "types": [
+      "Plasma",
+      "Thermal"
+    ],
+    "forms": [
+      {
+        "species_id": "fusor-baby",
+        "name": "Fusor",
+        "evolution_level": 10,
+        "front": "sprites/front/Fusor.png",
+        "back": "sprites/back/Fusor.png"
+      },
+      {
+        "species_id": "fusor",
+        "name": "Fusalam",
+        "evolution_level": 22,
+        "front": "sprites/front/Fusalam.png",
+        "back": "sprites/back/Fusalam.png"
+      },
+      {
+        "species_id": "fusor-final",
+        "name": "Tokamander",
+        "evolution_level": null,
+        "front": "sprites/front/Tokamander.png",
+        "back": "sprites/back/Tokamander.png"
+      }
+    ]
+  },
+  {
+    "family_id": "galepod",
+    "types": [
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "galepod-baby",
+        "name": "Galepod",
+        "evolution_level": 10,
+        "front": "sprites/front/Galepod.png",
+        "back": "sprites/back/Galepod.png"
+      },
+      {
+        "species_id": "galepod",
+        "name": "Galecoil",
+        "evolution_level": 14,
+        "front": "sprites/front/Galecoil.png",
+        "back": "sprites/back/Galecoil.png"
+      },
+      {
+        "species_id": "galepod-final",
+        "name": "Anemospire",
+        "evolution_level": null,
+        "front": "sprites/front/Anemospire.png",
+        "back": "sprites/back/Anemospire.png"
+      }
+    ]
+  },
+  {
+    "family_id": "gearhulk",
+    "types": [
+      "Mechanical",
+      "Geologic"
+    ],
+    "forms": [
+      {
+        "species_id": "gearhulk-baby",
+        "name": "Gearhulk",
+        "evolution_level": 11,
+        "front": "sprites/front/Gearhulk.png",
+        "back": "sprites/back/Gearhulk.png"
+      },
+      {
+        "species_id": "gearhulk",
+        "name": "Geargrizz",
+        "evolution_level": 30,
+        "front": "sprites/front/Geargrizz.png",
+        "back": "sprites/back/Geargrizz.png"
+      },
+      {
+        "species_id": "gearhulk-final",
+        "name": "Ursamechan",
+        "evolution_level": null,
+        "front": "sprites/front/Ursamechan.png",
+        "back": "sprites/back/Ursamechan.png"
+      }
+    ]
+  },
+  {
+    "family_id": "glacibit",
+    "types": [
+      "Cryo",
+      "Hydro"
+    ],
+    "forms": [
+      {
+        "species_id": "glacibit-baby",
+        "name": "Glacibit",
+        "evolution_level": 10,
+        "front": "sprites/front/Glacibit.png",
+        "back": "sprites/back/Glacibit.png"
+      },
+      {
+        "species_id": "glacibit",
+        "name": "Glacigon",
+        "evolution_level": 16,
+        "front": "sprites/front/Glacigon.png",
+        "back": "sprites/back/Glacigon.png"
+      },
+      {
+        "species_id": "glacibit-final",
+        "name": "Cryotitan",
+        "evolution_level": null,
+        "front": "sprites/front/Cryotitan.png",
+        "back": "sprites/back/Cryotitan.png"
+      }
+    ]
+  },
+  {
+    "family_id": "gleamlet",
+    "types": [
+      "Radiant"
+    ],
+    "forms": [
+      {
+        "species_id": "gleamlet-baby",
+        "name": "Gleamlet",
+        "evolution_level": 10,
+        "front": "sprites/front/Gleamlet.png",
+        "back": "sprites/back/Gleamlet.png"
+      },
+      {
+        "species_id": "gleamlet",
+        "name": "Gleamhart",
+        "evolution_level": 17,
+        "front": "sprites/front/Gleamhart.png",
+        "back": "sprites/back/Gleamhart.png"
+      },
+      {
+        "species_id": "gleamlet-final",
+        "name": "Opticerv",
+        "evolution_level": null,
+        "front": "sprites/front/Opticerv.png",
+        "back": "sprites/back/Opticerv.png"
+      }
+    ]
+  },
+  {
+    "family_id": "gloombat",
+    "types": [
+      "Shadow",
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "gloombat-baby",
+        "name": "Gloombat",
+        "evolution_level": 10,
+        "front": "sprites/front/Gloombat.png",
+        "back": "sprites/back/Gloombat.png"
+      },
+      {
+        "species_id": "gloombat",
+        "name": "Gloomecho",
+        "evolution_level": 14,
+        "front": "sprites/front/Gloomecho.png",
+        "back": "sprites/back/Gloomecho.png"
+      },
+      {
+        "species_id": "gloombat-final",
+        "name": "Sonarion",
+        "evolution_level": null,
+        "front": "sprites/front/Sonarion.png",
+        "back": "sprites/back/Sonarion.png"
+      }
+    ]
+  },
+  {
+    "family_id": "gravelmut",
+    "types": [
+      "Geologic",
+      "Metallic"
+    ],
+    "forms": [
+      {
+        "species_id": "gravelmut-baby",
+        "name": "Gravelmut",
+        "evolution_level": 10,
+        "front": "sprites/front/Gravelmut.png",
+        "back": "sprites/back/Gravelmut.png"
+      },
+      {
+        "species_id": "gravelmut",
+        "name": "Gravelhound",
+        "evolution_level": 16,
+        "front": "sprites/front/Gravelhound.png",
+        "back": "sprites/back/Gravelhound.png"
+      },
+      {
+        "species_id": "gravelmut-final",
+        "name": "Conglomast",
+        "evolution_level": null,
+        "front": "sprites/front/Conglomast.png",
+        "back": "sprites/back/Conglomast.png"
+      }
+    ]
+  },
+  {
+    "family_id": "icelyte",
+    "types": [
+      "Cryo",
+      "Radiant"
+    ],
+    "forms": [
+      {
+        "species_id": "icelyte-baby",
+        "name": "Icelyte",
+        "evolution_level": 10,
+        "front": "sprites/front/Icelyte.png",
+        "back": "sprites/back/Icelyte.png"
+      },
+      {
+        "species_id": "icelyte",
+        "name": "Icestride",
+        "evolution_level": 21,
+        "front": "sprites/front/Icestride.png",
+        "back": "sprites/back/Icestride.png"
+      },
+      {
+        "species_id": "icelyte-final",
+        "name": "Prismalop",
+        "evolution_level": null,
+        "front": "sprites/front/Prismalop.png",
+        "back": "sprites/back/Prismalop.png"
+      }
+    ]
+  },
+  {
+    "family_id": "ingotot",
+    "types": [
+      "Metallic",
+      "Geologic"
+    ],
+    "forms": [
+      {
+        "species_id": "ingotot-baby",
+        "name": "Ingotot",
+        "evolution_level": 10,
+        "front": "sprites/front/Ingotot.png",
+        "back": "sprites/back/Ingotot.png"
+      },
+      {
+        "species_id": "ingotot",
+        "name": "Ingotank",
+        "evolution_level": 14,
+        "front": "sprites/front/Ingotank.png",
+        "back": "sprites/back/Ingotank.png"
+      },
+      {
+        "species_id": "ingotot-final",
+        "name": "Crucibulk",
+        "evolution_level": null,
+        "front": "sprites/front/Crucibulk.png",
+        "back": "sprites/back/Crucibulk.png"
+      }
+    ]
+  },
+  {
+    "family_id": "ionling",
+    "types": [
+      "Plasma"
+    ],
+    "forms": [
+      {
+        "species_id": "ionling-baby",
+        "name": "Ionling",
+        "evolution_level": 10,
+        "front": "sprites/front/Ionling.png",
+        "back": "sprites/back/Ionling.png"
+      },
+      {
+        "species_id": "ionling",
+        "name": "Ionwing",
+        "evolution_level": 21,
+        "front": "sprites/front/Ionwing.png",
+        "back": "sprites/back/Ionwing.png"
+      },
+      {
+        "species_id": "ionling-final",
+        "name": "Electrofly",
+        "evolution_level": null,
+        "front": "sprites/front/Electrofly.png",
+        "back": "sprites/back/Electrofly.png"
+      }
+    ]
+  },
+  {
+    "family_id": "joulebot",
+    "types": [
+      "Electric"
+    ],
+    "forms": [
+      {
+        "species_id": "joulebot-baby",
+        "name": "Joulebot",
+        "evolution_level": 10,
+        "front": "sprites/front/Joulebot.png",
+        "back": "sprites/back/Joulebot.png"
+      },
+      {
+        "species_id": "joulebot",
+        "name": "Jouleape",
+        "evolution_level": 15,
+        "front": "sprites/front/Jouleape.png",
+        "back": "sprites/back/Jouleape.png"
+      },
+      {
+        "species_id": "joulebot-final",
+        "name": "Dynamorilla",
+        "evolution_level": null,
+        "front": "sprites/front/Dynamorilla.png",
+        "back": "sprites/back/Dynamorilla.png"
+      }
+    ]
+  },
+  {
+    "family_id": "kelpbot",
+    "types": [
+      "Hydro",
+      "Botanic"
+    ],
+    "forms": [
+      {
+        "species_id": "kelpbot-baby",
+        "name": "Kelpbot",
+        "evolution_level": 10,
+        "front": "sprites/front/Kelpbot.png",
+        "back": "sprites/back/Kelpbot.png"
+      },
+      {
+        "species_id": "kelpbot",
+        "name": "Kelptide",
+        "evolution_level": 18,
+        "front": "sprites/front/Kelptide.png",
+        "back": "sprites/back/Kelptide.png"
+      },
+      {
+        "species_id": "kelpbot-final",
+        "name": "Thalassurge",
+        "evolution_level": null,
+        "front": "sprites/front/Thalassurge.png",
+        "back": "sprites/back/Thalassurge.png"
+      }
+    ]
+  },
+  {
+    "family_id": "larvaburn",
+    "types": [
+      "Thermal",
+      "Bio"
+    ],
+    "forms": [
+      {
+        "species_id": "larvaburn-baby",
+        "name": "Larvaburn",
+        "evolution_level": 10,
+        "front": "sprites/front/Larvaburn.png",
+        "back": "sprites/back/Larvaburn.png"
+      },
+      {
+        "species_id": "larvaburn",
+        "name": "Larvaflare",
+        "evolution_level": 22,
+        "front": "sprites/front/Larvaflare.png",
+        "back": "sprites/back/Larvaflare.png"
+      },
+      {
+        "species_id": "larvaburn-final",
+        "name": "Radiapillar",
+        "evolution_level": null,
+        "front": "sprites/front/Radiapillar.png",
+        "back": "sprites/back/Radiapillar.png"
+      }
+    ]
+  },
+  {
+    "family_id": "lumibot",
+    "types": [
+      "Radiant"
+    ],
+    "forms": [
+      {
+        "species_id": "lumibot-baby",
+        "name": "Lumibot",
+        "evolution_level": 14,
+        "front": "sprites/front/Lumibot.png",
+        "back": "sprites/back/Lumibot.png"
+      },
+      {
+        "species_id": "lumibot",
+        "name": "Lumowl",
+        "evolution_level": 28,
+        "front": "sprites/front/Lumowl.png",
+        "back": "sprites/back/Lumowl.png"
+      },
+      {
+        "species_id": "lumibot-final",
+        "name": "Luminarch",
+        "evolution_level": null,
+        "front": "sprites/front/Luminarch.png",
+        "back": "sprites/back/Luminarch.png"
+      }
+    ]
+  },
+  {
+    "family_id": "magmite",
+    "types": [
+      "Thermal"
+    ],
+    "forms": [
+      {
+        "species_id": "magmite-baby",
+        "name": "Magmite",
+        "evolution_level": 14,
+        "front": "sprites/front/Magmite.png",
+        "back": "sprites/back/Magmite.png"
+      },
+      {
+        "species_id": "magmite",
+        "name": "Magnihorn",
+        "evolution_level": 28,
+        "front": "sprites/front/Magnihorn.png",
+        "back": "sprites/back/Magnihorn.png"
+      },
+      {
+        "species_id": "magmite-final",
+        "name": "Polaritusk",
+        "evolution_level": null,
+        "front": "sprites/front/Polaritusk.png",
+        "back": "sprites/back/Polaritusk.png"
+      }
+    ]
+  },
+  {
+    "family_id": "micromite",
+    "types": [
+      "Nano",
+      "Mechanical"
+    ],
+    "forms": [
+      {
+        "species_id": "micromite-baby",
+        "name": "Micromite",
+        "evolution_level": 10,
+        "front": "sprites/front/Micromite.png",
+        "back": "sprites/back/Micromite.png"
+      },
+      {
+        "species_id": "micromite",
+        "name": "Microdome",
+        "evolution_level": 29,
+        "front": "sprites/front/Microdome.png",
+        "back": "sprites/back/Microdome.png"
+      },
+      {
+        "species_id": "micromite-final",
+        "name": "Tardiscope",
+        "evolution_level": null,
+        "front": "sprites/front/Tardiscope.png",
+        "back": "sprites/back/Tardiscope.png"
+      }
+    ]
+  },
+  {
+    "family_id": "mistfin",
+    "types": [
+      "Hydro",
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "mistfin-baby",
+        "name": "Mistfin",
+        "evolution_level": 10,
+        "front": "sprites/front/Mistfin.png",
+        "back": "sprites/back/Mistfin.png"
+      },
+      {
+        "species_id": "mistfin",
+        "name": "Mistglide",
+        "evolution_level": 22,
+        "front": "sprites/front/Mistglide.png",
+        "back": "sprites/back/Mistglide.png"
+      },
+      {
+        "species_id": "mistfin-final",
+        "name": "Nebulafin",
+        "evolution_level": null,
+        "front": "sprites/front/Nebulafin.png",
+        "back": "sprites/back/Nebulafin.png"
+      }
+    ]
+  },
+  {
+    "family_id": "mosswing",
+    "types": [
+      "Botanic",
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "mosswing-baby",
+        "name": "Mosswing",
+        "evolution_level": 10,
+        "front": "sprites/front/Mosswing.png",
+        "back": "sprites/back/Mosswing.png"
+      },
+      {
+        "species_id": "mosswing",
+        "name": "Mossflutter",
+        "evolution_level": 14,
+        "front": "sprites/front/Mossflutter.png",
+        "back": "sprites/back/Mossflutter.png"
+      },
+      {
+        "species_id": "mosswing-final",
+        "name": "Bryomoth",
+        "evolution_level": null,
+        "front": "sprites/front/Bryomoth.png",
+        "back": "sprites/back/Bryomoth.png"
+      }
+    ]
+  },
+  {
+    "family_id": "mycelid",
+    "types": [
+      "Bio"
+    ],
+    "forms": [
+      {
+        "species_id": "mycelid-baby",
+        "name": "Mycelid",
+        "evolution_level": 10,
+        "front": "sprites/front/Mycelid.png",
+        "back": "sprites/back/Mycelid.png"
+      },
+      {
+        "species_id": "mycelid",
+        "name": "Mycelhart",
+        "evolution_level": 21,
+        "front": "sprites/front/Mycelhart.png",
+        "back": "sprites/back/Mycelhart.png"
+      },
+      {
+        "species_id": "mycelid-final",
+        "name": "Mycervus",
+        "evolution_level": null,
+        "front": "sprites/front/Mycervus.png",
+        "back": "sprites/back/Mycervus.png"
+      }
+    ]
+  },
+  {
+    "family_id": "nanoclit",
+    "types": [
+      "Nano"
+    ],
+    "forms": [
+      {
+        "species_id": "nanoclit-baby",
+        "name": "Nanoclit",
+        "evolution_level": 10,
+        "front": "sprites/front/Nanoclit.png",
+        "back": "sprites/back/Nanoclit.png"
+      },
+      {
+        "species_id": "nanoclit",
+        "name": "Nanocloak",
+        "evolution_level": 22,
+        "front": "sprites/front/Nanocloak.png",
+        "back": "sprites/back/Nanocloak.png"
+      },
+      {
+        "species_id": "nanoclit-final",
+        "name": "Chromanite",
+        "evolution_level": null,
+        "front": "sprites/front/Chromanite.png",
+        "back": "sprites/back/Chromanite.png"
+      }
+    ]
+  },
+  {
+    "family_id": "nanolyte",
+    "types": [
+      "Nano",
+      "Digital"
+    ],
+    "forms": [
+      {
+        "species_id": "nanolyte-baby",
+        "name": "Nanolyte",
+        "evolution_level": 10,
+        "front": "sprites/front/Nanolyte.png",
+        "back": "sprites/back/Nanolyte.png"
+      },
+      {
+        "species_id": "nanolyte",
+        "name": "Nanoflit",
+        "evolution_level": 20,
+        "front": "sprites/front/Nanoflit.png",
+        "back": "sprites/back/Nanoflit.png"
+      },
+      {
+        "species_id": "nanolyte-final",
+        "name": "Femtowing",
+        "evolution_level": null,
+        "front": "sprites/front/Femtowing.png",
+        "back": "sprites/back/Femtowing.png"
+      }
+    ]
+  },
+  {
+    "family_id": "nebulon",
+    "types": [
+      "Cosmic"
+    ],
+    "forms": [
+      {
+        "species_id": "nebulon-baby",
+        "name": "Nebulon",
+        "evolution_level": 13,
+        "front": "sprites/front/Nebulon.png",
+        "back": "sprites/back/Nebulon.png"
+      },
+      {
+        "species_id": "nebulon",
+        "name": "Nebulora",
+        "evolution_level": 32,
+        "front": "sprites/front/Nebulora.png",
+        "back": "sprites/back/Nebulora.png"
+      },
+      {
+        "species_id": "nebulon-final",
+        "name": "Cosmocetus",
+        "evolution_level": null,
+        "front": "sprites/front/Cosmocetus.png",
+        "back": "sprites/back/Cosmocetus.png"
+      }
+    ]
+  },
+  {
+    "family_id": "noctulite",
+    "types": [
+      "Shadow",
+      "Radiant"
+    ],
+    "forms": [
+      {
+        "species_id": "noctulite-baby",
+        "name": "Noctulite",
+        "evolution_level": 10,
+        "front": "sprites/front/Noctulite.png",
+        "back": "sprites/back/Noctulite.png"
+      },
+      {
+        "species_id": "noctulite",
+        "name": "Noctowl",
+        "evolution_level": 24,
+        "front": "sprites/front/Noctowl.png",
+        "back": "sprites/back/Noctowl.png"
+      },
+      {
+        "species_id": "noctulite-final",
+        "name": "Obsidianox",
+        "evolution_level": null,
+        "front": "sprites/front/Obsidianox.png",
+        "back": "sprites/back/Obsidianox.png"
+      }
+    ]
+  },
+  {
+    "family_id": "ohmite",
+    "types": [
+      "Electric"
+    ],
+    "forms": [
+      {
+        "species_id": "ohmite-baby",
+        "name": "Ohmite",
+        "evolution_level": 13,
+        "front": "sprites/front/Ohmite.png",
+        "back": "sprites/back/Ohmite.png"
+      },
+      {
+        "species_id": "ohmite",
+        "name": "Ohmquill",
+        "evolution_level": 27,
+        "front": "sprites/front/Ohmquill.png",
+        "back": "sprites/back/Ohmquill.png"
+      },
+      {
+        "species_id": "ohmite-final",
+        "name": "Resistadon",
+        "evolution_level": null,
+        "front": "sprites/front/Resistadon.png",
+        "back": "sprites/back/Resistadon.png"
+      }
+    ]
+  },
+  {
+    "family_id": "orbitling",
+    "types": [
+      "Cosmic",
+      "Metallic"
+    ],
+    "forms": [
+      {
+        "species_id": "orbitling-baby",
+        "name": "Orbitling",
+        "evolution_level": 10,
+        "front": "sprites/front/Orbitling.png",
+        "back": "sprites/back/Orbitling.png"
+      },
+      {
+        "species_id": "orbitling",
+        "name": "Orbitort",
+        "evolution_level": 15,
+        "front": "sprites/front/Orbitort.png",
+        "back": "sprites/back/Orbitort.png"
+      },
+      {
+        "species_id": "orbitling-final",
+        "name": "Gravitorto",
+        "evolution_level": null,
+        "front": "sprites/front/Gravitorto.png",
+        "back": "sprites/back/Gravitorto.png"
+      }
+    ]
+  },
+  {
+    "family_id": "organitron",
+    "types": [
+      "Bio",
+      "Mechanical"
+    ],
+    "forms": [
+      {
+        "species_id": "organitron-baby",
+        "name": "Organitron",
+        "evolution_level": 10,
+        "front": "sprites/front/Organitron.png",
+        "back": "sprites/back/Organitron.png"
+      },
+      {
+        "species_id": "organitron",
+        "name": "Organhart",
+        "evolution_level": 20,
+        "front": "sprites/front/Organhart.png",
+        "back": "sprites/back/Organhart.png"
+      },
+      {
+        "species_id": "organitron-final",
+        "name": "Biocervion",
+        "evolution_level": null,
+        "front": "sprites/front/Biocervion.png",
+        "back": "sprites/back/Biocervion.png"
+      }
+    ]
+  },
+  {
+    "family_id": "packetot",
+    "types": [
+      "Digital"
+    ],
+    "forms": [
+      {
+        "species_id": "packetot-baby",
+        "name": "Packetot",
+        "evolution_level": 10,
+        "front": "sprites/front/Packetot.png",
+        "back": "sprites/back/Packetot.png"
+      },
+      {
+        "species_id": "packetot",
+        "name": "Packetwing",
+        "evolution_level": 14,
+        "front": "sprites/front/Packetwing.png",
+        "back": "sprites/back/Packetwing.png"
+      },
+      {
+        "species_id": "packetot-final",
+        "name": "Routigeon",
+        "evolution_level": null,
+        "front": "sprites/front/Routigeon.png",
+        "back": "sprites/back/Routigeon.png"
+      }
+    ]
+  },
+  {
+    "family_id": "pebblon",
+    "types": [
+      "Geologic"
+    ],
+    "forms": [
+      {
+        "species_id": "pebblon-baby",
+        "name": "Pebblon",
+        "evolution_level": 10,
+        "front": "sprites/front/Pebblon.png",
+        "back": "sprites/back/Pebblon.png"
+      },
+      {
+        "species_id": "pebblon",
+        "name": "Pebblescale",
+        "evolution_level": 15,
+        "front": "sprites/front/Pebblescale.png",
+        "back": "sprites/back/Pebblescale.png"
+      },
+      {
+        "species_id": "pebblon-final",
+        "name": "Lithoguana",
+        "evolution_level": null,
+        "front": "sprites/front/Lithoguana.png",
+        "back": "sprites/back/Lithoguana.png"
+      }
+    ]
+  },
+  {
+    "family_id": "petalug",
+    "types": [
+      "Botanic"
+    ],
+    "forms": [
+      {
+        "species_id": "petalug-baby",
+        "name": "Petalug",
+        "evolution_level": 12,
+        "front": "sprites/front/Petalug.png",
+        "back": "sprites/back/Petalug.png"
+      },
+      {
+        "species_id": "petalug",
+        "name": "Petalume",
+        "evolution_level": 26,
+        "front": "sprites/front/Petalume.png",
+        "back": "sprites/back/Petalume.png"
+      },
+      {
+        "species_id": "petalug-final",
+        "name": "Floribranch",
+        "evolution_level": null,
+        "front": "sprites/front/Floribranch.png",
+        "back": "sprites/back/Floribranch.png"
+      }
+    ]
+  },
+  {
+    "family_id": "phaseling",
+    "types": [
+      "Quantum",
+      "Shadow"
+    ],
+    "forms": [
+      {
+        "species_id": "phaseling-baby",
+        "name": "Phaseling",
+        "evolution_level": 13,
+        "front": "sprites/front/Phaseling.png",
+        "back": "sprites/back/Phaseling.png"
+      },
+      {
+        "species_id": "phaseling",
+        "name": "Phasepelt",
+        "evolution_level": 32,
+        "front": "sprites/front/Phasepelt.png",
+        "back": "sprites/back/Phasepelt.png"
+      },
+      {
+        "species_id": "phaseling-final",
+        "name": "Phasmaris",
+        "evolution_level": null,
+        "front": "sprites/front/Phasmaris.png",
+        "back": "sprites/back/Phasmaris.png"
+      }
+    ]
+  },
+  {
+    "family_id": "pixelot",
+    "types": [
+      "Digital",
+      "Radiant"
+    ],
+    "forms": [
+      {
+        "species_id": "pixelot-baby",
+        "name": "Pixelot",
+        "evolution_level": 10,
+        "front": "sprites/front/Pixelot.png",
+        "back": "sprites/back/Pixelot.png"
+      },
+      {
+        "species_id": "pixelot",
+        "name": "Pixelclaw",
+        "evolution_level": 21,
+        "front": "sprites/front/Pixelclaw.png",
+        "back": "sprites/back/Pixelclaw.png"
+      },
+      {
+        "species_id": "pixelot-final",
+        "name": "Rasteryx",
+        "evolution_level": null,
+        "front": "sprites/front/Rasteryx.png",
+        "back": "sprites/back/Rasteryx.png"
+      }
+    ]
+  },
+  {
+    "family_id": "prismoth",
+    "types": [
+      "Radiant",
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "prismoth-baby",
+        "name": "Prismoth",
+        "evolution_level": 12,
+        "front": "sprites/front/Prismoth.png",
+        "back": "sprites/back/Prismoth.png"
+      },
+      {
+        "species_id": "prismoth",
+        "name": "Prismwing",
+        "evolution_level": 26,
+        "front": "sprites/front/Prismwing.png",
+        "back": "sprites/back/Prismwing.png"
+      },
+      {
+        "species_id": "prismoth-final",
+        "name": "Spectramoth",
+        "evolution_level": null,
+        "front": "sprites/front/Spectramoth.png",
+        "back": "sprites/back/Spectramoth.png"
+      }
+    ]
+  },
+  {
+    "family_id": "puddlit",
+    "types": [
+      "Hydro"
+    ],
+    "forms": [
+      {
+        "species_id": "puddlit-baby",
+        "name": "Puddlit",
+        "evolution_level": 13,
+        "front": "sprites/front/Puddlit.png",
+        "back": "sprites/back/Puddlit.png"
+      },
+      {
+        "species_id": "puddlit",
+        "name": "Puddleplat",
+        "evolution_level": 32,
+        "front": "sprites/front/Puddleplat.png",
+        "back": "sprites/back/Puddleplat.png"
+      },
+      {
+        "species_id": "puddlit-final",
+        "name": "Reservatypus",
+        "evolution_level": null,
+        "front": "sprites/front/Reservatypus.png",
+        "back": "sprites/back/Reservatypus.png"
+      }
+    ]
+  },
+  {
+    "family_id": "pyrodrive",
+    "types": [
+      "Thermal",
+      "Mechanical"
+    ],
+    "forms": [
+      {
+        "species_id": "pyrodrive",
+        "name": "Pyrodrive",
+        "evolution_level": 16,
+        "front": "sprites/front/Pyrodrive.png",
+        "back": "sprites/back/Pyrodrive.png"
+      },
+      {
+        "species_id": "pyrodrive-mid",
+        "name": "Pyroblaze",
+        "evolution_level": 32,
+        "front": "sprites/front/Pyroblaze.png",
+        "back": "sprites/back/Pyroblaze.png"
+      },
+      {
+        "species_id": "pyrodrive-final",
+        "name": "Pyrodrake",
+        "evolution_level": null,
+        "front": "sprites/front/Pyrodrake.png",
+        "back": "sprites/back/Pyrodrake.png"
+      }
+    ]
+  },
+  {
+    "family_id": "quartzot",
+    "types": [
+      "Geologic",
+      "Radiant"
+    ],
+    "forms": [
+      {
+        "species_id": "quartzot-baby",
+        "name": "Quartzot",
+        "evolution_level": 10,
+        "front": "sprites/front/Quartzot.png",
+        "back": "sprites/back/Quartzot.png"
+      },
+      {
+        "species_id": "quartzot",
+        "name": "Quartzorn",
+        "evolution_level": 15,
+        "front": "sprites/front/Quartzorn.png",
+        "back": "sprites/back/Quartzorn.png"
+      },
+      {
+        "species_id": "quartzot-final",
+        "name": "Piezoceros",
+        "evolution_level": null,
+        "front": "sprites/front/Piezoceros.png",
+        "back": "sprites/back/Piezoceros.png"
+      }
+    ]
+  },
+  {
+    "family_id": "qubit",
+    "types": [
+      "Quantum"
+    ],
+    "forms": [
+      {
+        "species_id": "qubit-baby",
+        "name": "Qubit",
+        "evolution_level": 14,
+        "front": "sprites/front/Qubit.png",
+        "back": "sprites/back/Qubit.png"
+      },
+      {
+        "species_id": "qubit",
+        "name": "Qubiton",
+        "evolution_level": 33,
+        "front": "sprites/front/Qubiton.png",
+        "back": "sprites/back/Qubiton.png"
+      },
+      {
+        "species_id": "qubit-final",
+        "name": "Quantarch",
+        "evolution_level": null,
+        "front": "sprites/front/Quantarch.png",
+        "back": "sprites/back/Quantarch.png"
+      }
+    ]
+  },
+  {
+    "family_id": "reagentot",
+    "types": [
+      "Chemical"
+    ],
+    "forms": [
+      {
+        "species_id": "reagentot-baby",
+        "name": "Reagentot",
+        "evolution_level": 10,
+        "front": "sprites/front/Reagentot.png",
+        "back": "sprites/back/Reagentot.png"
+      },
+      {
+        "species_id": "reagentot",
+        "name": "Reagentail",
+        "evolution_level": 14,
+        "front": "sprites/front/Reagentail.png",
+        "back": "sprites/back/Reagentail.png"
+      },
+      {
+        "species_id": "reagentot-final",
+        "name": "Ampulander",
+        "evolution_level": null,
+        "front": "sprites/front/Ampulander.png",
+        "back": "sprites/back/Ampulander.png"
+      }
+    ]
+  },
+  {
+    "family_id": "rimelet",
+    "types": [
+      "Cryo"
+    ],
+    "forms": [
+      {
+        "species_id": "rimelet-baby",
+        "name": "Rimelet",
+        "evolution_level": 13,
+        "front": "sprites/front/Rimelet.png",
+        "back": "sprites/back/Rimelet.png"
+      },
+      {
+        "species_id": "rimelet",
+        "name": "Rimewing",
+        "evolution_level": 27,
+        "front": "sprites/front/Rimewing.png",
+        "back": "sprites/back/Rimewing.png"
+      },
+      {
+        "species_id": "rimelet-final",
+        "name": "Cryostriga",
+        "evolution_level": null,
+        "front": "sprites/front/Cryostriga.png",
+        "back": "sprites/back/Cryostriga.png"
+      }
+    ]
+  },
+  {
+    "family_id": "riveton",
+    "types": [
+      "Mechanical"
+    ],
+    "forms": [
+      {
+        "species_id": "riveton-baby",
+        "name": "Riveton",
+        "evolution_level": 10,
+        "front": "sprites/front/Riveton.png",
+        "back": "sprites/back/Riveton.png"
+      },
+      {
+        "species_id": "riveton",
+        "name": "Rivetusk",
+        "evolution_level": 15,
+        "front": "sprites/front/Rivetusk.png",
+        "back": "sprites/back/Rivetusk.png"
+      },
+      {
+        "species_id": "riveton-final",
+        "name": "Pistoceros",
+        "evolution_level": null,
+        "front": "sprites/front/Pistoceros.png",
+        "back": "sprites/back/Pistoceros.png"
+      }
+    ]
+  },
+  {
+    "family_id": "scorchit",
+    "types": [
+      "Thermal"
+    ],
+    "forms": [
+      {
+        "species_id": "scorchit-baby",
+        "name": "Scorchit",
+        "evolution_level": 12,
+        "front": "sprites/front/Scorchit.png",
+        "back": "sprites/back/Scorchit.png"
+      },
+      {
+        "species_id": "scorchit",
+        "name": "Scorchclaw",
+        "evolution_level": 31,
+        "front": "sprites/front/Scorchclaw.png",
+        "back": "sprites/back/Scorchclaw.png"
+      },
+      {
+        "species_id": "scorchit-final",
+        "name": "Combustinger",
+        "evolution_level": null,
+        "front": "sprites/front/Combustinger.png",
+        "back": "sprites/back/Combustinger.png"
+      }
+    ]
+  },
+  {
+    "family_id": "shadebot",
+    "types": [
+      "Shadow",
+      "Mechanical"
+    ],
+    "forms": [
+      {
+        "species_id": "shadebot-baby",
+        "name": "Shadebot",
+        "evolution_level": 14,
+        "front": "sprites/front/Shadebot.png",
+        "back": "sprites/back/Shadebot.png"
+      },
+      {
+        "species_id": "shadebot",
+        "name": "Shadewing",
+        "evolution_level": 33,
+        "front": "sprites/front/Shadewing.png",
+        "back": "sprites/back/Shadewing.png"
+      },
+      {
+        "species_id": "shadebot-final",
+        "name": "Stealthraven",
+        "evolution_level": null,
+        "front": "sprites/front/Stealthraven.png",
+        "back": "sprites/back/Stealthraven.png"
+      }
+    ]
+  },
+  {
+    "family_id": "shalebit",
+    "types": [
+      "Geologic"
+    ],
+    "forms": [
+      {
+        "species_id": "shalebit-baby",
+        "name": "Shalebit",
+        "evolution_level": 10,
+        "front": "sprites/front/Shalebit.png",
+        "back": "sprites/back/Shalebit.png"
+      },
+      {
+        "species_id": "shalebit",
+        "name": "Shaleplate",
+        "evolution_level": 18,
+        "front": "sprites/front/Shaleplate.png",
+        "back": "sprites/back/Shaleplate.png"
+      },
+      {
+        "species_id": "shalebit-final",
+        "name": "Stratosteg",
+        "evolution_level": null,
+        "front": "sprites/front/Stratosteg.png",
+        "back": "sprites/back/Stratosteg.png"
+      }
+    ]
+  },
+  {
+    "family_id": "slagmite",
+    "types": [
+      "Thermal",
+      "Geologic"
+    ],
+    "forms": [
+      {
+        "species_id": "slagmite-baby",
+        "name": "Slagmite",
+        "evolution_level": 13,
+        "front": "sprites/front/Slagmite.png",
+        "back": "sprites/back/Slagmite.png"
+      },
+      {
+        "species_id": "slagmite",
+        "name": "Slagboar",
+        "evolution_level": 32,
+        "front": "sprites/front/Slagboar.png",
+        "back": "sprites/back/Slagboar.png"
+      },
+      {
+        "species_id": "slagmite-final",
+        "name": "Smeltusk",
+        "evolution_level": null,
+        "front": "sprites/front/Smeltusk.png",
+        "back": "sprites/back/Smeltusk.png"
+      }
+    ]
+  },
+  {
+    "family_id": "sludgebot",
+    "types": [
+      "Chemical"
+    ],
+    "forms": [
+      {
+        "species_id": "sludgebot-baby",
+        "name": "Sludgebot",
+        "evolution_level": 10,
+        "front": "sprites/front/Sludgebot.png",
+        "back": "sprites/back/Sludgebot.png"
+      },
+      {
+        "species_id": "sludgebot",
+        "name": "Sludgefilter",
+        "evolution_level": 21,
+        "front": "sprites/front/Sludgefilter.png",
+        "back": "sprites/back/Sludgefilter.png"
+      },
+      {
+        "species_id": "sludgebot-final",
+        "name": "Remedispire",
+        "evolution_level": null,
+        "front": "sprites/front/Remedispire.png",
+        "back": "sprites/back/Remedispire.png"
+      }
+    ]
+  },
+  {
+    "family_id": "snovite",
+    "types": [
+      "Cryo",
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "snovite-baby",
+        "name": "Snovite",
+        "evolution_level": 10,
+        "front": "sprites/front/Snovite.png",
+        "back": "sprites/back/Snovite.png"
+      },
+      {
+        "species_id": "snovite",
+        "name": "Snovail",
+        "evolution_level": 15,
+        "front": "sprites/front/Snovail.png",
+        "back": "sprites/back/Snovail.png"
+      },
+      {
+        "species_id": "snovite-final",
+        "name": "Nivermine",
+        "evolution_level": null,
+        "front": "sprites/front/Nivermine.png",
+        "back": "sprites/back/Nivermine.png"
+      }
+    ]
+  },
+  {
+    "family_id": "solburst",
+    "types": [
+      "Radiant",
+      "Plasma"
+    ],
+    "forms": [
+      {
+        "species_id": "solburst-baby",
+        "name": "Solburst",
+        "evolution_level": 10,
+        "front": "sprites/front/Solburst.png",
+        "back": "sprites/back/Solburst.png"
+      },
+      {
+        "species_id": "solburst",
+        "name": "Solwing",
+        "evolution_level": 16,
+        "front": "sprites/front/Solwing.png",
+        "back": "sprites/back/Solwing.png"
+      },
+      {
+        "species_id": "solburst-final",
+        "name": "Heliophane",
+        "evolution_level": null,
+        "front": "sprites/front/Heliophane.png",
+        "back": "sprites/back/Heliophane.png"
+      }
+    ]
+  },
+  {
+    "family_id": "solvexel",
+    "types": [
+      "Hydro",
+      "Chemical"
+    ],
+    "forms": [
+      {
+        "species_id": "solvexel-baby",
+        "name": "Solvexel",
+        "evolution_level": 10,
+        "front": "sprites/front/Solvexel.png",
+        "back": "sprites/back/Solvexel.png"
+      },
+      {
+        "species_id": "solvexel",
+        "name": "Solvoct",
+        "evolution_level": 14,
+        "front": "sprites/front/Solvoct.png",
+        "back": "sprites/back/Solvoct.png"
+      },
+      {
+        "species_id": "solvexel-final",
+        "name": "Octoreagent",
+        "evolution_level": null,
+        "front": "sprites/front/Octoreagent.png",
+        "back": "sprites/back/Octoreagent.png"
+      }
+    ]
+  },
+  {
+    "family_id": "sparkit",
+    "types": [
+      "Electric"
+    ],
+    "forms": [
+      {
+        "species_id": "sparkit-baby",
+        "name": "Sparkit",
+        "evolution_level": 10,
+        "front": "sprites/front/Sparkit.png",
+        "back": "sprites/back/Sparkit.png"
+      },
+      {
+        "species_id": "sparkit",
+        "name": "Sparkcoil",
+        "evolution_level": 17,
+        "front": "sprites/front/Sparkcoil.png",
+        "back": "sprites/back/Sparkcoil.png"
+      },
+      {
+        "species_id": "sparkit-final",
+        "name": "Teslarrel",
+        "evolution_level": null,
+        "front": "sprites/front/Teslarrel.png",
+        "back": "sprites/back/Teslarrel.png"
+      }
+    ]
+  },
+  {
+    "family_id": "splicewisp",
+    "types": [
+      "Bio"
+    ],
+    "forms": [
+      {
+        "species_id": "splicewisp-baby",
+        "name": "Splicewisp",
+        "evolution_level": 14,
+        "front": "sprites/front/Splicewisp.png",
+        "back": "sprites/back/Splicewisp.png"
+      },
+      {
+        "species_id": "splicewisp",
+        "name": "Splicewing",
+        "evolution_level": 33,
+        "front": "sprites/front/Splicewing.png",
+        "back": "sprites/back/Splicewing.png"
+      },
+      {
+        "species_id": "splicewisp-final",
+        "name": "Helixara",
+        "evolution_level": null,
+        "front": "sprites/front/Helixara.png",
+        "back": "sprites/back/Helixara.png"
+      }
+    ]
+  },
+  {
+    "family_id": "sporelet",
+    "types": [
+      "Botanic"
+    ],
+    "forms": [
+      {
+        "species_id": "sporelet-baby",
+        "name": "Sporelet",
+        "evolution_level": 14,
+        "front": "sprites/front/Sporelet.png",
+        "back": "sprites/back/Sporelet.png"
+      },
+      {
+        "species_id": "sporelet",
+        "name": "Sporehop",
+        "evolution_level": 28,
+        "front": "sprites/front/Sporehop.png",
+        "back": "sprites/back/Sporehop.png"
+      },
+      {
+        "species_id": "sporelet-final",
+        "name": "Mycotoad",
+        "evolution_level": null,
+        "front": "sprites/front/Mycotoad.png",
+        "back": "sprites/back/Mycotoad.png"
+      }
+    ]
+  },
+  {
+    "family_id": "springbit",
+    "types": [
+      "Mechanical"
+    ],
+    "forms": [
+      {
+        "species_id": "springbit-baby",
+        "name": "Springbit",
+        "evolution_level": 12,
+        "front": "sprites/front/Springbit.png",
+        "back": "sprites/back/Springbit.png"
+      },
+      {
+        "species_id": "springbit",
+        "name": "Springhopper",
+        "evolution_level": 31,
+        "front": "sprites/front/Springhopper.png",
+        "back": "sprites/back/Springhopper.png"
+      },
+      {
+        "species_id": "springbit-final",
+        "name": "Tensionyx",
+        "evolution_level": null,
+        "front": "sprites/front/Tensionyx.png",
+        "back": "sprites/back/Tensionyx.png"
+      }
+    ]
+  },
+  {
+    "family_id": "sproutle",
+    "types": [
+      "Botanic"
+    ],
+    "forms": [
+      {
+        "species_id": "sproutle-baby",
+        "name": "Sproutle",
+        "evolution_level": 13,
+        "front": "sprites/front/Sproutle.png",
+        "back": "sprites/back/Sproutle.png"
+      },
+      {
+        "species_id": "sproutle",
+        "name": "Sproutshell",
+        "evolution_level": 32,
+        "front": "sprites/front/Sproutshell.png",
+        "back": "sprites/back/Sproutshell.png"
+      },
+      {
+        "species_id": "sproutle-final",
+        "name": "Arbortuga",
+        "evolution_level": null,
+        "front": "sprites/front/Arbortuga.png",
+        "back": "sprites/back/Arbortuga.png"
+      }
+    ]
+  },
+  {
+    "family_id": "starlit",
+    "types": [
+      "Cosmic"
+    ],
+    "forms": [
+      {
+        "species_id": "starlit-baby",
+        "name": "Starlit",
+        "evolution_level": 11,
+        "front": "sprites/front/Starlit.png",
+        "back": "sprites/back/Starlit.png"
+      },
+      {
+        "species_id": "starlit",
+        "name": "Starlynx",
+        "evolution_level": 25,
+        "front": "sprites/front/Starlynx.png",
+        "back": "sprites/back/Starlynx.png"
+      },
+      {
+        "species_id": "starlit-final",
+        "name": "Constellion",
+        "evolution_level": null,
+        "front": "sprites/front/Constellion.png",
+        "back": "sprites/back/Constellion.png"
+      }
+    ]
+  },
+  {
+    "family_id": "steelot",
+    "types": [
+      "Metallic"
+    ],
+    "forms": [
+      {
+        "species_id": "steelot-baby",
+        "name": "Steelot",
+        "evolution_level": 14,
+        "front": "sprites/front/Steelot.png",
+        "back": "sprites/back/Steelot.png"
+      },
+      {
+        "species_id": "steelot",
+        "name": "Steelstream",
+        "evolution_level": 33,
+        "front": "sprites/front/Steelstream.png",
+        "back": "sprites/back/Steelstream.png"
+      },
+      {
+        "species_id": "steelot-final",
+        "name": "Ferrutrine",
+        "evolution_level": null,
+        "front": "sprites/front/Ferrutrine.png",
+        "back": "sprites/back/Ferrutrine.png"
+      }
+    ]
+  },
+  {
+    "family_id": "stratowing",
+    "types": [
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "stratowing-baby",
+        "name": "Stratowing",
+        "evolution_level": 12,
+        "front": "sprites/front/Stratowing.png",
+        "back": "sprites/back/Stratowing.png"
+      },
+      {
+        "species_id": "stratowing",
+        "name": "Stratoglide",
+        "evolution_level": 26,
+        "front": "sprites/front/Stratoglide.png",
+        "back": "sprites/back/Stratoglide.png"
+      },
+      {
+        "species_id": "stratowing-final",
+        "name": "Aeralbatross",
+        "evolution_level": null,
+        "front": "sprites/front/Aeralbatross.png",
+        "back": "sprites/back/Aeralbatross.png"
+      }
+    ]
+  },
+  {
+    "family_id": "swarmlet",
+    "types": [
+      "Nano"
+    ],
+    "forms": [
+      {
+        "species_id": "swarmlet-baby",
+        "name": "Swarmlet",
+        "evolution_level": 14,
+        "front": "sprites/front/Swarmlet.png",
+        "back": "sprites/back/Swarmlet.png"
+      },
+      {
+        "species_id": "swarmlet",
+        "name": "Swarmatrix",
+        "evolution_level": 33,
+        "front": "sprites/front/Swarmatrix.png",
+        "back": "sprites/back/Swarmatrix.png"
+      },
+      {
+        "species_id": "swarmlet-final",
+        "name": "Hexacoccin",
+        "evolution_level": null,
+        "front": "sprites/front/Hexacoccin.png",
+        "back": "sprites/back/Hexacoccin.png"
+      }
+    ]
+  },
+  {
+    "family_id": "terrabot",
+    "types": [
+      "Geologic"
+    ],
+    "forms": [
+      {
+        "species_id": "terrabot-baby",
+        "name": "Terrabot",
+        "evolution_level": 10,
+        "front": "sprites/front/Terrabot.png",
+        "back": "sprites/back/Terrabot.png"
+      },
+      {
+        "species_id": "terrabot",
+        "name": "Terratusk",
+        "evolution_level": 24,
+        "front": "sprites/front/Terratusk.png",
+        "back": "sprites/back/Terratusk.png"
+      },
+      {
+        "species_id": "terrabot-final",
+        "name": "Tectophant",
+        "evolution_level": null,
+        "front": "sprites/front/Tectophant.png",
+        "back": "sprites/back/Tectophant.png"
+      }
+    ]
+  },
+  {
+    "family_id": "thistledrone",
+    "types": [
+      "Botanic"
+    ],
+    "forms": [
+      {
+        "species_id": "thistledrone-baby",
+        "name": "Thistledrone",
+        "evolution_level": 10,
+        "front": "sprites/front/Thistledrone.png",
+        "back": "sprites/back/Thistledrone.png"
+      },
+      {
+        "species_id": "thistledrone",
+        "name": "Thistlewing",
+        "evolution_level": 17,
+        "front": "sprites/front/Thistlewing.png",
+        "back": "sprites/back/Thistlewing.png"
+      },
+      {
+        "species_id": "thistledrone-final",
+        "name": "Spinadrone",
+        "evolution_level": null,
+        "front": "sprites/front/Spinadrone.png",
+        "back": "sprites/back/Spinadrone.png"
+      }
+    ]
+  },
+  {
+    "family_id": "tidefin",
+    "types": [
+      "Hydro"
+    ],
+    "forms": [
+      {
+        "species_id": "tidefin-baby",
+        "name": "Tidefin",
+        "evolution_level": 10,
+        "front": "sprites/front/Tidefin.png",
+        "back": "sprites/back/Tidefin.png"
+      },
+      {
+        "species_id": "tidefin",
+        "name": "Tideshear",
+        "evolution_level": 21,
+        "front": "sprites/front/Tideshear.png",
+        "back": "sprites/back/Tideshear.png"
+      },
+      {
+        "species_id": "tidefin-final",
+        "name": "Hydrohammer",
+        "evolution_level": null,
+        "front": "sprites/front/Hydrohammer.png",
+        "back": "sprites/back/Hydrohammer.png"
+      }
+    ]
+  },
+  {
+    "family_id": "toxigerm",
+    "types": [
+      "Chemical",
+      "Bio"
+    ],
+    "forms": [
+      {
+        "species_id": "toxigerm-baby",
+        "name": "Toxigerm",
+        "evolution_level": 10,
+        "front": "sprites/front/Toxigerm.png",
+        "back": "sprites/back/Toxigerm.png"
+      },
+      {
+        "species_id": "toxigerm",
+        "name": "Toxinewt",
+        "evolution_level": 20,
+        "front": "sprites/front/Toxinewt.png",
+        "back": "sprites/back/Toxinewt.png"
+      },
+      {
+        "species_id": "toxigerm-final",
+        "name": "Microbasil",
+        "evolution_level": null,
+        "front": "sprites/front/Microbasil.png",
+        "back": "sprites/back/Microbasil.png"
+      }
+    ]
+  },
+  {
+    "family_id": "umbralet",
+    "types": [
+      "Shadow"
+    ],
+    "forms": [
+      {
+        "species_id": "umbralet-baby",
+        "name": "Umbralet",
+        "evolution_level": 10,
+        "front": "sprites/front/Umbralet.png",
+        "back": "sprites/back/Umbralet.png"
+      },
+      {
+        "species_id": "umbralet",
+        "name": "Umbrawing",
+        "evolution_level": 22,
+        "front": "sprites/front/Umbrawing.png",
+        "back": "sprites/back/Umbrawing.png"
+      },
+      {
+        "species_id": "umbralet-final",
+        "name": "Noctiloom",
+        "evolution_level": null,
+        "front": "sprites/front/Noctiloom.png",
+        "back": "sprites/back/Noctiloom.png"
+      }
+    ]
+  },
+  {
+    "family_id": "vapomite",
+    "types": [
+      "Chemical",
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "vapomite-baby",
+        "name": "Vapomite",
+        "evolution_level": 10,
+        "front": "sprites/front/Vapomite.png",
+        "back": "sprites/back/Vapomite.png"
+      },
+      {
+        "species_id": "vapomite",
+        "name": "Vaporshell",
+        "evolution_level": 14,
+        "front": "sprites/front/Vaporshell.png",
+        "back": "sprites/back/Vaporshell.png"
+      },
+      {
+        "species_id": "vapomite-final",
+        "name": "Boilerceros",
+        "evolution_level": null,
+        "front": "sprites/front/Boilerceros.png",
+        "back": "sprites/back/Boilerceros.png"
+      }
+    ]
+  },
+  {
+    "family_id": "vinelatch",
+    "types": [
+      "Botanic"
+    ],
+    "forms": [
+      {
+        "species_id": "vinelatch-baby",
+        "name": "Vinelatch",
+        "evolution_level": 13,
+        "front": "sprites/front/Vinelatch.png",
+        "back": "sprites/back/Vinelatch.png"
+      },
+      {
+        "species_id": "vinelatch",
+        "name": "Vineleap",
+        "evolution_level": 32,
+        "front": "sprites/front/Vineleap.png",
+        "back": "sprites/back/Vineleap.png"
+      },
+      {
+        "species_id": "vinelatch-final",
+        "name": "Lianalord",
+        "evolution_level": null,
+        "front": "sprites/front/Lianalord.png",
+        "back": "sprites/back/Lianalord.png"
+      }
+    ]
+  },
+  {
+    "family_id": "visceroid",
+    "types": [
+      "Bio",
+      "Shadow"
+    ],
+    "forms": [
+      {
+        "species_id": "visceroid-baby",
+        "name": "Visceroid",
+        "evolution_level": 10,
+        "front": "sprites/front/Visceroid.png",
+        "back": "sprites/back/Visceroid.png"
+      },
+      {
+        "species_id": "visceroid",
+        "name": "Viscotl",
+        "evolution_level": 18,
+        "front": "sprites/front/Viscotl.png",
+        "back": "sprites/back/Viscotl.png"
+      },
+      {
+        "species_id": "visceroid-final",
+        "name": "Rheolotl",
+        "evolution_level": null,
+        "front": "sprites/front/Rheolotl.png",
+        "back": "sprites/back/Rheolotl.png"
+      }
+    ]
+  },
+  {
+    "family_id": "voidling",
+    "types": [
+      "Cosmic",
+      "Shadow"
+    ],
+    "forms": [
+      {
+        "species_id": "voidling-baby",
+        "name": "Voidling",
+        "evolution_level": 10,
+        "front": "sprites/front/Voidling.png",
+        "back": "sprites/back/Voidling.png"
+      },
+      {
+        "species_id": "voidling",
+        "name": "Voidpelt",
+        "evolution_level": 24,
+        "front": "sprites/front/Voidpelt.png",
+        "back": "sprites/back/Voidpelt.png"
+      },
+      {
+        "species_id": "voidling-final",
+        "name": "Singulynx",
+        "evolution_level": null,
+        "front": "sprites/front/Singulynx.png",
+        "back": "sprites/back/Singulynx.png"
+      }
+    ]
+  },
+  {
+    "family_id": "voltling",
+    "types": [
+      "Electric"
+    ],
+    "forms": [
+      {
+        "species_id": "voltling-baby",
+        "name": "Voltling",
+        "evolution_level": 10,
+        "front": "sprites/front/Voltling.png",
+        "back": "sprites/back/Voltling.png"
+      },
+      {
+        "species_id": "voltling",
+        "name": "Voltrix",
+        "evolution_level": 21,
+        "front": "sprites/front/Voltrix.png",
+        "back": "sprites/back/Voltrix.png"
+      },
+      {
+        "species_id": "voltling-final",
+        "name": "Teslarch",
+        "evolution_level": null,
+        "front": "sprites/front/Teslarch.png",
+        "back": "sprites/back/Teslarch.png"
+      }
+    ]
+  },
+  {
+    "family_id": "vortexling",
+    "types": [
+      "Atmospheric",
+      "Quantum"
+    ],
+    "forms": [
+      {
+        "species_id": "vortexling-baby",
+        "name": "Vortexling",
+        "evolution_level": 14,
+        "front": "sprites/front/Vortexling.png",
+        "back": "sprites/back/Vortexling.png"
+      },
+      {
+        "species_id": "vortexling",
+        "name": "Vortexcoil",
+        "evolution_level": 33,
+        "front": "sprites/front/Vortexcoil.png",
+        "back": "sprites/back/Vortexcoil.png"
+      },
+      {
+        "species_id": "vortexling-final",
+        "name": "Cyclonaga",
+        "evolution_level": null,
+        "front": "sprites/front/Cyclonaga.png",
+        "back": "sprites/back/Cyclonaga.png"
+      }
+    ]
+  },
+  {
+    "family_id": "wavicle",
+    "types": [
+      "Quantum",
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "wavicle-baby",
+        "name": "Wavicle",
+        "evolution_level": 14,
+        "front": "sprites/front/Wavicle.png",
+        "back": "sprites/back/Wavicle.png"
+      },
+      {
+        "species_id": "wavicle",
+        "name": "Wavecrest",
+        "evolution_level": 28,
+        "front": "sprites/front/Wavecrest.png",
+        "back": "sprites/back/Wavecrest.png"
+      },
+      {
+        "species_id": "wavicle-final",
+        "name": "Interferin",
+        "evolution_level": null,
+        "front": "sprites/front/Interferin.png",
+        "back": "sprites/back/Interferin.png"
+      }
+    ]
+  },
+  {
+    "family_id": "wraithex",
+    "types": [
+      "Shadow",
+      "Cosmic"
+    ],
+    "forms": [
+      {
+        "species_id": "wraithex-baby",
+        "name": "Wraithex",
+        "evolution_level": 11,
+        "front": "sprites/front/Wraithex.png",
+        "back": "sprites/back/Wraithex.png"
+      },
+      {
+        "species_id": "wraithex",
+        "name": "Wraithwing",
+        "evolution_level": 25,
+        "front": "sprites/front/Wraithwing.png",
+        "back": "sprites/back/Wraithwing.png"
+      },
+      {
+        "species_id": "wraithex-final",
+        "name": "Hexacorvus",
+        "evolution_level": null,
+        "front": "sprites/front/Hexacorvus.png",
+        "back": "sprites/back/Hexacorvus.png"
+      }
+    ]
+  },
+  {
+    "family_id": "zephyrit",
+    "types": [
+      "Atmospheric"
+    ],
+    "forms": [
+      {
+        "species_id": "zephyrit-baby",
+        "name": "Zephyrit",
+        "evolution_level": 10,
+        "front": "sprites/front/Zephyrit.png",
+        "back": "sprites/back/Zephyrit.png"
+      },
+      {
+        "species_id": "zephyrit",
+        "name": "Zephyrhart",
+        "evolution_level": 16,
+        "front": "sprites/front/Zephyrhart.png",
+        "back": "sprites/back/Zephyrhart.png"
+      },
+      {
+        "species_id": "zephyrit-final",
+        "name": "Anemocerv",
+        "evolution_level": null,
+        "front": "sprites/front/Anemocerv.png",
+        "back": "sprites/back/Anemocerv.png"
+      }
+    ]
+  }
+]

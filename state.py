@@ -2,7 +2,7 @@
 
 Port of V34's inventory section of engine.ts. Operations return (ok, message) so any UI -- the
 pack, the in-world Sci-Database terminal, the shop -- reports results the same way."""
-from data import (CATALOG, MODULES, ITEMS, SPECIES_COUNT, STARTING_CREDITS, sell_price, item_name, TECHNIQUES)
+from data import (CATALOG, MODULES, ITEMS, SPECIES, SPECIES_COUNT, STARTING_CREDITS, sell_price, item_name, TECHNIQUES)
 from monsters import PARTY_LIMIT, Scimon
 
 BOX_COLS, BOX_ROWS = 6, 5

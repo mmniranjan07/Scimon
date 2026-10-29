@@ -20,8 +20,14 @@ _new = [s for s in SPECIES.values() if s.id in DB["source"] and not s.source_reg
 assert len([s for s in SPECIES.values() if not s.source_registered]) == 59
 for s in SPECIES.values():
     if not s.source_registered:
-        assert s.id.endswith("-baby") and s.name.startswith("Baby ") and 270 <= s.dex <= 328, s.id
+        assert s.id.endswith("-baby") and 270 <= s.dex <= 328, s.id
         assert s.catch_rate == 190 and s.evolution_level == 10, s.id
+# display names: the named-sprite patch's canonical names -- no ID suffixes or stage placeholders
+for sp in SPECIES.values():
+    low = sp.name.lower().split()
+    assert not ({"baby", "middle", "final"} & set(low)) and not sp.name.endswith(" Prime"), sp.name
+for rec in DB["species"]:
+    assert SPECIES[rec["id"]].name == rec["name"], rec["id"]
 assert sum(1 for f in FAMILIES.values() if len(f["chain_ids"]) == 3) == 109, "every family is three forms now"
 
 # ---- 2) the 268 source facts are preserved: dex, names, stats, catch rates, xp, abilities, techniques

@@ -1,0 +1,1964 @@
+{
+  "abyssling-baby": {
+    "display_name": "Abyssling",
+    "previous_display_name": "Abyssliling",
+    "front": "sprites/front/Abyssling.png",
+    "back": "sprites/back/Abyssling.png"
+  },
+  "abyssling": {
+    "display_name": "Abyssail",
+    "previous_display_name": "Abyssling",
+    "front": "sprites/front/Abyssail.png",
+    "back": "sprites/back/Abyssail.png"
+  },
+  "abyssling-final": {
+    "display_name": "Bathyray",
+    "previous_display_name": "Abyssling Prime",
+    "front": "sprites/front/Bathyray.png",
+    "back": "sprites/back/Bathyray.png"
+  },
+  "aerochit-baby": {
+    "display_name": "Aerochit",
+    "previous_display_name": "Aerochling",
+    "front": "sprites/front/Aerochit.png",
+    "back": "sprites/back/Aerochit.png"
+  },
+  "aerochit": {
+    "display_name": "Aerofoil",
+    "previous_display_name": "Aerochit",
+    "front": "sprites/front/Aerofoil.png",
+    "back": "sprites/back/Aerofoil.png"
+  },
+  "aerochit-final": {
+    "display_name": "Stratochitin",
+    "previous_display_name": "Aerochit Prime",
+    "front": "sprites/front/Stratochitin.png",
+    "back": "sprites/back/Stratochitin.png"
+  },
+  "alloyling-baby": {
+    "display_name": "Alloyling",
+    "previous_display_name": "Baby Alloyling",
+    "front": "sprites/front/Alloyling.png",
+    "back": "sprites/back/Alloyling.png"
+  },
+  "alloyling": {
+    "display_name": "Alloyscale",
+    "previous_display_name": "Alloyling",
+    "front": "sprites/front/Alloyscale.png",
+    "back": "sprites/back/Alloyscale.png"
+  },
+  "alloyling-final": {
+    "display_name": "Metallodon",
+    "previous_display_name": "Alloyling Prime",
+    "front": "sprites/front/Metallodon.png",
+    "back": "sprites/back/Metallodon.png"
+  },
+  "amperit-baby": {
+    "display_name": "Amperit",
+    "previous_display_name": "Amperling",
+    "front": "sprites/front/Amperit.png",
+    "back": "sprites/back/Amperit.png"
+  },
+  "amperit": {
+    "display_name": "Amperam",
+    "previous_display_name": "Amperit",
+    "front": "sprites/front/Amperam.png",
+    "back": "sprites/back/Amperam.png"
+  },
+  "amperit-final": {
+    "display_name": "Inductaur",
+    "previous_display_name": "Amperit Prime",
+    "front": "sprites/front/Inductaur.png",
+    "back": "sprites/back/Inductaur.png"
+  },
+  "aquabit": {
+    "display_name": "Aquabit",
+    "previous_display_name": "Aquabit",
+    "front": "sprites/front/Aquabit.png",
+    "back": "sprites/back/Aquabit.png"
+  },
+  "aquabit-mid": {
+    "display_name": "Aquafin",
+    "previous_display_name": "Aquafin",
+    "front": "sprites/front/Aquafin.png",
+    "back": "sprites/back/Aquafin.png"
+  },
+  "aquabit-final": {
+    "display_name": "Aquarex",
+    "previous_display_name": "Aquarex",
+    "front": "sprites/front/Aquarex.png",
+    "back": "sprites/back/Aquarex.png"
+  },
+  "arcwisp-baby": {
+    "display_name": "Arcwisp",
+    "previous_display_name": "Baby Arcwisp",
+    "front": "sprites/front/Arcwisp.png",
+    "back": "sprites/back/Arcwisp.png"
+  },
+  "arcwisp": {
+    "display_name": "Arcflutter",
+    "previous_display_name": "Arcwisp",
+    "front": "sprites/front/Arcflutter.png",
+    "back": "sprites/back/Arcflutter.png"
+  },
+  "arcwisp-final": {
+    "display_name": "Plasmariel",
+    "previous_display_name": "Arcwisp Prime",
+    "front": "sprites/front/Plasmariel.png",
+    "back": "sprites/back/Plasmariel.png"
+  },
+  "ashling-baby": {
+    "display_name": "Ashling",
+    "previous_display_name": "Baby Ashling",
+    "front": "sprites/front/Ashling.png",
+    "back": "sprites/back/Ashling.png"
+  },
+  "ashling": {
+    "display_name": "Ashowl",
+    "previous_display_name": "Ashling",
+    "front": "sprites/front/Ashowl.png",
+    "back": "sprites/back/Ashowl.png"
+  },
+  "ashling-final": {
+    "display_name": "Cineroc",
+    "previous_display_name": "Ashling Prime",
+    "front": "sprites/front/Cineroc.png",
+    "back": "sprites/back/Cineroc.png"
+  },
+  "assembit-baby": {
+    "display_name": "Assembit",
+    "previous_display_name": "Baby Assembit",
+    "front": "sprites/front/Assembit.png",
+    "back": "sprites/back/Assembit.png"
+  },
+  "assembit": {
+    "display_name": "Assemclaw",
+    "previous_display_name": "Assembit",
+    "front": "sprites/front/Assemclaw.png",
+    "back": "sprites/back/Assemclaw.png"
+  },
+  "assembit-final": {
+    "display_name": "Fabricrux",
+    "previous_display_name": "Assembit Prime",
+    "front": "sprites/front/Fabricrux.png",
+    "back": "sprites/back/Fabricrux.png"
+  },
+  "automit-baby": {
+    "display_name": "Automit",
+    "previous_display_name": "Baby Automit",
+    "front": "sprites/front/Automit.png",
+    "back": "sprites/back/Automit.png"
+  },
+  "automit": {
+    "display_name": "Autolimb",
+    "previous_display_name": "Automit",
+    "front": "sprites/front/Autolimb.png",
+    "back": "sprites/back/Autolimb.png"
+  },
+  "automit-final": {
+    "display_name": "Mantimech",
+    "previous_display_name": "Automit Prime",
+    "front": "sprites/front/Mantimech.png",
+    "back": "sprites/back/Mantimech.png"
+  },
+  "basaltot-baby": {
+    "display_name": "Basaltot",
+    "previous_display_name": "Baby Basaltot",
+    "front": "sprites/front/Basaltot.png",
+    "back": "sprites/back/Basaltot.png"
+  },
+  "basaltot": {
+    "display_name": "Basalton",
+    "previous_display_name": "Basaltot",
+    "front": "sprites/front/Basalton.png",
+    "back": "sprites/back/Basalton.png"
+  },
+  "basaltot-final": {
+    "display_name": "Caldero",
+    "previous_display_name": "Basaltot Prime",
+    "front": "sprites/front/Caldero.png",
+    "back": "sprites/back/Caldero.png"
+  },
+  "biteling-baby": {
+    "display_name": "Biteling",
+    "previous_display_name": "Baby Biteling",
+    "front": "sprites/front/Biteling.png",
+    "back": "sprites/back/Biteling.png"
+  },
+  "biteling": {
+    "display_name": "Bitmander",
+    "previous_display_name": "Biteling",
+    "front": "sprites/front/Bitmander.png",
+    "back": "sprites/back/Bitmander.png"
+  },
+  "biteling-final": {
+    "display_name": "Megabitle",
+    "previous_display_name": "Biteling Prime",
+    "front": "sprites/front/Megabitle.png",
+    "back": "sprites/back/Megabitle.png"
+  },
+  "bloomxell-baby": {
+    "display_name": "Bloomxell",
+    "previous_display_name": "Baby Bloomxell",
+    "front": "sprites/front/Bloomxell.png",
+    "back": "sprites/back/Bloomxell.png"
+  },
+  "bloomxell": {
+    "display_name": "Bloomhart",
+    "previous_display_name": "Bloomxell",
+    "front": "sprites/front/Bloomhart.png",
+    "back": "sprites/back/Bloomhart.png"
+  },
+  "bloomxell-final": {
+    "display_name": "Floracervus",
+    "previous_display_name": "Bloomxell Prime",
+    "front": "sprites/front/Floracervus.png",
+    "back": "sprites/back/Floracervus.png"
+  },
+  "boulderon-baby": {
+    "display_name": "Boulderon",
+    "previous_display_name": "Baby Boulderon",
+    "front": "sprites/front/Boulderon.png",
+    "back": "sprites/back/Boulderon.png"
+  },
+  "boulderon": {
+    "display_name": "Boulderback",
+    "previous_display_name": "Boulderon",
+    "front": "sprites/front/Boulderback.png",
+    "back": "sprites/back/Boulderback.png"
+  },
+  "boulderon-final": {
+    "display_name": "Monolithor",
+    "previous_display_name": "Boulderon Prime",
+    "front": "sprites/front/Monolithor.png",
+    "back": "sprites/back/Monolithor.png"
+  },
+  "brineling-baby": {
+    "display_name": "Brineling",
+    "previous_display_name": "Brineliling",
+    "front": "sprites/front/Brineling.png",
+    "back": "sprites/back/Brineling.png"
+  },
+  "brineling": {
+    "display_name": "Brinescale",
+    "previous_display_name": "Brineling",
+    "front": "sprites/front/Brinescale.png",
+    "back": "sprites/back/Brinescale.png"
+  },
+  "brineling-final": {
+    "display_name": "Halodrake",
+    "previous_display_name": "Brineling Prime",
+    "front": "sprites/front/Halodrake.png",
+    "back": "sprites/back/Halodrake.png"
+  },
+  "cactopod-baby": {
+    "display_name": "Cactopod",
+    "previous_display_name": "Cactopling",
+    "front": "sprites/front/Cactopod.png",
+    "back": "sprites/back/Cactopod.png"
+  },
+  "cactopod": {
+    "display_name": "Cactarmor",
+    "previous_display_name": "Cactopod",
+    "front": "sprites/front/Cactarmor.png",
+    "back": "sprites/back/Cactarmor.png"
+  },
+  "cactopod-final": {
+    "display_name": "Xeroshield",
+    "previous_display_name": "Cactopod Prime",
+    "front": "sprites/front/Xeroshield.png",
+    "back": "sprites/back/Xeroshield.png"
+  },
+  "catalyxt-baby": {
+    "display_name": "Catalyxt",
+    "previous_display_name": "Baby Catalyxt",
+    "front": "sprites/front/Catalyxt.png",
+    "back": "sprites/back/Catalyxt.png"
+  },
+  "catalyxt": {
+    "display_name": "Catalynx",
+    "previous_display_name": "Catalyxt",
+    "front": "sprites/front/Catalynx.png",
+    "back": "sprites/back/Catalynx.png"
+  },
+  "catalyxt-final": {
+    "display_name": "Reactyger",
+    "previous_display_name": "Catalyxt Prime",
+    "front": "sprites/front/Reactyger.png",
+    "back": "sprites/back/Reactyger.png"
+  },
+  "cellling-baby": {
+    "display_name": "Cellling",
+    "previous_display_name": "Baby Cellling",
+    "front": "sprites/front/Cellling.png",
+    "back": "sprites/back/Cellling.png"
+  },
+  "cellling": {
+    "display_name": "Cellulo",
+    "previous_display_name": "Cellling",
+    "front": "sprites/front/Cellulo.png",
+    "back": "sprites/back/Cellulo.png"
+  },
+  "cellling-final": {
+    "display_name": "Organella",
+    "previous_display_name": "Cellling Prime",
+    "front": "sprites/front/Organella.png",
+    "back": "sprites/back/Organella.png"
+  },
+  "chillmite-baby": {
+    "display_name": "Chillmite",
+    "previous_display_name": "Chillmiling",
+    "front": "sprites/front/Chillmite.png",
+    "back": "sprites/back/Chillmite.png"
+  },
+  "chillmite": {
+    "display_name": "Chillclaw",
+    "previous_display_name": "Chillmite",
+    "front": "sprites/front/Chillclaw.png",
+    "back": "sprites/back/Chillclaw.png"
+  },
+  "chillmite-final": {
+    "display_name": "Cryoarach",
+    "previous_display_name": "Chillmite Prime",
+    "front": "sprites/front/Cryoarach.png",
+    "back": "sprites/back/Cryoarach.png"
+  },
+  "chromelet-baby": {
+    "display_name": "Chromelet",
+    "previous_display_name": "Chromellet",
+    "front": "sprites/front/Chromelet.png",
+    "back": "sprites/back/Chromelet.png"
+  },
+  "chromelet": {
+    "display_name": "Chromafowl",
+    "previous_display_name": "Chromelet",
+    "front": "sprites/front/Chromafowl.png",
+    "back": "sprites/back/Chromafowl.png"
+  },
+  "chromelet-final": {
+    "display_name": "Chromavane",
+    "previous_display_name": "Chromelet Prime",
+    "front": "sprites/front/Chromavane.png",
+    "back": "sprites/back/Chromavane.png"
+  },
+  "cindermite-baby": {
+    "display_name": "Cindermite",
+    "previous_display_name": "Cindermiling",
+    "front": "sprites/front/Cindermite.png",
+    "back": "sprites/back/Cindermite.png"
+  },
+  "cindermite": {
+    "display_name": "Cinderant",
+    "previous_display_name": "Cindermite",
+    "front": "sprites/front/Cinderant.png",
+    "back": "sprites/back/Cinderant.png"
+  },
+  "cindermite-final": {
+    "display_name": "Furnacina",
+    "previous_display_name": "Cindermite Prime",
+    "front": "sprites/front/Furnacina.png",
+    "back": "sprites/back/Furnacina.png"
+  },
+  "codeling-baby": {
+    "display_name": "Codeling",
+    "previous_display_name": "Baby Codeling",
+    "front": "sprites/front/Codeling.png",
+    "back": "sprites/back/Codeling.png"
+  },
+  "codeling": {
+    "display_name": "Codetail",
+    "previous_display_name": "Codeling",
+    "front": "sprites/front/Codetail.png",
+    "back": "sprites/back/Codetail.png"
+  },
+  "codeling-final": {
+    "display_name": "Algoryx",
+    "previous_display_name": "Codeling Prime",
+    "front": "sprites/front/Algoryx.png",
+    "back": "sprites/back/Algoryx.png"
+  },
+  "cogmite-baby": {
+    "display_name": "Cogmite",
+    "previous_display_name": "Baby Cogmite",
+    "front": "sprites/front/Cogmite.png",
+    "back": "sprites/back/Cogmite.png"
+  },
+  "cogmite": {
+    "display_name": "Cogcrab",
+    "previous_display_name": "Cogmite",
+    "front": "sprites/front/Cogcrab.png",
+    "back": "sprites/back/Cogcrab.png"
+  },
+  "cogmite-final": {
+    "display_name": "Chronocarapace",
+    "previous_display_name": "Cogmite Prime",
+    "front": "sprites/front/Chronocarapace.png",
+    "back": "sprites/back/Chronocarapace.png"
+  },
+  "cometling-baby": {
+    "display_name": "Cometling",
+    "previous_display_name": "Cometliling",
+    "front": "sprites/front/Cometling.png",
+    "back": "sprites/back/Cometling.png"
+  },
+  "cometling": {
+    "display_name": "Comethare",
+    "previous_display_name": "Cometling",
+    "front": "sprites/front/Comethare.png",
+    "back": "sprites/back/Comethare.png"
+  },
+  "cometling-final": {
+    "display_name": "Astralop",
+    "previous_display_name": "Cometling Prime",
+    "front": "sprites/front/Astralop.png",
+    "back": "sprites/back/Astralop.png"
+  },
+  "coralbit-baby": {
+    "display_name": "Coralbit",
+    "previous_display_name": "Baby Coralbit",
+    "front": "sprites/front/Coralbit.png",
+    "back": "sprites/back/Coralbit.png"
+  },
+  "coralbit": {
+    "display_name": "Coralclaw",
+    "previous_display_name": "Coralbit",
+    "front": "sprites/front/Coralclaw.png",
+    "back": "sprites/back/Coralclaw.png"
+  },
+  "coralbit-final": {
+    "display_name": "Reefortress",
+    "previous_display_name": "Coralbit Prime",
+    "front": "sprites/front/Reefortress.png",
+    "back": "sprites/back/Reefortress.png"
+  },
+  "coronalet-baby": {
+    "display_name": "Coronalet",
+    "previous_display_name": "Baby Coronalet",
+    "front": "sprites/front/Coronalet.png",
+    "back": "sprites/back/Coronalet.png"
+  },
+  "coronalet": {
+    "display_name": "Coronion",
+    "previous_display_name": "Coronalet",
+    "front": "sprites/front/Coronion.png",
+    "back": "sprites/back/Coronion.png"
+  },
+  "coronalet-final": {
+    "display_name": "Heliomane",
+    "previous_display_name": "Coronalet Prime",
+    "front": "sprites/front/Heliomane.png",
+    "back": "sprites/back/Heliomane.png"
+  },
+  "cragling-baby": {
+    "display_name": "Cragling",
+    "previous_display_name": "Cragliling",
+    "front": "sprites/front/Cragling.png",
+    "back": "sprites/back/Cragling.png"
+  },
+  "cragling": {
+    "display_name": "Craghorn",
+    "previous_display_name": "Cragling",
+    "front": "sprites/front/Craghorn.png",
+    "back": "sprites/back/Craghorn.png"
+  },
+  "cragling-final": {
+    "display_name": "Stratoceros",
+    "previous_display_name": "Cragling Prime",
+    "front": "sprites/front/Stratoceros.png",
+    "back": "sprites/back/Stratoceros.png"
+  },
+  "crankling-baby": {
+    "display_name": "Crankling",
+    "previous_display_name": "Baby Crankling",
+    "front": "sprites/front/Crankling.png",
+    "back": "sprites/back/Crankling.png"
+  },
+  "crankling": {
+    "display_name": "Crankaroo",
+    "previous_display_name": "Crankling",
+    "front": "sprites/front/Crankaroo.png",
+    "back": "sprites/back/Crankaroo.png"
+  },
+  "crankling-final": {
+    "display_name": "Kinetaroo",
+    "previous_display_name": "Crankling Prime",
+    "front": "sprites/front/Kinetaroo.png",
+    "back": "sprites/back/Kinetaroo.png"
+  },
+  "cumulob-baby": {
+    "display_name": "Cumulob",
+    "previous_display_name": "Cumullet",
+    "front": "sprites/front/Cumulob.png",
+    "back": "sprites/back/Cumulob.png"
+  },
+  "cumulob": {
+    "display_name": "Cumulamb",
+    "previous_display_name": "Cumulob",
+    "front": "sprites/front/Cumulamb.png",
+    "back": "sprites/back/Cumulamb.png"
+  },
+  "cumulob-final": {
+    "display_name": "Baroram",
+    "previous_display_name": "Cumulob Prime",
+    "front": "sprites/front/Baroram.png",
+    "back": "sprites/back/Baroram.png"
+  },
+  "dewbit-baby": {
+    "display_name": "Dewbit",
+    "previous_display_name": "Baby Dewbit",
+    "front": "sprites/front/Dewbit.png",
+    "back": "sprites/back/Dewbit.png"
+  },
+  "dewbit": {
+    "display_name": "Dewleap",
+    "previous_display_name": "Dewbit",
+    "front": "sprites/front/Dewleap.png",
+    "back": "sprites/back/Dewleap.png"
+  },
+  "dewbit-final": {
+    "display_name": "Hygrofrog",
+    "previous_display_name": "Dewbit Prime",
+    "front": "sprites/front/Hygrofrog.png",
+    "back": "sprites/back/Hygrofrog.png"
+  },
+  "droplite-baby": {
+    "display_name": "Droplite",
+    "previous_display_name": "Dropliling",
+    "front": "sprites/front/Droplite.png",
+    "back": "sprites/back/Droplite.png"
+  },
+  "droplite": {
+    "display_name": "Droplume",
+    "previous_display_name": "Droplite",
+    "front": "sprites/front/Droplume.png",
+    "back": "sprites/back/Droplume.png"
+  },
+  "droplite-final": {
+    "display_name": "Hydromedusa",
+    "previous_display_name": "Droplite Prime",
+    "front": "sprites/front/Hydromedusa.png",
+    "back": "sprites/back/Hydromedusa.png"
+  },
+  "duskling-baby": {
+    "display_name": "Duskling",
+    "previous_display_name": "Baby Duskling",
+    "front": "sprites/front/Duskling.png",
+    "back": "sprites/back/Duskling.png"
+  },
+  "duskling": {
+    "display_name": "Dusklynx",
+    "previous_display_name": "Duskling",
+    "front": "sprites/front/Dusklynx.png",
+    "back": "sprites/back/Dusklynx.png"
+  },
+  "duskling-final": {
+    "display_name": "Lunafelin",
+    "previous_display_name": "Duskling Prime",
+    "front": "sprites/front/Lunafelin.png",
+    "back": "sprites/back/Lunafelin.png"
+  },
+  "emberling-baby": {
+    "display_name": "Emberling",
+    "previous_display_name": "Emberliling",
+    "front": "sprites/front/Emberling.png",
+    "back": "sprites/back/Emberling.png"
+  },
+  "emberling": {
+    "display_name": "Emberfox",
+    "previous_display_name": "Emberling",
+    "front": "sprites/front/Emberfox.png",
+    "back": "sprites/back/Emberfox.png"
+  },
+  "emberling-final": {
+    "display_name": "Vulcaruff",
+    "previous_display_name": "Emberling Prime",
+    "front": "sprites/front/Vulcaruff.png",
+    "back": "sprites/back/Vulcaruff.png"
+  },
+  "entanglit-baby": {
+    "display_name": "Entanglit",
+    "previous_display_name": "Baby Entanglit",
+    "front": "sprites/front/Entanglit.png",
+    "back": "sprites/back/Entanglit.png"
+  },
+  "entanglit": {
+    "display_name": "Entangcoil",
+    "previous_display_name": "Entanglit",
+    "front": "sprites/front/Entangcoil.png",
+    "back": "sprites/back/Entangcoil.png"
+  },
+  "entanglit-final": {
+    "display_name": "Duantum",
+    "previous_display_name": "Entanglit Prime",
+    "front": "sprites/front/Duantum.png",
+    "back": "sprites/back/Duantum.png"
+  },
+  "enzymite-baby": {
+    "display_name": "Enzymite",
+    "previous_display_name": "Baby Enzymite",
+    "front": "sprites/front/Enzymite.png",
+    "back": "sprites/back/Enzymite.png"
+  },
+  "enzymite": {
+    "display_name": "Enzycle",
+    "previous_display_name": "Enzymite",
+    "front": "sprites/front/Enzycle.png",
+    "back": "sprites/back/Enzycle.png"
+  },
+  "enzymite-final": {
+    "display_name": "Catalytron",
+    "previous_display_name": "Enzymite Prime",
+    "front": "sprites/front/Catalytron.png",
+    "back": "sprites/back/Catalytron.png"
+  },
+  "faradot-baby": {
+    "display_name": "Faradot",
+    "previous_display_name": "Faradling",
+    "front": "sprites/front/Faradot.png",
+    "back": "sprites/back/Faradot.png"
+  },
+  "faradot": {
+    "display_name": "Farafrog",
+    "previous_display_name": "Faradot",
+    "front": "sprites/front/Farafrog.png",
+    "back": "sprites/back/Farafrog.png"
+  },
+  "faradot-final": {
+    "display_name": "Capacitoad",
+    "previous_display_name": "Faradot Prime",
+    "front": "sprites/front/Capacitoad.png",
+    "back": "sprites/back/Capacitoad.png"
+  },
+  "ferrite-baby": {
+    "display_name": "Ferrite",
+    "previous_display_name": "Ferriling",
+    "front": "sprites/front/Ferrite.png",
+    "back": "sprites/back/Ferrite.png"
+  },
+  "ferrite": {
+    "display_name": "Ferroclaw",
+    "previous_display_name": "Ferrite",
+    "front": "sprites/front/Ferroclaw.png",
+    "back": "sprites/back/Ferroclaw.png"
+  },
+  "ferrite-final": {
+    "display_name": "Magnetusk",
+    "previous_display_name": "Ferrite Prime",
+    "front": "sprites/front/Magnetusk.png",
+    "back": "sprites/back/Magnetusk.png"
+  },
+  "flarebit-baby": {
+    "display_name": "Flarebit",
+    "previous_display_name": "Flarebling",
+    "front": "sprites/front/Flarebit.png",
+    "back": "sprites/back/Flarebit.png"
+  },
+  "flarebit": {
+    "display_name": "Flarewing",
+    "previous_display_name": "Flarebit",
+    "front": "sprites/front/Flarewing.png",
+    "back": "sprites/back/Flarewing.png"
+  },
+  "flarebit-final": {
+    "display_name": "Radiavolt",
+    "previous_display_name": "Flarebit Prime",
+    "front": "sprites/front/Radiavolt.png",
+    "back": "sprites/back/Radiavolt.png"
+  },
+  "florabot": {
+    "display_name": "Florabot",
+    "previous_display_name": "Florabot",
+    "front": "sprites/front/Florabot.png",
+    "back": "sprites/back/Florabot.png"
+  },
+  "florabot-mid": {
+    "display_name": "Floravine",
+    "previous_display_name": "Floravine",
+    "front": "sprites/front/Floravine.png",
+    "back": "sprites/back/Floravine.png"
+  },
+  "florabot-final": {
+    "display_name": "Floratitan",
+    "previous_display_name": "Floratitan",
+    "front": "sprites/front/Floratitan.png",
+    "back": "sprites/back/Floratitan.png"
+  },
+  "frostrit-baby": {
+    "display_name": "Frostrit",
+    "previous_display_name": "Frostrling",
+    "front": "sprites/front/Frostrit.png",
+    "back": "sprites/back/Frostrit.png"
+  },
+  "frostrit": {
+    "display_name": "Frostruff",
+    "previous_display_name": "Frostrit",
+    "front": "sprites/front/Frostruff.png",
+    "back": "sprites/back/Frostruff.png"
+  },
+  "frostrit-final": {
+    "display_name": "Glaciovulp",
+    "previous_display_name": "Frostrit Prime",
+    "front": "sprites/front/Glaciovulp.png",
+    "back": "sprites/back/Glaciovulp.png"
+  },
+  "fusor-baby": {
+    "display_name": "Fusor",
+    "previous_display_name": "Baby Fusor",
+    "front": "sprites/front/Fusor.png",
+    "back": "sprites/back/Fusor.png"
+  },
+  "fusor": {
+    "display_name": "Fusalam",
+    "previous_display_name": "Fusor",
+    "front": "sprites/front/Fusalam.png",
+    "back": "sprites/back/Fusalam.png"
+  },
+  "fusor-final": {
+    "display_name": "Tokamander",
+    "previous_display_name": "Fusor Prime",
+    "front": "sprites/front/Tokamander.png",
+    "back": "sprites/back/Tokamander.png"
+  },
+  "galepod-baby": {
+    "display_name": "Galepod",
+    "previous_display_name": "Baby Galepod",
+    "front": "sprites/front/Galepod.png",
+    "back": "sprites/back/Galepod.png"
+  },
+  "galepod": {
+    "display_name": "Galecoil",
+    "previous_display_name": "Galepod",
+    "front": "sprites/front/Galecoil.png",
+    "back": "sprites/back/Galecoil.png"
+  },
+  "galepod-final": {
+    "display_name": "Anemospire",
+    "previous_display_name": "Galepod Prime",
+    "front": "sprites/front/Anemospire.png",
+    "back": "sprites/back/Anemospire.png"
+  },
+  "gearhulk-baby": {
+    "display_name": "Gearhulk",
+    "previous_display_name": "Gearhuling",
+    "front": "sprites/front/Gearhulk.png",
+    "back": "sprites/back/Gearhulk.png"
+  },
+  "gearhulk": {
+    "display_name": "Geargrizz",
+    "previous_display_name": "Gearhulk",
+    "front": "sprites/front/Geargrizz.png",
+    "back": "sprites/back/Geargrizz.png"
+  },
+  "gearhulk-final": {
+    "display_name": "Ursamechan",
+    "previous_display_name": "Gearhulk Prime",
+    "front": "sprites/front/Ursamechan.png",
+    "back": "sprites/back/Ursamechan.png"
+  },
+  "glacibit-baby": {
+    "display_name": "Glacibit",
+    "previous_display_name": "Baby Glacibit",
+    "front": "sprites/front/Glacibit.png",
+    "back": "sprites/back/Glacibit.png"
+  },
+  "glacibit": {
+    "display_name": "Glacigon",
+    "previous_display_name": "Glacibit",
+    "front": "sprites/front/Glacigon.png",
+    "back": "sprites/back/Glacigon.png"
+  },
+  "glacibit-final": {
+    "display_name": "Cryotitan",
+    "previous_display_name": "Glacibit Prime",
+    "front": "sprites/front/Cryotitan.png",
+    "back": "sprites/back/Cryotitan.png"
+  },
+  "gleamlet-baby": {
+    "display_name": "Gleamlet",
+    "previous_display_name": "Baby Gleamlet",
+    "front": "sprites/front/Gleamlet.png",
+    "back": "sprites/back/Gleamlet.png"
+  },
+  "gleamlet": {
+    "display_name": "Gleamhart",
+    "previous_display_name": "Gleamlet",
+    "front": "sprites/front/Gleamhart.png",
+    "back": "sprites/back/Gleamhart.png"
+  },
+  "gleamlet-final": {
+    "display_name": "Opticerv",
+    "previous_display_name": "Gleamlet Prime",
+    "front": "sprites/front/Opticerv.png",
+    "back": "sprites/back/Opticerv.png"
+  },
+  "gloombat-baby": {
+    "display_name": "Gloombat",
+    "previous_display_name": "Baby Gloombat",
+    "front": "sprites/front/Gloombat.png",
+    "back": "sprites/back/Gloombat.png"
+  },
+  "gloombat": {
+    "display_name": "Gloomecho",
+    "previous_display_name": "Gloombat",
+    "front": "sprites/front/Gloomecho.png",
+    "back": "sprites/back/Gloomecho.png"
+  },
+  "gloombat-final": {
+    "display_name": "Sonarion",
+    "previous_display_name": "Gloombat Prime",
+    "front": "sprites/front/Sonarion.png",
+    "back": "sprites/back/Sonarion.png"
+  },
+  "gravelmut-baby": {
+    "display_name": "Gravelmut",
+    "previous_display_name": "Baby Gravelmut",
+    "front": "sprites/front/Gravelmut.png",
+    "back": "sprites/back/Gravelmut.png"
+  },
+  "gravelmut": {
+    "display_name": "Gravelhound",
+    "previous_display_name": "Gravelmut",
+    "front": "sprites/front/Gravelhound.png",
+    "back": "sprites/back/Gravelhound.png"
+  },
+  "gravelmut-final": {
+    "display_name": "Conglomast",
+    "previous_display_name": "Gravelmut Prime",
+    "front": "sprites/front/Conglomast.png",
+    "back": "sprites/back/Conglomast.png"
+  },
+  "icelyte-baby": {
+    "display_name": "Icelyte",
+    "previous_display_name": "Baby Icelyte",
+    "front": "sprites/front/Icelyte.png",
+    "back": "sprites/back/Icelyte.png"
+  },
+  "icelyte": {
+    "display_name": "Icestride",
+    "previous_display_name": "Icelyte",
+    "front": "sprites/front/Icestride.png",
+    "back": "sprites/back/Icestride.png"
+  },
+  "icelyte-final": {
+    "display_name": "Prismalop",
+    "previous_display_name": "Icelyte Prime",
+    "front": "sprites/front/Prismalop.png",
+    "back": "sprites/back/Prismalop.png"
+  },
+  "ingotot-baby": {
+    "display_name": "Ingotot",
+    "previous_display_name": "Baby Ingotot",
+    "front": "sprites/front/Ingotot.png",
+    "back": "sprites/back/Ingotot.png"
+  },
+  "ingotot": {
+    "display_name": "Ingotank",
+    "previous_display_name": "Ingotot",
+    "front": "sprites/front/Ingotank.png",
+    "back": "sprites/back/Ingotank.png"
+  },
+  "ingotot-final": {
+    "display_name": "Crucibulk",
+    "previous_display_name": "Ingotot Prime",
+    "front": "sprites/front/Crucibulk.png",
+    "back": "sprites/back/Crucibulk.png"
+  },
+  "ionling-baby": {
+    "display_name": "Ionling",
+    "previous_display_name": "Baby Ionling",
+    "front": "sprites/front/Ionling.png",
+    "back": "sprites/back/Ionling.png"
+  },
+  "ionling": {
+    "display_name": "Ionwing",
+    "previous_display_name": "Ionling",
+    "front": "sprites/front/Ionwing.png",
+    "back": "sprites/back/Ionwing.png"
+  },
+  "ionling-final": {
+    "display_name": "Electrofly",
+    "previous_display_name": "Ionling Prime",
+    "front": "sprites/front/Electrofly.png",
+    "back": "sprites/back/Electrofly.png"
+  },
+  "joulebot-baby": {
+    "display_name": "Joulebot",
+    "previous_display_name": "Baby Joulebot",
+    "front": "sprites/front/Joulebot.png",
+    "back": "sprites/back/Joulebot.png"
+  },
+  "joulebot": {
+    "display_name": "Jouleape",
+    "previous_display_name": "Joulebot",
+    "front": "sprites/front/Jouleape.png",
+    "back": "sprites/back/Jouleape.png"
+  },
+  "joulebot-final": {
+    "display_name": "Dynamorilla",
+    "previous_display_name": "Joulebot Prime",
+    "front": "sprites/front/Dynamorilla.png",
+    "back": "sprites/back/Dynamorilla.png"
+  },
+  "kelpbot-baby": {
+    "display_name": "Kelpbot",
+    "previous_display_name": "Baby Kelpbot",
+    "front": "sprites/front/Kelpbot.png",
+    "back": "sprites/back/Kelpbot.png"
+  },
+  "kelpbot": {
+    "display_name": "Kelptide",
+    "previous_display_name": "Kelpbot",
+    "front": "sprites/front/Kelptide.png",
+    "back": "sprites/back/Kelptide.png"
+  },
+  "kelpbot-final": {
+    "display_name": "Thalassurge",
+    "previous_display_name": "Kelpbot Prime",
+    "front": "sprites/front/Thalassurge.png",
+    "back": "sprites/back/Thalassurge.png"
+  },
+  "larvaburn-baby": {
+    "display_name": "Larvaburn",
+    "previous_display_name": "Baby Larvaburn",
+    "front": "sprites/front/Larvaburn.png",
+    "back": "sprites/back/Larvaburn.png"
+  },
+  "larvaburn": {
+    "display_name": "Larvaflare",
+    "previous_display_name": "Larvaburn",
+    "front": "sprites/front/Larvaflare.png",
+    "back": "sprites/back/Larvaflare.png"
+  },
+  "larvaburn-final": {
+    "display_name": "Radiapillar",
+    "previous_display_name": "Larvaburn Prime",
+    "front": "sprites/front/Radiapillar.png",
+    "back": "sprites/back/Radiapillar.png"
+  },
+  "lumibot-baby": {
+    "display_name": "Lumibot",
+    "previous_display_name": "Lumibling",
+    "front": "sprites/front/Lumibot.png",
+    "back": "sprites/back/Lumibot.png"
+  },
+  "lumibot": {
+    "display_name": "Lumowl",
+    "previous_display_name": "Lumibot",
+    "front": "sprites/front/Lumowl.png",
+    "back": "sprites/back/Lumowl.png"
+  },
+  "lumibot-final": {
+    "display_name": "Luminarch",
+    "previous_display_name": "Lumibot Prime",
+    "front": "sprites/front/Luminarch.png",
+    "back": "sprites/back/Luminarch.png"
+  },
+  "magmite-baby": {
+    "display_name": "Magmite",
+    "previous_display_name": "Magmiling",
+    "front": "sprites/front/Magmite.png",
+    "back": "sprites/back/Magmite.png"
+  },
+  "magmite": {
+    "display_name": "Magnihorn",
+    "previous_display_name": "Magmite",
+    "front": "sprites/front/Magnihorn.png",
+    "back": "sprites/back/Magnihorn.png"
+  },
+  "magmite-final": {
+    "display_name": "Polaritusk",
+    "previous_display_name": "Magmite Prime",
+    "front": "sprites/front/Polaritusk.png",
+    "back": "sprites/back/Polaritusk.png"
+  },
+  "micromite-baby": {
+    "display_name": "Micromite",
+    "previous_display_name": "Micromiling",
+    "front": "sprites/front/Micromite.png",
+    "back": "sprites/back/Micromite.png"
+  },
+  "micromite": {
+    "display_name": "Microdome",
+    "previous_display_name": "Micromite",
+    "front": "sprites/front/Microdome.png",
+    "back": "sprites/back/Microdome.png"
+  },
+  "micromite-final": {
+    "display_name": "Tardiscope",
+    "previous_display_name": "Micromite Prime",
+    "front": "sprites/front/Tardiscope.png",
+    "back": "sprites/back/Tardiscope.png"
+  },
+  "mistfin-baby": {
+    "display_name": "Mistfin",
+    "previous_display_name": "Baby Mistfin",
+    "front": "sprites/front/Mistfin.png",
+    "back": "sprites/back/Mistfin.png"
+  },
+  "mistfin": {
+    "display_name": "Mistglide",
+    "previous_display_name": "Mistfin",
+    "front": "sprites/front/Mistglide.png",
+    "back": "sprites/back/Mistglide.png"
+  },
+  "mistfin-final": {
+    "display_name": "Nebulafin",
+    "previous_display_name": "Mistfin Prime",
+    "front": "sprites/front/Nebulafin.png",
+    "back": "sprites/back/Nebulafin.png"
+  },
+  "mosswing-baby": {
+    "display_name": "Mosswing",
+    "previous_display_name": "Baby Mosswing",
+    "front": "sprites/front/Mosswing.png",
+    "back": "sprites/back/Mosswing.png"
+  },
+  "mosswing": {
+    "display_name": "Mossflutter",
+    "previous_display_name": "Mosswing",
+    "front": "sprites/front/Mossflutter.png",
+    "back": "sprites/back/Mossflutter.png"
+  },
+  "mosswing-final": {
+    "display_name": "Bryomoth",
+    "previous_display_name": "Mosswing Prime",
+    "front": "sprites/front/Bryomoth.png",
+    "back": "sprites/back/Bryomoth.png"
+  },
+  "mycelid-baby": {
+    "display_name": "Mycelid",
+    "previous_display_name": "Baby Mycelid",
+    "front": "sprites/front/Mycelid.png",
+    "back": "sprites/back/Mycelid.png"
+  },
+  "mycelid": {
+    "display_name": "Mycelhart",
+    "previous_display_name": "Mycelid",
+    "front": "sprites/front/Mycelhart.png",
+    "back": "sprites/back/Mycelhart.png"
+  },
+  "mycelid-final": {
+    "display_name": "Mycervus",
+    "previous_display_name": "Mycelid Prime",
+    "front": "sprites/front/Mycervus.png",
+    "back": "sprites/back/Mycervus.png"
+  },
+  "nanoclit-baby": {
+    "display_name": "Nanoclit",
+    "previous_display_name": "Baby Nanoclit",
+    "front": "sprites/front/Nanoclit.png",
+    "back": "sprites/back/Nanoclit.png"
+  },
+  "nanoclit": {
+    "display_name": "Nanocloak",
+    "previous_display_name": "Nanoclit",
+    "front": "sprites/front/Nanocloak.png",
+    "back": "sprites/back/Nanocloak.png"
+  },
+  "nanoclit-final": {
+    "display_name": "Chromanite",
+    "previous_display_name": "Nanoclit Prime",
+    "front": "sprites/front/Chromanite.png",
+    "back": "sprites/back/Chromanite.png"
+  },
+  "nanolyte-baby": {
+    "display_name": "Nanolyte",
+    "previous_display_name": "Baby Nanolyte",
+    "front": "sprites/front/Nanolyte.png",
+    "back": "sprites/back/Nanolyte.png"
+  },
+  "nanolyte": {
+    "display_name": "Nanoflit",
+    "previous_display_name": "Nanolyte",
+    "front": "sprites/front/Nanoflit.png",
+    "back": "sprites/back/Nanoflit.png"
+  },
+  "nanolyte-final": {
+    "display_name": "Femtowing",
+    "previous_display_name": "Nanolyte Prime",
+    "front": "sprites/front/Femtowing.png",
+    "back": "sprites/back/Femtowing.png"
+  },
+  "nebulon-baby": {
+    "display_name": "Nebulon",
+    "previous_display_name": "Nebullet",
+    "front": "sprites/front/Nebulon.png",
+    "back": "sprites/back/Nebulon.png"
+  },
+  "nebulon": {
+    "display_name": "Nebulora",
+    "previous_display_name": "Nebulon",
+    "front": "sprites/front/Nebulora.png",
+    "back": "sprites/back/Nebulora.png"
+  },
+  "nebulon-final": {
+    "display_name": "Cosmocetus",
+    "previous_display_name": "Nebulon Prime",
+    "front": "sprites/front/Cosmocetus.png",
+    "back": "sprites/back/Cosmocetus.png"
+  },
+  "noctulite-baby": {
+    "display_name": "Noctulite",
+    "previous_display_name": "Noctuliling",
+    "front": "sprites/front/Noctulite.png",
+    "back": "sprites/back/Noctulite.png"
+  },
+  "noctulite": {
+    "display_name": "Noctowl",
+    "previous_display_name": "Noctulite",
+    "front": "sprites/front/Noctowl.png",
+    "back": "sprites/back/Noctowl.png"
+  },
+  "noctulite-final": {
+    "display_name": "Obsidianox",
+    "previous_display_name": "Noctulite Prime",
+    "front": "sprites/front/Obsidianox.png",
+    "back": "sprites/back/Obsidianox.png"
+  },
+  "ohmite-baby": {
+    "display_name": "Ohmite",
+    "previous_display_name": "Ohmiteling",
+    "front": "sprites/front/Ohmite.png",
+    "back": "sprites/back/Ohmite.png"
+  },
+  "ohmite": {
+    "display_name": "Ohmquill",
+    "previous_display_name": "Ohmite",
+    "front": "sprites/front/Ohmquill.png",
+    "back": "sprites/back/Ohmquill.png"
+  },
+  "ohmite-final": {
+    "display_name": "Resistadon",
+    "previous_display_name": "Ohmite Prime",
+    "front": "sprites/front/Resistadon.png",
+    "back": "sprites/back/Resistadon.png"
+  },
+  "orbitling-baby": {
+    "display_name": "Orbitling",
+    "previous_display_name": "Baby Orbitling",
+    "front": "sprites/front/Orbitling.png",
+    "back": "sprites/back/Orbitling.png"
+  },
+  "orbitling": {
+    "display_name": "Orbitort",
+    "previous_display_name": "Orbitling",
+    "front": "sprites/front/Orbitort.png",
+    "back": "sprites/back/Orbitort.png"
+  },
+  "orbitling-final": {
+    "display_name": "Gravitorto",
+    "previous_display_name": "Orbitling Prime",
+    "front": "sprites/front/Gravitorto.png",
+    "back": "sprites/back/Gravitorto.png"
+  },
+  "organitron-baby": {
+    "display_name": "Organitron",
+    "previous_display_name": "Baby Organitron",
+    "front": "sprites/front/Organitron.png",
+    "back": "sprites/back/Organitron.png"
+  },
+  "organitron": {
+    "display_name": "Organhart",
+    "previous_display_name": "Organitron",
+    "front": "sprites/front/Organhart.png",
+    "back": "sprites/back/Organhart.png"
+  },
+  "organitron-final": {
+    "display_name": "Biocervion",
+    "previous_display_name": "Organitron Prime",
+    "front": "sprites/front/Biocervion.png",
+    "back": "sprites/back/Biocervion.png"
+  },
+  "packetot-baby": {
+    "display_name": "Packetot",
+    "previous_display_name": "Baby Packetot",
+    "front": "sprites/front/Packetot.png",
+    "back": "sprites/back/Packetot.png"
+  },
+  "packetot": {
+    "display_name": "Packetwing",
+    "previous_display_name": "Packetot",
+    "front": "sprites/front/Packetwing.png",
+    "back": "sprites/back/Packetwing.png"
+  },
+  "packetot-final": {
+    "display_name": "Routigeon",
+    "previous_display_name": "Packetot Prime",
+    "front": "sprites/front/Routigeon.png",
+    "back": "sprites/back/Routigeon.png"
+  },
+  "pebblon-baby": {
+    "display_name": "Pebblon",
+    "previous_display_name": "Baby Pebblon",
+    "front": "sprites/front/Pebblon.png",
+    "back": "sprites/back/Pebblon.png"
+  },
+  "pebblon": {
+    "display_name": "Pebblescale",
+    "previous_display_name": "Pebblon",
+    "front": "sprites/front/Pebblescale.png",
+    "back": "sprites/back/Pebblescale.png"
+  },
+  "pebblon-final": {
+    "display_name": "Lithoguana",
+    "previous_display_name": "Pebblon Prime",
+    "front": "sprites/front/Lithoguana.png",
+    "back": "sprites/back/Lithoguana.png"
+  },
+  "petalug-baby": {
+    "display_name": "Petalug",
+    "previous_display_name": "Petallet",
+    "front": "sprites/front/Petalug.png",
+    "back": "sprites/back/Petalug.png"
+  },
+  "petalug": {
+    "display_name": "Petalume",
+    "previous_display_name": "Petalug",
+    "front": "sprites/front/Petalume.png",
+    "back": "sprites/back/Petalume.png"
+  },
+  "petalug-final": {
+    "display_name": "Floribranch",
+    "previous_display_name": "Petalug Prime",
+    "front": "sprites/front/Floribranch.png",
+    "back": "sprites/back/Floribranch.png"
+  },
+  "phaseling-baby": {
+    "display_name": "Phaseling",
+    "previous_display_name": "Phaseliling",
+    "front": "sprites/front/Phaseling.png",
+    "back": "sprites/back/Phaseling.png"
+  },
+  "phaseling": {
+    "display_name": "Phasepelt",
+    "previous_display_name": "Phaseling",
+    "front": "sprites/front/Phasepelt.png",
+    "back": "sprites/back/Phasepelt.png"
+  },
+  "phaseling-final": {
+    "display_name": "Phasmaris",
+    "previous_display_name": "Phaseling Prime",
+    "front": "sprites/front/Phasmaris.png",
+    "back": "sprites/back/Phasmaris.png"
+  },
+  "pixelot-baby": {
+    "display_name": "Pixelot",
+    "previous_display_name": "Baby Pixelot",
+    "front": "sprites/front/Pixelot.png",
+    "back": "sprites/back/Pixelot.png"
+  },
+  "pixelot": {
+    "display_name": "Pixelclaw",
+    "previous_display_name": "Pixelot",
+    "front": "sprites/front/Pixelclaw.png",
+    "back": "sprites/back/Pixelclaw.png"
+  },
+  "pixelot-final": {
+    "display_name": "Rasteryx",
+    "previous_display_name": "Pixelot Prime",
+    "front": "sprites/front/Rasteryx.png",
+    "back": "sprites/back/Rasteryx.png"
+  },
+  "prismoth-baby": {
+    "display_name": "Prismoth",
+    "previous_display_name": "Prismoling",
+    "front": "sprites/front/Prismoth.png",
+    "back": "sprites/back/Prismoth.png"
+  },
+  "prismoth": {
+    "display_name": "Prismwing",
+    "previous_display_name": "Prismoth",
+    "front": "sprites/front/Prismwing.png",
+    "back": "sprites/back/Prismwing.png"
+  },
+  "prismoth-final": {
+    "display_name": "Spectramoth",
+    "previous_display_name": "Prismoth Prime",
+    "front": "sprites/front/Spectramoth.png",
+    "back": "sprites/back/Spectramoth.png"
+  },
+  "puddlit-baby": {
+    "display_name": "Puddlit",
+    "previous_display_name": "Puddllet",
+    "front": "sprites/front/Puddlit.png",
+    "back": "sprites/back/Puddlit.png"
+  },
+  "puddlit": {
+    "display_name": "Puddleplat",
+    "previous_display_name": "Puddlit",
+    "front": "sprites/front/Puddleplat.png",
+    "back": "sprites/back/Puddleplat.png"
+  },
+  "puddlit-final": {
+    "display_name": "Reservatypus",
+    "previous_display_name": "Puddlit Prime",
+    "front": "sprites/front/Reservatypus.png",
+    "back": "sprites/back/Reservatypus.png"
+  },
+  "pyrodrive": {
+    "display_name": "Pyrodrive",
+    "previous_display_name": "Pyrodrive",
+    "front": "sprites/front/Pyrodrive.png",
+    "back": "sprites/back/Pyrodrive.png"
+  },
+  "pyrodrive-mid": {
+    "display_name": "Pyroblaze",
+    "previous_display_name": "Pyroblaze",
+    "front": "sprites/front/Pyroblaze.png",
+    "back": "sprites/back/Pyroblaze.png"
+  },
+  "pyrodrive-final": {
+    "display_name": "Pyrodrake",
+    "previous_display_name": "Pyrodrake",
+    "front": "sprites/front/Pyrodrake.png",
+    "back": "sprites/back/Pyrodrake.png"
+  },
+  "quartzot-baby": {
+    "display_name": "Quartzot",
+    "previous_display_name": "Baby Quartzot",
+    "front": "sprites/front/Quartzot.png",
+    "back": "sprites/back/Quartzot.png"
+  },
+  "quartzot": {
+    "display_name": "Quartzorn",
+    "previous_display_name": "Quartzot",
+    "front": "sprites/front/Quartzorn.png",
+    "back": "sprites/back/Quartzorn.png"
+  },
+  "quartzot-final": {
+    "display_name": "Piezoceros",
+    "previous_display_name": "Quartzot Prime",
+    "front": "sprites/front/Piezoceros.png",
+    "back": "sprites/back/Piezoceros.png"
+  },
+  "qubit-baby": {
+    "display_name": "Qubit",
+    "previous_display_name": "Qubitling",
+    "front": "sprites/front/Qubit.png",
+    "back": "sprites/back/Qubit.png"
+  },
+  "qubit": {
+    "display_name": "Qubiton",
+    "previous_display_name": "Qubit",
+    "front": "sprites/front/Qubiton.png",
+    "back": "sprites/back/Qubiton.png"
+  },
+  "qubit-final": {
+    "display_name": "Quantarch",
+    "previous_display_name": "Qubit Prime",
+    "front": "sprites/front/Quantarch.png",
+    "back": "sprites/back/Quantarch.png"
+  },
+  "reagentot-baby": {
+    "display_name": "Reagentot",
+    "previous_display_name": "Baby Reagentot",
+    "front": "sprites/front/Reagentot.png",
+    "back": "sprites/back/Reagentot.png"
+  },
+  "reagentot": {
+    "display_name": "Reagentail",
+    "previous_display_name": "Reagentot",
+    "front": "sprites/front/Reagentail.png",
+    "back": "sprites/back/Reagentail.png"
+  },
+  "reagentot-final": {
+    "display_name": "Ampulander",
+    "previous_display_name": "Reagentot Prime",
+    "front": "sprites/front/Ampulander.png",
+    "back": "sprites/back/Ampulander.png"
+  },
+  "rimelet-baby": {
+    "display_name": "Rimelet",
+    "previous_display_name": "Rimellet",
+    "front": "sprites/front/Rimelet.png",
+    "back": "sprites/back/Rimelet.png"
+  },
+  "rimelet": {
+    "display_name": "Rimewing",
+    "previous_display_name": "Rimelet",
+    "front": "sprites/front/Rimewing.png",
+    "back": "sprites/back/Rimewing.png"
+  },
+  "rimelet-final": {
+    "display_name": "Cryostriga",
+    "previous_display_name": "Rimelet Prime",
+    "front": "sprites/front/Cryostriga.png",
+    "back": "sprites/back/Cryostriga.png"
+  },
+  "riveton-baby": {
+    "display_name": "Riveton",
+    "previous_display_name": "Baby Riveton",
+    "front": "sprites/front/Riveton.png",
+    "back": "sprites/back/Riveton.png"
+  },
+  "riveton": {
+    "display_name": "Rivetusk",
+    "previous_display_name": "Riveton",
+    "front": "sprites/front/Rivetusk.png",
+    "back": "sprites/back/Rivetusk.png"
+  },
+  "riveton-final": {
+    "display_name": "Pistoceros",
+    "previous_display_name": "Riveton Prime",
+    "front": "sprites/front/Pistoceros.png",
+    "back": "sprites/back/Pistoceros.png"
+  },
+  "scorchit-baby": {
+    "display_name": "Scorchit",
+    "previous_display_name": "Scorchling",
+    "front": "sprites/front/Scorchit.png",
+    "back": "sprites/back/Scorchit.png"
+  },
+  "scorchit": {
+    "display_name": "Scorchclaw",
+    "previous_display_name": "Scorchit",
+    "front": "sprites/front/Scorchclaw.png",
+    "back": "sprites/back/Scorchclaw.png"
+  },
+  "scorchit-final": {
+    "display_name": "Combustinger",
+    "previous_display_name": "Scorchit Prime",
+    "front": "sprites/front/Combustinger.png",
+    "back": "sprites/back/Combustinger.png"
+  },
+  "shadebot-baby": {
+    "display_name": "Shadebot",
+    "previous_display_name": "Shadebling",
+    "front": "sprites/front/Shadebot.png",
+    "back": "sprites/back/Shadebot.png"
+  },
+  "shadebot": {
+    "display_name": "Shadewing",
+    "previous_display_name": "Shadebot",
+    "front": "sprites/front/Shadewing.png",
+    "back": "sprites/back/Shadewing.png"
+  },
+  "shadebot-final": {
+    "display_name": "Stealthraven",
+    "previous_display_name": "Shadebot Prime",
+    "front": "sprites/front/Stealthraven.png",
+    "back": "sprites/back/Stealthraven.png"
+  },
+  "shalebit-baby": {
+    "display_name": "Shalebit",
+    "previous_display_name": "Baby Shalebit",
+    "front": "sprites/front/Shalebit.png",
+    "back": "sprites/back/Shalebit.png"
+  },
+  "shalebit": {
+    "display_name": "Shaleplate",
+    "previous_display_name": "Shalebit",
+    "front": "sprites/front/Shaleplate.png",
+    "back": "sprites/back/Shaleplate.png"
+  },
+  "shalebit-final": {
+    "display_name": "Stratosteg",
+    "previous_display_name": "Shalebit Prime",
+    "front": "sprites/front/Stratosteg.png",
+    "back": "sprites/back/Stratosteg.png"
+  },
+  "slagmite-baby": {
+    "display_name": "Slagmite",
+    "previous_display_name": "Slagmiling",
+    "front": "sprites/front/Slagmite.png",
+    "back": "sprites/back/Slagmite.png"
+  },
+  "slagmite": {
+    "display_name": "Slagboar",
+    "previous_display_name": "Slagmite",
+    "front": "sprites/front/Slagboar.png",
+    "back": "sprites/back/Slagboar.png"
+  },
+  "slagmite-final": {
+    "display_name": "Smeltusk",
+    "previous_display_name": "Slagmite Prime",
+    "front": "sprites/front/Smeltusk.png",
+    "back": "sprites/back/Smeltusk.png"
+  },
+  "sludgebot-baby": {
+    "display_name": "Sludgebot",
+    "previous_display_name": "Baby Sludgebot",
+    "front": "sprites/front/Sludgebot.png",
+    "back": "sprites/back/Sludgebot.png"
+  },
+  "sludgebot": {
+    "display_name": "Sludgefilter",
+    "previous_display_name": "Sludgebot",
+    "front": "sprites/front/Sludgefilter.png",
+    "back": "sprites/back/Sludgefilter.png"
+  },
+  "sludgebot-final": {
+    "display_name": "Remedispire",
+    "previous_display_name": "Sludgebot Prime",
+    "front": "sprites/front/Remedispire.png",
+    "back": "sprites/back/Remedispire.png"
+  },
+  "snovite-baby": {
+    "display_name": "Snovite",
+    "previous_display_name": "Baby Snovite",
+    "front": "sprites/front/Snovite.png",
+    "back": "sprites/back/Snovite.png"
+  },
+  "snovite": {
+    "display_name": "Snovail",
+    "previous_display_name": "Snovite",
+    "front": "sprites/front/Snovail.png",
+    "back": "sprites/back/Snovail.png"
+  },
+  "snovite-final": {
+    "display_name": "Nivermine",
+    "previous_display_name": "Snovite Prime",
+    "front": "sprites/front/Nivermine.png",
+    "back": "sprites/back/Nivermine.png"
+  },
+  "solburst-baby": {
+    "display_name": "Solburst",
+    "previous_display_name": "Baby Solburst",
+    "front": "sprites/front/Solburst.png",
+    "back": "sprites/back/Solburst.png"
+  },
+  "solburst": {
+    "display_name": "Solwing",
+    "previous_display_name": "Solburst",
+    "front": "sprites/front/Solwing.png",
+    "back": "sprites/back/Solwing.png"
+  },
+  "solburst-final": {
+    "display_name": "Heliophane",
+    "previous_display_name": "Solburst Prime",
+    "front": "sprites/front/Heliophane.png",
+    "back": "sprites/back/Heliophane.png"
+  },
+  "solvexel-baby": {
+    "display_name": "Solvexel",
+    "previous_display_name": "Baby Solvexel",
+    "front": "sprites/front/Solvexel.png",
+    "back": "sprites/back/Solvexel.png"
+  },
+  "solvexel": {
+    "display_name": "Solvoct",
+    "previous_display_name": "Solvexel",
+    "front": "sprites/front/Solvoct.png",
+    "back": "sprites/back/Solvoct.png"
+  },
+  "solvexel-final": {
+    "display_name": "Octoreagent",
+    "previous_display_name": "Solvexel Prime",
+    "front": "sprites/front/Octoreagent.png",
+    "back": "sprites/back/Octoreagent.png"
+  },
+  "sparkit-baby": {
+    "display_name": "Sparkit",
+    "previous_display_name": "Baby Sparkit",
+    "front": "sprites/front/Sparkit.png",
+    "back": "sprites/back/Sparkit.png"
+  },
+  "sparkit": {
+    "display_name": "Sparkcoil",
+    "previous_display_name": "Sparkit",
+    "front": "sprites/front/Sparkcoil.png",
+    "back": "sprites/back/Sparkcoil.png"
+  },
+  "sparkit-final": {
+    "display_name": "Teslarrel",
+    "previous_display_name": "Sparkit Prime",
+    "front": "sprites/front/Teslarrel.png",
+    "back": "sprites/back/Teslarrel.png"
+  },
+  "splicewisp-baby": {
+    "display_name": "Splicewisp",
+    "previous_display_name": "Splicewiling",
+    "front": "sprites/front/Splicewisp.png",
+    "back": "sprites/back/Splicewisp.png"
+  },
+  "splicewisp": {
+    "display_name": "Splicewing",
+    "previous_display_name": "Splicewisp",
+    "front": "sprites/front/Splicewing.png",
+    "back": "sprites/back/Splicewing.png"
+  },
+  "splicewisp-final": {
+    "display_name": "Helixara",
+    "previous_display_name": "Splicewisp Prime",
+    "front": "sprites/front/Helixara.png",
+    "back": "sprites/back/Helixara.png"
+  },
+  "sporelet-baby": {
+    "display_name": "Sporelet",
+    "previous_display_name": "Sporellet",
+    "front": "sprites/front/Sporelet.png",
+    "back": "sprites/back/Sporelet.png"
+  },
+  "sporelet": {
+    "display_name": "Sporehop",
+    "previous_display_name": "Sporelet",
+    "front": "sprites/front/Sporehop.png",
+    "back": "sprites/back/Sporehop.png"
+  },
+  "sporelet-final": {
+    "display_name": "Mycotoad",
+    "previous_display_name": "Sporelet Prime",
+    "front": "sprites/front/Mycotoad.png",
+    "back": "sprites/back/Mycotoad.png"
+  },
+  "springbit-baby": {
+    "display_name": "Springbit",
+    "previous_display_name": "Springbling",
+    "front": "sprites/front/Springbit.png",
+    "back": "sprites/back/Springbit.png"
+  },
+  "springbit": {
+    "display_name": "Springhopper",
+    "previous_display_name": "Springbit",
+    "front": "sprites/front/Springhopper.png",
+    "back": "sprites/back/Springhopper.png"
+  },
+  "springbit-final": {
+    "display_name": "Tensionyx",
+    "previous_display_name": "Springbit Prime",
+    "front": "sprites/front/Tensionyx.png",
+    "back": "sprites/back/Tensionyx.png"
+  },
+  "sproutle-baby": {
+    "display_name": "Sproutle",
+    "previous_display_name": "Sproutling",
+    "front": "sprites/front/Sproutle.png",
+    "back": "sprites/back/Sproutle.png"
+  },
+  "sproutle": {
+    "display_name": "Sproutshell",
+    "previous_display_name": "Sproutle",
+    "front": "sprites/front/Sproutshell.png",
+    "back": "sprites/back/Sproutshell.png"
+  },
+  "sproutle-final": {
+    "display_name": "Arbortuga",
+    "previous_display_name": "Sproutle Prime",
+    "front": "sprites/front/Arbortuga.png",
+    "back": "sprites/back/Arbortuga.png"
+  },
+  "starlit-baby": {
+    "display_name": "Starlit",
+    "previous_display_name": "Starllet",
+    "front": "sprites/front/Starlit.png",
+    "back": "sprites/back/Starlit.png"
+  },
+  "starlit": {
+    "display_name": "Starlynx",
+    "previous_display_name": "Starlit",
+    "front": "sprites/front/Starlynx.png",
+    "back": "sprites/back/Starlynx.png"
+  },
+  "starlit-final": {
+    "display_name": "Constellion",
+    "previous_display_name": "Starlit Prime",
+    "front": "sprites/front/Constellion.png",
+    "back": "sprites/back/Constellion.png"
+  },
+  "steelot-baby": {
+    "display_name": "Steelot",
+    "previous_display_name": "Steellet",
+    "front": "sprites/front/Steelot.png",
+    "back": "sprites/back/Steelot.png"
+  },
+  "steelot": {
+    "display_name": "Steelstream",
+    "previous_display_name": "Steelot",
+    "front": "sprites/front/Steelstream.png",
+    "back": "sprites/back/Steelstream.png"
+  },
+  "steelot-final": {
+    "display_name": "Ferrutrine",
+    "previous_display_name": "Steelot Prime",
+    "front": "sprites/front/Ferrutrine.png",
+    "back": "sprites/back/Ferrutrine.png"
+  },
+  "stratowing-baby": {
+    "display_name": "Stratowing",
+    "previous_display_name": "Stratowiling",
+    "front": "sprites/front/Stratowing.png",
+    "back": "sprites/back/Stratowing.png"
+  },
+  "stratowing": {
+    "display_name": "Stratoglide",
+    "previous_display_name": "Stratowing",
+    "front": "sprites/front/Stratoglide.png",
+    "back": "sprites/back/Stratoglide.png"
+  },
+  "stratowing-final": {
+    "display_name": "Aeralbatross",
+    "previous_display_name": "Stratowing Prime",
+    "front": "sprites/front/Aeralbatross.png",
+    "back": "sprites/back/Aeralbatross.png"
+  },
+  "swarmlet-baby": {
+    "display_name": "Swarmlet",
+    "previous_display_name": "Swarmllet",
+    "front": "sprites/front/Swarmlet.png",
+    "back": "sprites/back/Swarmlet.png"
+  },
+  "swarmlet": {
+    "display_name": "Swarmatrix",
+    "previous_display_name": "Swarmlet",
+    "front": "sprites/front/Swarmatrix.png",
+    "back": "sprites/back/Swarmatrix.png"
+  },
+  "swarmlet-final": {
+    "display_name": "Hexacoccin",
+    "previous_display_name": "Swarmlet Prime",
+    "front": "sprites/front/Hexacoccin.png",
+    "back": "sprites/back/Hexacoccin.png"
+  },
+  "terrabot-baby": {
+    "display_name": "Terrabot",
+    "previous_display_name": "Terrabling",
+    "front": "sprites/front/Terrabot.png",
+    "back": "sprites/back/Terrabot.png"
+  },
+  "terrabot": {
+    "display_name": "Terratusk",
+    "previous_display_name": "Terrabot",
+    "front": "sprites/front/Terratusk.png",
+    "back": "sprites/back/Terratusk.png"
+  },
+  "terrabot-final": {
+    "display_name": "Tectophant",
+    "previous_display_name": "Terrabot Prime",
+    "front": "sprites/front/Tectophant.png",
+    "back": "sprites/back/Tectophant.png"
+  },
+  "thistledrone-baby": {
+    "display_name": "Thistledrone",
+    "previous_display_name": "Baby Thistledrone",
+    "front": "sprites/front/Thistledrone.png",
+    "back": "sprites/back/Thistledrone.png"
+  },
+  "thistledrone": {
+    "display_name": "Thistlewing",
+    "previous_display_name": "Thistledrone",
+    "front": "sprites/front/Thistlewing.png",
+    "back": "sprites/back/Thistlewing.png"
+  },
+  "thistledrone-final": {
+    "display_name": "Spinadrone",
+    "previous_display_name": "Thistledrone Prime",
+    "front": "sprites/front/Spinadrone.png",
+    "back": "sprites/back/Spinadrone.png"
+  },
+  "tidefin-baby": {
+    "display_name": "Tidefin",
+    "previous_display_name": "Baby Tidefin",
+    "front": "sprites/front/Tidefin.png",
+    "back": "sprites/back/Tidefin.png"
+  },
+  "tidefin": {
+    "display_name": "Tideshear",
+    "previous_display_name": "Tidefin",
+    "front": "sprites/front/Tideshear.png",
+    "back": "sprites/back/Tideshear.png"
+  },
+  "tidefin-final": {
+    "display_name": "Hydrohammer",
+    "previous_display_name": "Tidefin Prime",
+    "front": "sprites/front/Hydrohammer.png",
+    "back": "sprites/back/Hydrohammer.png"
+  },
+  "toxigerm-baby": {
+    "display_name": "Toxigerm",
+    "previous_display_name": "Baby Toxigerm",
+    "front": "sprites/front/Toxigerm.png",
+    "back": "sprites/back/Toxigerm.png"
+  },
+  "toxigerm": {
+    "display_name": "Toxinewt",
+    "previous_display_name": "Toxigerm",
+    "front": "sprites/front/Toxinewt.png",
+    "back": "sprites/back/Toxinewt.png"
+  },
+  "toxigerm-final": {
+    "display_name": "Microbasil",
+    "previous_display_name": "Toxigerm Prime",
+    "front": "sprites/front/Microbasil.png",
+    "back": "sprites/back/Microbasil.png"
+  },
+  "umbralet-baby": {
+    "display_name": "Umbralet",
+    "previous_display_name": "Baby Umbralet",
+    "front": "sprites/front/Umbralet.png",
+    "back": "sprites/back/Umbralet.png"
+  },
+  "umbralet": {
+    "display_name": "Umbrawing",
+    "previous_display_name": "Umbralet",
+    "front": "sprites/front/Umbrawing.png",
+    "back": "sprites/back/Umbrawing.png"
+  },
+  "umbralet-final": {
+    "display_name": "Noctiloom",
+    "previous_display_name": "Umbralet Prime",
+    "front": "sprites/front/Noctiloom.png",
+    "back": "sprites/back/Noctiloom.png"
+  },
+  "vapomite-baby": {
+    "display_name": "Vapomite",
+    "previous_display_name": "Baby Vapomite",
+    "front": "sprites/front/Vapomite.png",
+    "back": "sprites/back/Vapomite.png"
+  },
+  "vapomite": {
+    "display_name": "Vaporshell",
+    "previous_display_name": "Vapomite",
+    "front": "sprites/front/Vaporshell.png",
+    "back": "sprites/back/Vaporshell.png"
+  },
+  "vapomite-final": {
+    "display_name": "Boilerceros",
+    "previous_display_name": "Vapomite Prime",
+    "front": "sprites/front/Boilerceros.png",
+    "back": "sprites/back/Boilerceros.png"
+  },
+  "vinelatch-baby": {
+    "display_name": "Vinelatch",
+    "previous_display_name": "Vinelatling",
+    "front": "sprites/front/Vinelatch.png",
+    "back": "sprites/back/Vinelatch.png"
+  },
+  "vinelatch": {
+    "display_name": "Vineleap",
+    "previous_display_name": "Vinelatch",
+    "front": "sprites/front/Vineleap.png",
+    "back": "sprites/back/Vineleap.png"
+  },
+  "vinelatch-final": {
+    "display_name": "Lianalord",
+    "previous_display_name": "Vinelatch Prime",
+    "front": "sprites/front/Lianalord.png",
+    "back": "sprites/back/Lianalord.png"
+  },
+  "visceroid-baby": {
+    "display_name": "Visceroid",
+    "previous_display_name": "Baby Visceroid",
+    "front": "sprites/front/Visceroid.png",
+    "back": "sprites/back/Visceroid.png"
+  },
+  "visceroid": {
+    "display_name": "Viscotl",
+    "previous_display_name": "Visceroid",
+    "front": "sprites/front/Viscotl.png",
+    "back": "sprites/back/Viscotl.png"
+  },
+  "visceroid-final": {
+    "display_name": "Rheolotl",
+    "previous_display_name": "Visceroid Prime",
+    "front": "sprites/front/Rheolotl.png",
+    "back": "sprites/back/Rheolotl.png"
+  },
+  "voidling-baby": {
+    "display_name": "Voidling",
+    "previous_display_name": "Voidliling",
+    "front": "sprites/front/Voidling.png",
+    "back": "sprites/back/Voidling.png"
+  },
+  "voidling": {
+    "display_name": "Voidpelt",
+    "previous_display_name": "Voidling",
+    "front": "sprites/front/Voidpelt.png",
+    "back": "sprites/back/Voidpelt.png"
+  },
+  "voidling-final": {
+    "display_name": "Singulynx",
+    "previous_display_name": "Voidling Prime",
+    "front": "sprites/front/Singulynx.png",
+    "back": "sprites/back/Singulynx.png"
+  },
+  "voltling-baby": {
+    "display_name": "Voltling",
+    "previous_display_name": "Baby Voltling",
+    "front": "sprites/front/Voltling.png",
+    "back": "sprites/back/Voltling.png"
+  },
+  "voltling": {
+    "display_name": "Voltrix",
+    "previous_display_name": "Voltling",
+    "front": "sprites/front/Voltrix.png",
+    "back": "sprites/back/Voltrix.png"
+  },
+  "voltling-final": {
+    "display_name": "Teslarch",
+    "previous_display_name": "Voltling Prime",
+    "front": "sprites/front/Teslarch.png",
+    "back": "sprites/back/Teslarch.png"
+  },
+  "vortexling-baby": {
+    "display_name": "Vortexling",
+    "previous_display_name": "Vortexliling",
+    "front": "sprites/front/Vortexling.png",
+    "back": "sprites/back/Vortexling.png"
+  },
+  "vortexling": {
+    "display_name": "Vortexcoil",
+    "previous_display_name": "Vortexling",
+    "front": "sprites/front/Vortexcoil.png",
+    "back": "sprites/back/Vortexcoil.png"
+  },
+  "vortexling-final": {
+    "display_name": "Cyclonaga",
+    "previous_display_name": "Vortexling Prime",
+    "front": "sprites/front/Cyclonaga.png",
+    "back": "sprites/back/Cyclonaga.png"
+  },
+  "wavicle-baby": {
+    "display_name": "Wavicle",
+    "previous_display_name": "Wavicling",
+    "front": "sprites/front/Wavicle.png",
+    "back": "sprites/back/Wavicle.png"
+  },
+  "wavicle": {
+    "display_name": "Wavecrest",
+    "previous_display_name": "Wavicle",
+    "front": "sprites/front/Wavecrest.png",
+    "back": "sprites/back/Wavecrest.png"
+  },
+  "wavicle-final": {
+    "display_name": "Interferin",
+    "previous_display_name": "Wavicle Prime",
+    "front": "sprites/front/Interferin.png",
+    "back": "sprites/back/Interferin.png"
+  },
+  "wraithex-baby": {
+    "display_name": "Wraithex",
+    "previous_display_name": "Wraithling",
+    "front": "sprites/front/Wraithex.png",
+    "back": "sprites/back/Wraithex.png"
+  },
+  "wraithex": {
+    "display_name": "Wraithwing",
+    "previous_display_name": "Wraithex",
+    "front": "sprites/front/Wraithwing.png",
+    "back": "sprites/back/Wraithwing.png"
+  },
+  "wraithex-final": {
+    "display_name": "Hexacorvus",
+    "previous_display_name": "Wraithex Prime",
+    "front": "sprites/front/Hexacorvus.png",
+    "back": "sprites/back/Hexacorvus.png"
+  },
+  "zephyrit-baby": {
+    "display_name": "Zephyrit",
+    "previous_display_name": "Baby Zephyrit",
+    "front": "sprites/front/Zephyrit.png",
+    "back": "sprites/back/Zephyrit.png"
+  },
+  "zephyrit": {
+    "display_name": "Zephyrhart",
+    "previous_display_name": "Zephyrit",
+    "front": "sprites/front/Zephyrhart.png",
+    "back": "sprites/back/Zephyrhart.png"
+  },
+  "zephyrit-final": {
+    "display_name": "Anemocerv",
+    "previous_display_name": "Zephyrit Prime",
+    "front": "sprites/front/Anemocerv.png",
+    "back": "sprites/back/Anemocerv.png"
+  }
+}

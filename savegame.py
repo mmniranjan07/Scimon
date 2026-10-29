@@ -88,9 +88,19 @@ def save(st, last=None):
 
 def load(st):
     """Fill `st` from the save. Returns True on success; on any problem `st` is left reset."""
-    from data import SPECIES
+    from data import SPECIES, PREVIOUS_NAMES
     from monsters import Scimon
     from state import stamp_by_id
+
+    def fix_name(m):
+        # display-name migration: saves written before the named-sprite patch stored the species'
+        # default name on the creature.  Rename it ONLY when it still equals that species' previous
+        # canonical name -- anything else is a player nickname and stays untouched.
+        prev = PREVIOUS_NAMES.get(m.species_id)
+        if prev and m.name == prev:
+            m.name = SPECIES[m.species_id].name
+        return m
+
     try:
         d = json.loads(_read())
         if d.get("v") != VERSION:
@@ -101,7 +111,7 @@ def load(st):
             out = []
             for r in rows:
                 if r["species_id"] in SPECIES:
-                    out.append(Scimon(**{k: v for k, v in r.items() if k in fields}))
+                    out.append(fix_name(Scimon(**{k: v for k, v in r.items() if k in fields})))
             return out
         st.reset()
         st.party, st.storage = mons(d["party"]), mons(d["storage"])
@@ -123,7 +133,8 @@ def load(st):
         st.story = set(d.get("story", []))
         st.abilities = set(d.get("abilities", []))
         sn = d.get("snatched")
-        st.snatched = Scimon(**{k: v for k, v in sn.items() if k in fields}) if sn and sn.get("species_id") in SPECIES else None
+        st.snatched = fix_name(Scimon(**{k: v for k, v in sn.items() if k in fields})) \
+            if sn and sn.get("species_id") in SPECIES else None
         if st.snatched:
             st.seen.add(st.snatched.species_id)
         st.playtime = float(d.get("playtime", 0.0) or 0.0)

@@ -326,6 +326,10 @@ for _rec in DB["species"]:
        evolution_level=_rec.get("evolution_level"), wild_enabled=bool(_rec.get("wild_enabled", True)),
        source_registered=bool(_rec.get("source_registered", True)))
 
+# ---- display-name patch provenance (tools/apply_name_patch.py): each species' previous canonical
+# name, kept so savegame.load() can migrate a stored default name while preserving real nicknames
+PREVIOUS_NAMES = {rec["id"]: rec["previous_name"] for rec in DB["species"] if rec.get("previous_name")}
+
 # ---- evolutions and chains straight from the database (the old CRC-seeded registration is gone)
 EVOLUTIONS = {sid: (rec["evolves_to"], int(rec["evolution_level"]))
               for sid, rec in ((s["id"], s) for s in DB["species"]) if rec.get("evolves_to")}
