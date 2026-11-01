@@ -69,8 +69,8 @@ def path(m, start, goal):
         if c == goal: break
         for d, (dx, dy) in DIRS.items():
             n = (c[0] + dx, c[1] + dy)
-            if n not in prev and not m.blocked(*n, ovs._npc_rects()):
-                prev[n] = (c, d); q.append(n)
+            if n not in prev and not m.blocked(*n, ovs._npc_rects()) and m.rows[n[1]][n[0]] != "D":
+                prev[n] = (c, d); q.append(n)   # never route through door tiles: stepping on one enters a building
     assert goal in prev, f"no walkable path {start} -> {goal} on {m.name}"
     out, c = [], goal
     while prev[c]: c, d = prev[c][0], prev[c][1]; out.append(d)
@@ -84,7 +84,7 @@ def walk(dirs):
             eng.step(1 / 60)
             if p.moving or p.tile != t0: break
         held["d"] = None
-        for _ in range(240):
+        for _ in range(1200):                    # route 2's FireRed straights run 14+ tiles
             if not p.moving and not eng.transitioning: break
             eng.step(1 / 60)
         if eng.transitioning or ovs.map.area != getattr(ovs, "_walk_area", ovs.map.area):

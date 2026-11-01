@@ -203,8 +203,10 @@ archetype + a per-type technique pool; 49 new techniques cover all 18 types), wi
 
 ## FRLG landmarks (the reference-map build)
 Every town and route follows its FireRed/LeafGreen counterpart's building placement, adapted to the region.
-**All 25 routes and 5 wild places are hand-authored to their FRLG shapes** (`kanto.py` `*_ROWS` grids): Route 2's
-forest corridors and hop-down ledges, Route 3's ledge tiers, Route 4's descent with the sealed chest clearing,
+**All 25 routes and 5 wild places are hand-authored to their FRLG shapes** (`kanto.py` `*_ROWS` grids): Route 2
+(decoded metatile-for-metatile from the pokefirered data: the full 24x80 run with the Diglett's-Cave-style hill,
+both forest gates, the mid-route checkpoint the road passes through, the route house and the east hop-down
+ledges), Route 3's ledge tiers, Route 4's descent with the sealed chest clearing,
 Route 5's Day-Care, Route 12/13's coastal water strips, Route 17's fence-railed cycling road with one-way slope
 cuts, Route 19-21's sea boardwalks and islets, Route 23's checkpoint climb with its water bridge, Route 24's
 Nugget Bridge at the Tidebrook exit, Mossmere's two-gate forest, Hollowgate's two-mouth tunnel, the Ascent Road's
@@ -233,13 +235,17 @@ All 268 species evolve: the three starters climb three-stage lines (Florabot -> 
 Lv32; Pyrodrive -> Pyroblaze -> Pyrodrake; Aquabit -> Aquafin -> Aquarex -- dex 4-9), and every wild line runs
 two stages (base -> "Rex/Prime/Nova..." final) or three (a "ling" baby -> base -> final; a seeded ~40/60 split,
 159 stage species in all).  Levels trigger the change automatically after a battle: level-ups in the fight carry
-over, and the overworld announces each evolution ("Florabot is evolving! ...").  Stage stats derive from the
+over, and each evolution plays a FireRed-style cutscene (the old form pulses white faster and faster to rising
+beeps, a shockwave of light fills the screen, and the new form lands in a sparkle shower) before the
+"Congratulations!" dialogue.  Learning a technique with a full moveset prompts FireRed-style as well: the
+battle pauses, the player picks which of the four techniques to forget (or gives up), and evolution back-fill
+queues the same prompts after the cutscene (`scenes.LearnMoveScene`).  Stage stats derive from the
 line's archetype (babies 62%, finals ~145% with rarer catch rates and richer learnsets), stages inherit the
 family's habitat so the biome rule holds per family, and babies/finals appear in the wild pools: babies common at
 the low end of a route's band, finals rare at the top.  Starters and the classic Route 1 cast are never wild
 outside Route 1 (enforced by routes.validate()).
 * Mechanics: `data.EVOLUTIONS` / `data.CHAIN_OF` (pure data, built in data.py), `monsters.evolve` /
-  `check_evolutions`, `overworld._evolution_lines`.
+  `check_evolutions`, `overworld._evolution_lines`, `scenes.EvolutionScene` (the cutscene; sounds in `audio.py`).
 * Sprites: `tools/build_scimon_art.py` renders any species missing a PNG; babies are drawn smaller with a big
   visor, finals gain a golden crest and aura motes.
 

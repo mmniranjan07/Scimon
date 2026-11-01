@@ -175,7 +175,8 @@ def choose_enemy_move(enemy, player):
 # --------------------------------------------------------------------------- evolution
 def evolve(mon):
     """Transform `mon` into its evolved species (keeping level, HP ratio, uid and any nickname).  Returns
-    (old name, new name) or None when there is nothing pending at this level."""
+    (old name, new name, [techniques the full moveset could not take -- prompt the player, FireRed-style])
+    or None when there is nothing pending at this level."""
     evo = EVOLUTIONS.get(mon.species_id)
     if not evo or mon.level < evo[1]:
         return None
@@ -189,23 +190,26 @@ def evolve(mon):
     # keep nicknames: only rename when the current name is the current species' own name
     mon.name = sp.name if mon.name == SPECIES[old_species_id].name else mon.name
     known = set(mon.moves)
+    pending = []
     for lv, tech in sp.learnset:
         if lv <= mon.level and tech not in known:
             known.add(tech)
             if len(mon.moves) < 4:
                 mon.moves.append(tech)
+            else:
+                pending.append(tech)
     mon.recalc_stats(keep_hp_ratio=True)
-    return old_name, sp.name
+    return old_name, sp.name, pending
 
 
 def check_evolutions(party):
     """Run every pending evolution across the party (after a battle's level-ups).  Returns a list of
-    (mon, "old name", "new name") in party order."""
+    (mon, "old name", "new name", [techniques the full moveset could not take]) in party order."""
     done = []
     for mon in party:
         while True:
             res = evolve(mon)
             if not res:
                 break
-            done.append((mon, res[0], res[1]))
+            done.append((mon, res[0], res[1], res[2]))
     return done

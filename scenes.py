@@ -5,19 +5,21 @@ plus the flow that chains them
 
 Dialogue is a state, not a loop: lines advance on input while the engine keeps running at full frame rate."""
 import math
+import random
 
 import pygame
 
 import assets
 import audio
 import savegame
-from data import SPECIES, STARTER_IDS
+from battle_sizing import battle_surface
+from data import SPECIES, STARTER_IDS, TECHNIQUES
 from engine import Scene, StateId
 from monsters import create_scimon
 from settings import CREAM, H, INK, ORANGE, TEAL, TEAL_DARK, W
 from sprites import (CLOTH_HUES, HAIR_HUES, SKIN_OFFSETS, Character, class_swatches, look_animator, look_for, make_look)
-from ui import (ButtonGrid, Button, DialogueBox, circuit_backdrop, draw_button, hp_color, is_back, is_click, is_confirm,
-                label_chip, nav_dir, panel, text, type_chip, wrap_text)
+from ui import (ButtonGrid, Button, DialogueBox, circuit_backdrop, draw_button, fade, hp_color, is_back, is_click,
+                is_confirm, label_chip, nav_dir, panel, text, type_chip, wrap_text)
 
 RIVAL_NAME = "Kael"
 # Kael always picks the starter that is WEAK against yours: florabot > aquabit > pyrodrive > florabot.
@@ -120,6 +122,333 @@ class DialogueScene(Scene):
         self.box.draw(surf)
         if self.asking and self.grid:
             self.grid.draw(surf, size=18)
+
+
+# =========================================================================== evolution
+def _silhouette(img):
+    """Pure-white twin of a sprite (alpha preserved): the FireRed evolution pulse paints the creature with it."""
+    sil = img.copy()
+    sil.fill((255, 255, 255, 0), special_flags=pygame.BLEND_RGBA_MAX)
+    return sil
+
+
+def _sparkle(overlay, x, y, r, col):
+    """A tiny 4-point star."""
+    pygame.draw.rect(overlay, col, (x - r, y - 1, r * 2, 2))
+    pygame.draw.rect(overlay, col, (x - 1, y - r, 2, r * 2))
+    pygame.draw.circle(overlay, col, (x, y), max(1, r // 2))
+
+
+def _out_cubic(u):
+    return 1 - (1 - u) ** 3
+
+
+def _stage_form(species_id):
+    """Battle sprite blown up for the cutscene spotlight (same factor for both forms, so the new stage still
+    reads bigger; capped so nothing spills off-screen)."""
+    img = battle_surface(species_id)
+    k = max(1.0, min(2.0, 340 / img.get_height(), 360 / img.get_width()))
+    return pygame.transform.scale(img, (int(img.get_width() * k), int(img.get_height() * k)))
+
+
+class EvolutionScene(Scene):
+    """FireRed-style evolution cutscene. The old form stands in a dark starfield and pulses white, faster and
+    faster, with beeps to match -- then a shockwave of light swallows the screen and the new form is revealed
+    in a shower of sparkles. Confirm/click speeds up the pulsing (the flash and reveal always play); the
+    congratulations dialogue closes the scene. One scene per evolution: several stack and play in order."""
+    state_id = StateId.DIALOGUE
+
+    INTRO = 0.55                 # old form pops in
+    FLASH = 1.05                 # white shockwave covers the screen, then fades over the new form
+    REVEAL = 1.5                 # sparkle shower while the new form settles
+    TEXT_DELAY = 0.8             # a beat of calm before the congratulations box appears
+    GROUND_Y = 430               # where every form stands (midbottom)
+    FOCUS = (W // 2, 300)        # glow / flash centre
+
+    def __init__(self, old_id, new_id, lines=None, on_done=None):
+        self.old_id, self.new_id = old_id, new_id
+        self.lines = list(lines) if lines else [
+            f"Congratulations! Your {SPECIES[old_id].name} evolved into {SPECIES[new_id].name}!"]
+        self.on_done = on_done
+        self.opaque = True
+        self.t = 0.0
+        self.done = False
+        self._beat = 0
+        self._fanfared = self._healed = False
+        self.text_on = False
+        self.old_img, self.new_img = _stage_form(old_id), _stage_form(new_id)
+        self.old_sil, self.new_sil = _silhouette(self.old_img), _silhouette(self.new_img)
+        self.box = DialogueBox(self.lines, size=36)
+        # accelerating pulse beats (start, interval): the envelope drives the white flash, grow-shrink and beeps
+        self.beats = []
+        t, iv = self.INTRO, 0.55
+        for _ in range(12):
+            self.beats.append((t, iv))
+            t += iv
+            iv *= 0.84
+        self.pulse_end = t
+        # precomputed backdrop: indigo gradient, warm glow behind the creature, twinkling stars
+        self.bg = pygame.Surface((W, H))
+        for y in range(H):
+            k = y / H
+            self.bg.fill((int(20 + 44 * k), int(16 + 24 * k), int(44 + 44 * k)), (0, y, W, 1))
+        self.glow = pygame.Surface((640, 640), pygame.SRCALPHA)
+        for r in range(320, 20, -6):
+            a = int(26 * (1 - r / 320) ** 1.5)
+            pygame.draw.circle(self.glow, (210, 190, 255, a), (320, 320), r)
+        self.shadow = pygame.Surface((int(max(self.old_img.get_width(), self.new_img.get_width()) * 0.72), 22),
+                                     pygame.SRCALPHA)
+        pygame.draw.ellipse(self.shadow, (6, 4, 16, 110), self.shadow.get_rect())
+        rnd = random.Random(f"{old_id}>{new_id}")
+        self.stars = [(rnd.randint(20, W - 20), rnd.randint(20, 470), rnd.uniform(0, math.tau),
+                       rnd.choice((1, 1, 2))) for _ in range(46)]
+        self.motes = [(rnd.randint(20, W - 20), rnd.uniform(26, 60), rnd.uniform(0, H + 80),
+                       rnd.randint(2, 3)) for _ in range(24)]
+        self.shower = [(rnd.uniform(0, math.tau), rnd.uniform(180, 380), rnd.uniform(0.55, 1.0),
+                        rnd.randint(3, 6)) for _ in range(34)]
+        self._fx = pygame.Surface((W, H), pygame.SRCALPHA)
+        self._fx2 = pygame.Surface((W, H), pygame.SRCALPHA)
+
+    # ---- phases ----------------------------------------------------------------------------
+    def _pulse_env(self):
+        """0..1 energy envelope of the current pulse beat (0 between beats)."""
+        env = 0.0
+        for bt, iv in self.beats:
+            if bt <= self.t:
+                env = max(env, math.sin(math.pi * min(1.0, (self.t - bt) / iv)))
+        return env
+
+    def _flash_q(self):
+        """0..1 progress of the white flash (negative before it starts)."""
+        return (self.t - self.pulse_end) / self.FLASH
+
+    def _form_scale(self):
+        """Display scale of whichever form is on stage."""
+        if self._flash_q() >= 0.5:                     # reveal: the new form lands with a soft overshoot
+            r = (self.t - self.pulse_end - self.FLASH) / self.REVEAL
+            return 1.15 - 0.15 * _out_cubic(min(1.0, max(0.0, r) * 2.4))
+        base = 0.8 + 0.2 * _out_cubic(min(1.0, self.t / self.INTRO))
+        return base + 0.16 * self._pulse_env()         # powering up: grow on every white pulse
+
+    def _skip_pulse(self):
+        """Confirm during the build-up: jump straight to the transformation (never skip the payoff)."""
+        if self._flash_q() < 0:
+            self.t = self.pulse_end
+            self._beat = len(self.beats)
+
+    def _finish(self):
+        self.done = True
+        self.engine.pop(self)
+        if self.on_done:
+            self.on_done()
+
+    # ---- frame hooks ------------------------------------------------------------------------
+    def handle_event(self, e):
+        if self.done:
+            return
+        if self.text_on:
+            if is_confirm(e) or is_back(e) or is_click(e):
+                audio.play("move")
+                if self.box.advance():
+                    self._finish()
+            return
+        if is_confirm(e) or is_back(e) or is_click(e):
+            self._skip_pulse()
+
+    def update(self, dt):
+        self.t += dt
+        while self._beat < len(self.beats) and self.t >= self.beats[self._beat][0]:
+            audio.play("evolve_beep_hi" if self._beat % 2 else "evolve_beep")
+            self._beat += 1
+        q = self._flash_q()
+        if not self._fanfared and q >= 0:
+            audio.play("evolve")
+            self._fanfared = True
+        if not self._healed and q >= 1:
+            audio.play("heal")
+            self._healed = True
+        if not self.text_on and self.t >= self.pulse_end + self.FLASH + self.TEXT_DELAY:
+            self.text_on = True
+        if self.text_on:
+            self.box.update(dt)
+
+    def _draw_form(self, surf, img, sil, scale, sil_alpha, bob=0.0):
+        w, h = max(2, int(img.get_width() * scale)), max(2, int(img.get_height() * scale))
+        sc = pygame.transform.scale(img, (w, h)) if abs(scale - 1.0) > 0.001 else img
+        pos = (W // 2 - w // 2, self.GROUND_Y - h + int(bob))
+        surf.blit(self.shadow, self.shadow.get_rect(midbottom=(W // 2, self.GROUND_Y + 4)))
+        surf.blit(sc, pos)
+        if sil_alpha > 0:
+            s2 = pygame.transform.scale(sil, (w, h)) if abs(scale - 1.0) > 0.001 else sil
+            s2.set_alpha(sil_alpha)
+            surf.blit(s2, pos)
+
+    def draw(self, surf):
+        surf.blit(self.bg, (0, 0))
+        fx = self._fx
+        # ambient starfield + rising motes
+        fx.fill(0)
+        for x, y, ph, r in self.stars:
+            a = int(70 + 70 * (0.5 + 0.5 * math.sin(self.t * 1.8 + ph)))
+            _sparkle(fx, x, y, r + 1, (230, 224, 255, a))
+        for x, sp, ph, r in self.motes:
+            y = (H + 40) - ((self.t * sp + ph) % (H + 80))
+            a = int(120 * min(1.0, y / 120, (H - y) / 120))
+            if a > 0:
+                pygame.draw.circle(fx, (190, 170, 255, a), (x, int(y)), r)
+        surf.blit(fx, (0, 0))
+        surf.blit(self.glow, self.glow.get_rect(center=self.FOCUS))
+        # energy rings radiating outward on every pulse beat
+        fx.fill(0)
+        for bt, iv in self.beats:
+            p = (self.t - bt) / (iv * 2.6)
+            if 0 <= p < 1:
+                r = int(50 + 330 * _out_cubic(p))
+                pygame.draw.circle(fx, (205, 190, 255, int(150 * (1 - p))), self.FOCUS, r, 3)
+        surf.blit(fx, (0, 0))
+        # the creature: old form until the flash swallows it, new form as the white fades
+        scale = self._form_scale()
+        if self._flash_q() >= 0.5:
+            r = (self.t - self.pulse_end - self.FLASH) / self.REVEAL
+            bob = math.sin(self.t * 2.2) * 4 if r > 0.4 else 0.0    # the new form idles happily
+            self._draw_form(surf, self.new_img, self.new_sil, scale, 0, bob)
+        else:
+            self._draw_form(surf, self.old_img, self.old_sil, scale, int(255 * self._pulse_env()))
+        # sparkle shower over the reveal + the white shockwave / veil on top
+        fx.fill(0)
+        if self._flash_q() >= 0.5:
+            r = (self.t - self.pulse_end - self.FLASH) / self.REVEAL
+            for ang, speed, life, size in self.shower:
+                sp = r / life
+                if 0 <= sp < 1:
+                    d = speed * (1 - (1 - sp) ** 2)
+                    x = int(self.FOCUS[0] + math.cos(ang) * d)
+                    y = int(self.FOCUS[1] + math.sin(ang) * d * 0.8)
+                    _sparkle(fx, x, y, max(1, int(size * (1.6 - sp)) + 1),
+                             (255, 250, 230, int(255 * min(1.0, 1.4 * (1 - sp)))))
+        surf.blit(fx, (0, 0))
+        q = self._flash_q()
+        if 0 <= q < 0.5:                               # expanding shockwave circle
+            pygame.draw.circle(surf, (255, 255, 255), self.FOCUS, int(660 * (q / 0.5) ** 2) + 2)
+        elif q >= 0.5:                                 # white veil dissolving over the new form
+            self._fx2.fill((255, 255, 255, int(255 * max(0.0, 1 - (q - 0.5) / 0.5))))
+            surf.blit(self._fx2, (0, 0))
+        if self.t < 0.3:                               # scene entrance
+            self._fx2.fill((8, 6, 18, int(255 * (1 - self.t / 0.3))))
+            surf.blit(self._fx2, (0, 0))
+        if self.text_on:
+            self.box.draw(surf)
+
+
+# =========================================================================== move learning
+class LearnMoveScene(Scene):
+    """FireRed-style 'wants to learn a technique' prompt, usable as a translucent overlay over any scene (a
+    battle freezes beneath it while it is up).  With a free slot the technique is simply learned; with a full
+    moveset the player picks which technique to forget -- or gives up, FireRed-style.  Mutates `mon` directly
+    (in a battle that is the copy the battle commits when it ends), then pops itself."""
+    state_id = StateId.DIALOGUE
+    opaque = False
+    BOX_W = 580
+
+    def __init__(self, mon, tech_id, on_done=None):
+        self.mon, self.tech_id, self.on_done = mon, tech_id, on_done
+        self.tech = TECHNIQUES[tech_id]
+        self.t, self.done = 0.0, False
+        self.grid, self.box = None, pygame.Rect(0, 0, self.BOX_W, 200)
+        self.box.center = (W // 2, H // 2 - 24)
+        if tech_id in mon.moves:                       # safety net: nothing to teach
+            self.phase, self.lines = "result", [f"{mon.name} already knows {self.tech.name}."]
+        elif len(mon.moves) < 4:                       # room in the moveset: learn straight away
+            mon.moves.append(tech_id)
+            self.phase, self.lines = "result", [f"{mon.name} learned {self.tech.name}!"]
+        else:                                          # moveset full: ask which one to forget
+            self._enter_ask()
+
+    # ---- phases ----------------------------------------------------------------------------
+    def _center_box(self, h):
+        self.box = pygame.Rect(0, 0, self.BOX_W, h)
+        self.box.center = (W // 2, H // 2 - 24)
+        return self.box
+
+    def _rows(self):
+        return [p for ln in self.lines for p in wrap_text(ln, "body", 24, self.BOX_W - 56)]
+
+    def _enter_ask(self):
+        self.phase = "ask"
+        self.lines = [f"{self.mon.name} wants to learn the technique {self.tech.name}!",
+                      "However, it already knows four techniques. Should one be forgotten to make room?"]
+        box = self._center_box(26 + len(self._rows()) * 32 + 16 + 78)
+        y = box.bottom - 68
+        self.grid = ButtonGrid([Button("Yes", (box.centerx - 166, y, 150, 52), tag=0, accent=True),
+                                Button("No", (box.centerx + 16, y, 150, 52), tag=1)], cols=2)
+
+    def _enter_pick(self):
+        self.phase = "pick"
+        self.lines = [f"Which technique should be forgotten to make room for {self.tech.name}?"]
+        rows = len(self._rows())
+        box = self._center_box(26 + rows * 32 + 14 + 4 * 54 + 64)
+        y0 = box.y + 26 + rows * 32 + 14
+        self.grid = ButtonGrid([Button(TECHNIQUES[t].name, (box.x + 30, y0 + k * 54, box.w - 60, 46), tag=k)
+                                for k, t in enumerate(self.mon.moves)] +
+                               [Button("Give up", (box.x + 30, box.bottom - 64, box.w - 60, 46), tag=4)], cols=1)
+
+    def _finish(self, lines):
+        self.phase, self.lines, self.grid = "result", lines, None
+        self._center_box(26 + len(self._rows()) * 32 + 26)
+
+    def _give_up(self):
+        self._finish([f"{self.mon.name} did not learn {self.tech.name}."])
+
+    def _finish_scene(self):
+        self.done = True
+        self.engine.pop(self)
+        if self.on_done:
+            self.on_done()
+
+    # ---- frame hooks ------------------------------------------------------------------------
+    def handle_event(self, e):
+        if self.done:
+            return
+        if self.grid:
+            r = self.grid.handle(e)
+            if not r:
+                return
+            kind, b = r
+            if kind == "activate":
+                audio.play("select")
+                if self.phase == "ask":
+                    self._enter_pick() if b.tag == 0 else self._give_up()
+                else:                                  # pick: tags 0..3 are the techniques, 4 gives up
+                    self._forget(b.tag) if b.tag < 4 else self._give_up()
+            elif kind == "back":
+                audio.play("deny")
+                self._give_up()
+            elif kind == "deny":
+                audio.play("deny")
+            return
+        if self.phase == "result" and (is_confirm(e) or is_back(e) or is_click(e)):
+            audio.play("move")
+            self._finish_scene()
+
+    def update(self, dt):
+        self.t += dt
+        if self.grid:
+            self.grid.update(dt)
+
+    def _forget(self, tag):
+        old = self.mon.moves[tag]
+        self.mon.moves[tag] = self.tech_id             # FireRed: "1, 2, and... poof!"
+        self._finish(["1, 2, and... poof!", f"{self.mon.name} forgot {TECHNIQUES[old].name} and learned {self.tech.name}!"])
+
+    def draw(self, surf):
+        fade(surf, 0.45)                               # dim the frozen scene beneath
+        panel(surf, self.box, "panel")
+        y = self.box.y + 26
+        for piece in self._rows():
+            text(surf, piece, (self.box.x + 28, y), "body", 24)
+            y += 32
+        if self.grid:
+            self.grid.draw(surf, size=20)
 
 
 # =========================================================================== backdrops

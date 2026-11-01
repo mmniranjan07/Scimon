@@ -189,7 +189,7 @@ def _end_of_turn_status(sim, side, events):
         events.append(BattleEvent(f"{label}'s systems are corrupted by nanites!", sfx="hit", effect=fx))
 
 
-def _apply_xp(sim, events):
+def _apply_xp(sim, events, scene=None):
     mon, sp = _active(sim), SPECIES[_active(sim).species_id]
     gain = xp_gain(sim.enemy)
     events.append(BattleEvent(f"{mon.name} gained {gain} EXP!", sfx="xp",
@@ -206,17 +206,29 @@ def _apply_xp(sim, events):
                     m = _active(s)
                     if tech not in m.moves and len(m.moves) < 4:
                         m.moves.append(tech)
-                events.append(BattleEvent(f"{mon.name} can use {TECHNIQUES[tech].name}!", effect=learn))
+                msg = BattleEvent(f"{mon.name} learned {TECHNIQUES[tech].name}!", effect=learn)
+
+                def decide(s, tech=tech, msg=msg):
+                    # playback-time check: earlier level-ups in this same queue may have filled the moveset
+                    m = _active(s)
+                    if tech in m.moves:
+                        msg.text = None               # already known: no announcement
+                    elif len(m.moves) >= 4:           # FireRed: ask which technique to forget
+                        msg.text = None               # the prompt announces everything itself
+                        if scene is not None:
+                            scene.queue_learn(m, tech)
+                events.append(BattleEvent(effect=decide))
+                events.append(msg)
 
         def settle(s, w=work, lv=level):
             _active(s).xp, _active(s).xp_to_next = w, xp_for_level(lv)
         events.append(BattleEvent(effect=settle))
 
 
-def _finalize(sim, events):
+def _finalize(sim, events, scene=None):
     if sim.enemy.hp <= 0:
         events.append(BattleEvent(f"{enemy_label(sim)} was defeated!", sfx="faint"))
-        _apply_xp(sim, events)
+        _apply_xp(sim, events, scene)
         nxt = next((i for i, m in enumerate(sim.enemy_party) if m.hp > 0 and i != sim.enemy_index), None)
         if nxt is not None:
             incoming = sim.enemy_party[nxt]
@@ -234,7 +246,7 @@ def _finalize(sim, events):
                                       effect=lambda s: setattr(s, "outcome", "lose")))
 
 
-def plan_turn(battle, action):
+def plan_turn(battle, action, scene=None):
     """action: ("move", tech_id) | ("defend",) | ("capture", module_id) | ("item", item_id) | ("switch", idx) | ("run",)"""
     sim = copy.deepcopy(battle)
     sim.turn += 1
@@ -249,7 +261,7 @@ def plan_turn(battle, action):
         _end_of_turn_status(sim, "player", ev)
         if both:
             _end_of_turn_status(sim, "enemy", ev)
-        _finalize(sim, ev)
+        _finalize(sim, ev, scene)
 
     if kind == "run":
         sim.run_attempts += 1
@@ -345,7 +357,7 @@ def plan_turn(battle, action):
             _execute_move(sim, "player", tech, ev)
     _end_of_turn_status(sim, "player", ev)
     _end_of_turn_status(sim, "enemy", ev)
-    _finalize(sim, ev)
+    _finalize(sim, ev, scene)
     return ev
 
 
@@ -397,6 +409,11 @@ class BattleScene(Scene):
         self._make_sprites(appear=True)
         self.trainer = TrainerSprite((ENEMY_MID[0] + 150, ENEMY_MID[1] - 20)) if self.bs.trainer else None
         self.cursor_hint = ""
+        self._learn_queue = []           # (mon, technique) pairs waiting for a FireRed forget-one prompt
+
+    def queue_learn(self, mon, tech):
+        """A level-up wants to teach `tech` to `mon` but the moveset is full: prompt after the current message."""
+        self._learn_queue.append((mon, tech))
 
     # ---- setup -----------------------------------------------------------------------
     def _make_sprites(self, appear=False):
@@ -574,7 +591,7 @@ class BattleScene(Scene):
 
     def _act(self, action):
         self.forced_switch = False
-        self._play(plan_turn(self.bs, action))
+        self._play(plan_turn(self.bs, action, self))
 
     # ---- scene interface ---------------------------------------------------------------------
     def handle_event(self, e):
@@ -600,6 +617,10 @@ class BattleScene(Scene):
                     self._open("main")
 
     def update(self, dt):
+        if self._learn_queue:            # one prompt per frame: each scene pops before the next is pushed
+            mon, tech = self._learn_queue.pop(0)
+            from scenes import LearnMoveScene   # lazy: scenes imports battle lazily too
+            self.engine.push(LearnMoveScene(mon, tech))
         self.t += dt
         self.msg.update(dt)
         for sp in (self.enemy_sprite, self.player_sprite):

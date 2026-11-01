@@ -10,7 +10,7 @@ import abilities
 import encounters
 import villain
 from battle import BG_FOR_AREA, BattleScene, new_battle
-from data import KAEL_RETEAM2, SPECIES_COUNT, item_def
+from data import EVOLUTIONS, KAEL_RETEAM2, SPECIES_COUNT, item_def
 from engine import Scene, StateId
 from map import Camera, TileMap
 from menus import DatabaseScene, HelpScene, InventoryScene, ShopScene
@@ -28,7 +28,7 @@ def _contact_shadow():
         _contact = pygame.Surface((34, 10), pygame.SRCALPHA)
         pygame.draw.ellipse(_contact, (10, 22, 18, 70), _contact.get_rect())
     return _contact
-from scenes import DialogueScene
+from scenes import DialogueScene, EvolutionScene, LearnMoveScene
 from settings import ENCOUNTER_CHANCE, H, INK, TILE, W
 from sprites import DIRS, NPC, Player, look_animator, look_for
 import touch
@@ -294,14 +294,37 @@ class OverworldScene(Scene):
         audio.play("capture")
         self.engine.fade_to(lambda: self.engine.push(scene), color=(255, 255, 255))
 
-    def _evolution_lines(self):
-        """Apply pending evolutions after a battle's level-ups; returns the announcement lines."""
-        lines = []
-        for mon, old, new in check_evolutions(self.engine.state.party):
-            self.engine.state.mark_seen(mon.species_id)   # the dex records the newly obtained form
-            lines += [f"{old} is evolving!", f"Congratulations! Your {old} evolved into {new}!"]
-            audio.play("heal")
-        return lines
+    def _evolution_lines(self, follow=()):
+        """Run every pending evolution after a battle's level-ups and queue one FireRed-style evolution
+        cutscene per evolution (they stack and play in order, each ending with its congratulations dialogue).
+        Techniques the evolved form's moveset could not take prompt a FireRed 'forget which one?' scene after
+        the cutscenes.  Returns True when any Scimon evolved -- the cutscenes own the announcements, so
+        callers skip their plain DialogueScene.  `follow` (e.g. a trainer's post-battle lines) is appended to
+        the last cutscene's text so it still plays right after the animation."""
+        st = self.engine.state
+        pending = []                                   # (old_id, new_id) pairs, in the order they will apply
+        for mon in st.party:
+            sid = mon.species_id
+            while sid in EVOLUTIONS and mon.level >= EVOLUTIONS[sid][1]:
+                nxt = EVOLUTIONS[sid][0]
+                pending.append((sid, nxt))
+                sid = nxt
+        if not pending:
+            return False
+        results = check_evolutions(st.party)           # mutates the party exactly as `pending` predicted
+        evo_scenes, learn_scenes = [], []
+        for k, ((old_id, new_id), (mon, old, new, missed)) in enumerate(zip(pending, results)):
+            st.mark_seen(new_id)                       # the dex records the newly obtained form
+            lines = [f"Congratulations! Your {old} evolved into {new}!"]
+            if k == len(pending) - 1:
+                lines += list(follow)
+            evo_scenes.append(EvolutionScene(old_id, new_id, lines))
+            learn_scenes += [LearnMoveScene(mon, tech) for tech in missed]
+        for scene in reversed(learn_scenes):           # beneath the cutscenes: the prompts play after them
+            self.engine.push(scene)
+        for scene in reversed(evo_scenes):             # push last-first so the earliest evolution plays first
+            self.engine.push(scene)
+        return True
 
     def end_wild_battle(self, res):
         st = self.engine.state
@@ -319,9 +342,7 @@ class OverworldScene(Scene):
             self.engine.toast.show(st.receive_scimon(res["caught"]), 2.6)
             if len(st.captured) >= SPECIES_COUNT:
                 self.engine.toast.show("You completed the Sci-Dex! Congratulations, Researcher!", 4.0)
-        evo = self._evolution_lines()
-        if evo:
-            self.engine.push(DialogueScene(evo))
+        self._evolution_lines()                        # queues the evolution cutscene(s), if any
 
     def _nearest_visited_healer(self):
         """The healer the player has used that is closest to where they stand now.  Failsafes keep a wipe from
@@ -447,7 +468,7 @@ class OverworldScene(Scene):
             return
         if n:
             st.beaten_trainers.add(n.id)
-            post = self._evolution_lines() + list(n.post)
+            post = list(n.post)
             if n.stamp:
                 d = st.award_stamp(n.stamp)
                 if d:
@@ -459,8 +480,8 @@ class OverworldScene(Scene):
                     post.append(f"They also handed you the {dd.name} - play it on a compatible Sci-Mon to teach its move!")
             if n.aside and n.tile != tuple(n.aside):
                 n.place(*n.aside)                          # step out of the gate so the way opens
-            if post:
-                self.engine.push(DialogueScene(post))
+            if not self._evolution_lines(follow=post) and post:
+                self.engine.push(DialogueScene(post))      # no evolution: plain dialogue (cutscenes eat `post`)
 
     # ---- events / update --------------------------------------------------------------------
     def handle_event(self, e):

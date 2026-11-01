@@ -65,6 +65,11 @@ def _build():
         "door": [(220, 0.08, "sine", 0.0, 0.05), (330, 0.1, "sine", 0.07, 0.05)],
         "buy": [(660, 0.05, "square", 0.0, 0.04), (880, 0.08, "square", 0.05, 0.04)],
         "deny": [(150, 0.12, "square", 0.0, 0.05)],
+        # evolution cutscene: alternating pulse beeps (accelerate with the animation) + a fanfare for the flash
+        "evolve_beep": [(587, 0.06, "square", 0.0, 0.05), (880, 0.07, "square", 0.06, 0.05)],
+        "evolve_beep_hi": [(784, 0.06, "square", 0.0, 0.05), (1175, 0.07, "square", 0.06, 0.05)],
+        "evolve": [(523, 0.1, "square", 0.0, 0.05), (659, 0.1, "square", 0.1, 0.05), (784, 0.1, "square", 0.2, 0.05),
+                   (1047, 0.34, "square", 0.3, 0.06), (1319, 0.4, "square", 0.4, 0.055)],
     }
     for name, notes in spec.items():
         _sounds[name] = _blip(notes)
