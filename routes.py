@@ -128,14 +128,14 @@ ZONE_TABLE = {
     "route6": [("meadow", "g", None), ("city", "P", None)],
     "route7": [("meadow", "g", None), ("city", "P", None)],
     # route8: west grass = meadow, east grass = Dusklight's ghost patches, roads = city
-    "route8": [("meadow", "g", [(4, 2, 11, 15)]), ("ghost", "g", [(20, 2, 26, 15)]), ("city", "P", None)],
+    "route8": [("meadow", "g", [(0, 0, 35, 19)]), ("ghost", "g", [(36, 0, 71, 19)]), ("city", "P", None)],
     "route9": [("meadow", "g", None)],
     # route10: the north grass = cave, the south grass by the lake = ghost
-    "route10": [("cave", "g", [(0, 0, 27, 9)]), ("ghost", "g", [(0, 10, 27, 19)])],
+    "route10": [("cave", "g", [(0, 0, 23, 39)]), ("ghost", "g", [(0, 40, 23, 79)])],
     "route11": [("meadow", "g", None)],
     # route12/13: inland grass = meadow, the coastal grass by the ocean = ghost
-    "route12": [("meadow", "g", [(0, 0, 15, 25)]), ("ghost", "g", [(16, 0, 23, 25)])],
-    "route13": [("meadow", "g", [(0, 0, 15, 25)]), ("ghost", "g", [(16, 0, 23, 25)])],
+    "route12": [("meadow", "g", None)],
+    "route13": [("ghost", "g", [(40, 0, 71, 19)]), ("meadow", "g", None)],
     "route14": [("meadow", "g", None)],
     "route15": [("meadow", "g", None)],
     "route16": [("meadow", "g", None)],
@@ -143,16 +143,16 @@ ZONE_TABLE = {
     "route18": [("meadow", "g", None)],
     "route24": [("meadow", "g", None)],
     "route25": [("meadow", "g", None)],
-    # the sea routes: tall grass = volcanic shore (Thermal families), sand = water shallows, piers = sea
+    # the sea routes: sand = water shallows (volcanic shore near Cinderfall), piers and causeways = sea
     "route19": [("water", "sg", None), ("sea", "I", None)],
-    "route20": [("volcanic", "g", None), ("water", "s", None), ("sea", "I", None)],
-    "route21": [("volcanic", "g", None), ("water", "s", None), ("sea", "I", None)],
-    "seaglass": [("water", "sg", None)],
+    "route20": [("volcanic", "s", [(0, 0, 15, 19)]), ("sea", "s", [(90, 0, 119, 19)]), ("water", "s", None)],
+    "route21": [("volcanic", "s", [(0, 50, 23, 99)]), ("water", "s", None), ("sea", "I", None)],
+    "seaglass": [("water", "P", None)],
     "route22": [("highland", "g", None)],
-    # the Ascent: the upper grass = plateau, the climb below the second ledge = highland
-    "ascent": [("plateau", "g", [(0, 0, 21, 12)]), ("highland", "g", [(0, 13, 21, 27)])],
-    "mt_crescent": [("cave", "g", None)],
-    "hollowgate": [("tunnel", "g", None)],
+    # the Ascent (Victory Road pass): the upper floor = plateau, the climb below = highland
+    "ascent": [("plateau", "P", [(0, 0, 47, 10)]), ("highland", "P", [(0, 11, 47, 21)])],
+    "mt_crescent": [("cave", "P", None)],
+    "hollowgate": [("tunnel", "P", None)],
 }
 
 _DB_BANDS = {(b["area_id"], h["id"]): (b["min_level"], b["max_level"])
@@ -335,7 +335,7 @@ def _reach(rows, w, h, start, solid, blocked=frozenset()):
     return seen
 
 
-ROUTE_LEGEND = "GFgPTurfhSl" + "sW" + "Qijvz" + "RIVU" + "XnZoCtKdJ" + "BDe" + "Hw"
+ROUTE_LEGEND = "GFgPTurfhSlk" + "sW" + "Qijvz" + "RIVU" + "XnZoCtKdJ" + "BDe" + "Hw"
 
 
 def validate():

@@ -71,6 +71,10 @@ def path(m, start, goal):
             n = (c[0] + dx, c[1] + dy)
             if n not in prev and not m.blocked(*n, ovs._npc_rects()) and m.rows[n[1]][n[0]] != "D":
                 prev[n] = (c, d); q.append(n)   # never route through door tiles: stepping on one enters a building
+        # the engine hops south over ledges: model it so paths may cross FireRed's one-way tiers
+        x, y = c
+        if y + 2 < m.h and m.rows[y + 1][x] == "l" and not m.blocked(x, y + 2, ovs._npc_rects()) and (x, y + 2) not in prev:
+            prev[(x, y + 2)] = (c, "down"); q.append((x, y + 2))
     assert goal in prev, f"no walkable path {start} -> {goal} on {m.name}"
     out, c = [], goal
     while prev[c]: c, d = prev[c][0], prev[c][1]; out.append(d)
@@ -119,10 +123,7 @@ cross("route2n"); cross("stonreach"); shot("net_stonreach")
 assert ovs.map.name == "Stonreach Town"
 cross("route3"); cross("mt_crescent"); shot("net_crescent")
 
-# Mt. Crescent -> Route 4 -> Tidebrook
-cross("route4"); cross("tidebrook"); shot("net_tidebrook")
-
-# ---- 5) the Route 4 chest: walk back, find the pocket, open it, take the loot
+# Mt. Crescent -> Route 4 (the FRLG descent passes the hidden clearing) -> Tidebrook
 cross("route4")
 chest = routes.CHESTS["route4"][0]
 cx, cy = chest["tile"]
@@ -130,7 +131,6 @@ before = {i: eng.state.qty(i) for i, _ in chest["loot"]}
 approach = next((cx + dx, cy + dy) for dx, dy in DIRS.values()
                 if not ovs.map.blocked(cx + dx, cy + dy, ovs._npc_rects()))
 goto(approach)
-d = next(d for d, (dx, dy) in DIRS.items() if (cx + dx, cy + dy) == (ovs.player.tile[0] + (cx - ovs.player.tile[0]), 0) or True)
 face = next(d for d, (dx, dy) in DIRS.items() if ovs.player.tile[0] + dx == cx and ovs.player.tile[1] + dy == cy)
 held["d"] = face; run(0.12); held["d"] = None
 key(pygame.K_RETURN); run(0.2)
@@ -142,6 +142,7 @@ for item, n in chest["loot"]:
     assert eng.state.qty(item) == before[item] + n, (item, eng.state.qty(item), before[item])
 assert "route4:chest" in eng.state.opened_chests
 shot("net_chest_route4")
+cross("tidebrook"); shot("net_tidebrook")
 
 # an opened chest stays open when the map is rebuilt (the save-state sync path)
 fresh = __import__("map").TileMap.route("route4")

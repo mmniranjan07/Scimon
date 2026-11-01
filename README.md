@@ -203,16 +203,22 @@ archetype + a per-type technique pool; 49 new techniques cover all 18 types), wi
 
 ## FRLG landmarks (the reference-map build)
 Every town and route follows its FireRed/LeafGreen counterpart's building placement, adapted to the region.
-**All 25 routes and 5 wild places are hand-authored to their FRLG shapes** (`kanto.py` `*_ROWS` grids): Route 2
-(decoded metatile-for-metatile from the pokefirered data: the full 24x80 run with the Diglett's-Cave-style hill,
-both forest gates, the mid-route checkpoint the road passes through, the route house and the east hop-down
-ledges), Route 3's ledge tiers, Route 4's descent with the sealed chest clearing,
-Route 5's Day-Care, Route 12/13's coastal water strips, Route 17's fence-railed cycling road with one-way slope
-cuts, Route 19-21's sea boardwalks and islets, Route 23's checkpoint climb with its water bridge, Route 24's
-Nugget Bridge at the Tidebrook exit, Mossmere's two-gate forest, Hollowgate's two-mouth tunnel, the Ascent Road's
-ledge climb and Seaglass Isles' sand islets. Pass `rows=` to `kanto.Route` to hand-draw a map -- gate positions
-are derived from the drawn rims and written back into each entry's `ends`, so geography and the link graph can
-never disagree.
+**Every route and wild place from Route 2 to the end of the region is now decoded metatile-for-metatile from the
+pokefirered decomp** (`kanto.py` `*_ROWS` grids, generated from `data/layouts/<Map>/map.bin` with FRLG's own
+collision bits): Route 2 (split at the forest between the Viridian-side run and the Route 2 North Pewter approach),
+Mossmere = Viridian Forest's full 54x69 wood, Route 3 + Route 4's west mountain road merged into one composite
+(FRLG connects them over Mt. Moon's ridge), Mt. Crescent = Mt. Moon 1F, Route 4's east ledge descent with the
+hidden clearing, Route 5's fenced Day-Care gardens, Route 7/8's underground-path gate stations, Route 9's rock
+terraces, Route 10's two-mouth tunnel hill, Route 12's full 24x120 boardwalk bridge run, Route 13's hedge maze
+with its plank crossing, Route 14's tiered sand fields, Route 16-18's fence-railed cycling road (24x160 Route
+17), Route 19-21's sea channels (FRLG's surf water becomes plank causeways and sand spits - the game has no
+surf), Route 22's Viridian gate station, Route 23's full 24x160 badge-gate climb with its pillar mazes, water
+channels and checkpoint buildings, Route 24's Nugget Bridge, Route 25's cape and Sea Cottage, Hollowgate = Rock
+Tunnel 1F, the Ascent = Victory Road 1F and Seaglass = Seafoam Islands 1F. Where FireRed passes through a gate
+building's interior or a surf channel, the game's border gates carve the road through (the checkpoint hut stands
+beside it); where FireRed's one-way ledges would seal a pocket for good, small stair-gap connectors keep every
+tile reachable. Pass `rows=` to `kanto.Route` to hand-draw a map -- gate positions are derived from the drawn
+rims and written back into each entry's `ends`, so geography and the link graph can never disagree.
 * **New landmark buildings** (`tools/town_network_art.py`): `bld_tower` (Dusklight's Monument Tower, Aurum's
   Spire), `bld_museum` (Stonreach's Museum of Science), `bld_deptstore` (Verdance's Grand Mart - extended stock),
   `bld_gatehouse` (route guard huts), `bld_mansion` (Cinderfall's Old Mansion), plus the Research Lab (Astrion
