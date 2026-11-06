@@ -11,7 +11,7 @@ import random
 from collections import deque
 
 import worldmap as wm
-from worldmap import _npc, _trainer, open_backs, trim_footprints
+from worldmap import Building, Interior, PALETTES, ROOM_ROWS, _npc, _trainer, open_backs, trim_footprints
 import towns
 
 # MPW look code without importing pygame (the formula behind sprites.make_look)
@@ -330,10 +330,19 @@ def _gate_hut(rid, name, fx, fy, lines):
 
 
 def _daycare(rid, fx, fy):
-    return towns._house(rid, f"{rid}-daycare", "The Day-Care", 0, fx, fy,
+    """The Route 5 Day-Care (FRLG's own building sprite, decoded from the pokefirered decomp):
+    a real breeding daycare -- leave two Scimons with Keeper Sorrel, they bank steps as EXP and
+    may produce an egg (see daycare.py).  The footprint sits on the FRLG-decoded building plot
+    in ROUTE5_ROWS (rows 22-25), door on the south path stub."""
+    return Building(f"{rid}-daycare", "The Day-Care", "Day-Care", "house", (fx, fy + 3), (fx, fy + 4),
+                    (fx - 1, fy, 5, 4), "town/bld_daycare.png",
+                    Interior(f"{rid}-daycare-interior", ROOM_ROWS["house"], (5, 9), (5, 8), [
                         towns._npc(f"{rid}-daykeeper", 6, 6, "#8fae6f", "#4a5a34", "Day-Care Keeper Sorrel", [
-                            "Sorrel: Leave a Scimon with me and I'll raise it like my own!",
-                            "Sorrel: The tiny ones grow so fast on this road. Must be the air."]))
+                            "Sorrel: Leave a Scimon or two with me - I'll raise them like my own!",
+                            "Sorrel: Two that get along might even leave an egg behind, {name}."],
+                            service="daycare")],
+                        PALETTES["store"], spec="house"),
+                    area=rid)
 
 
 # --------------------------------------------------------------------------- hand-authored maps (FRLG geography)
@@ -1567,7 +1576,7 @@ ROUTE23_ROWS = [
     "BrrTkkrPPGkPPPrrrrrrrkTT",
     "rrrrTTTBPPTPPPrrrrrrrrTT",
     "rrrrTTTTPPPPPPrrrrrrrrTT",
-    "rrrrTTTTPPPPPPrrrrrrrrTT",
+    "rrrrTTTThhPhhhrrrrrrrrTT",
     "rrrrTTTTPPPPPPrrrrrrrrTT",
     "rrrrTTTTPPPPPPrrrrrrrrrr",
     "rrrrTTTTPPPPPPrrrrrrrrrr",
@@ -1804,9 +1813,9 @@ ASCENT_ROWS = [
     "rhhPPPhhhhhhPPPPPPPPPhhhrrrrrrrrrrrrrrrrrrrrrrrr",
     "hhhhPPPhhhhhhhPPhPPPPPhrrrrrrrrrrrrrrrrrrrrrrrrr",
     "rrhPPPhPPPPPPPPPPPPPhPPrrrrrrrrrrrrrrrrrrrrrrrrr",
-    "rrhPPPrPPPPPPPPPPPPPrPPrrrrrrrrrrrrrrrrrrrrrrrrr",
-    "rrhPPPrPPPPPPPPPPPPPrPPrrrrrrrrrrrrrrrrrrrrrrrrr",
-    "rhhhPPrPPPPPPPPPPPPPrPPrrrrrrrrrrrrrrrrrrrrrrrrr",
+    "rrhPPPrPPPPPPPPPPPPPrPP^PPPrrrrrrrrrrrrrrrrrrrrr",
+    "rrhPPPrPPPPPPPPPPPPPrPP^PPXrrrrrrrrrrrrrrrrrrrrr",
+    "rrhPPPrPPPPPPPPPPPPPrP*^PPPrrrrrrrrrrrrrrrrrrrrr",
     "rrrhPPhhhhPhhhPPhhPhhPPrrrrrrrrrrrrrrrrrrrrrrrrr",
     "rrrhhPPPPPggPrPPrhPPSPPrrrrrrrrrrrrrrrrrrrrrrrrr",
     "rrrhPPhPPPghPrPPrhhPPPhrrrrrrrrrrrrrrrrrrrrrrrrr",
@@ -1902,7 +1911,7 @@ ROUTES = [
           buildings=[_gate_hut("route5", "Aurum Gate", 21, 34, [
               "Guard Aurel: The Aurum City gate - the grid roads hum day and night.",
               "Guard Aurel: City rules: no battling in the plaza. The roads, though - go wild."]),
-              _daycare("route5", 21, 20)],
+              _daycare("route5", 22, 22)],
           signs=[_sign("Route 5", ["South: Aurum City - the golden crossroads.", "North: Tidebrook Town.",
                                    "The Day-Care is north - they raise Scimons like their own."])],
           travelers=[
@@ -1962,7 +1971,7 @@ ROUTES = [
               _ranger("route11-ranger-bench", ["Bench: Officially I patrol this road.",
                                                "Bench: Unofficially I sit on the bench and watch the sea."])]),
     Route("route12", "Route 12", 24, 120, "grass", 32, {"n": 12, "s": 14},
-          rows=ROUTE12_ROWS, start=(12, 2), sign_tiles=[(15, 69), (17, 13)], traveler_tiles=[(12, 92)],
+          rows=ROUTE12_ROWS, start=(12, 2), sign_tiles=[(15, 69), (17, 13)], traveler_tiles=[(12, 92), (17, 92)],
           buildings=[_gate_hut("route12", "Dusklight Gate", 12, 15, [
               "Guard Wick: The coast road starts here - Dusklight's monuments watch you leave.",
               "Guard Wick: Wild Scimons nest along the cliffs. Rare ones. Quiet ones."])],
@@ -1970,7 +1979,12 @@ ROUTES = [
                  _sign("Route 12", ["The boardwalk south - every plank counted, every wave heard."])],
           travelers=[
               _ranger("route12-ranger-coast", ["Coast: You can smell the sea from here, {name}.",
-                                               "Coast: The road south winds along the cliffs. Take your time."])]),
+                                               "Coast: The road south winds along the cliffs. Take your time."]),
+              _sailor("route12-fisher-marlow", ["Marlow: The coast run is deeper than any lake.",
+                                                "Marlow: A lake rod gives up ten metres from the plank."],
+                      gives="field_rod",
+                      gift_line="Marlow: A Field Rod, spare and oiled - take it. Cast off the plank "
+                                "and the coast gives back what the lake never had.")]),
     Route("route13", "Route 13", 72, 20, "grass", 33, {"n": 63, "w": 7},
           rows=ROUTE13_ROWS, start=(62, 2), sign_tiles=[(41, 12)], traveler_tiles=[(40, 11)],
           signs=[_sign("Route 13", ["South: the cliff road bends east ahead.", "North: Dusklight's coast."])],
@@ -1985,7 +1999,7 @@ ROUTES = [
     Route("route15", "Route 15", 72, 20, "grass", 35, {"w": 11, "e": 14},
           rows=ROUTE15_ROWS, start=(13, 11), sign_tiles=[(41, 11)], traveler_tiles=[(40, 10)],
           buildings=[_gate_hut("route15", "Vespera Gate", 9, 7, [
-              "Guard Hedge: The Vespera gate - town of hedges, arches and one closed safari.",
+              "Guard Hedge: The Vespera gate - town of hedges, arches and the Safari Reserve.",
               "Guard Hedge: Whatever the hedges tell you, don't follow them. They lie for fun."])],
           signs=[_sign("Route 15", ["East: Vespera City - mind the hedges.", "West: the coast road."])],
           travelers=[
@@ -2025,12 +2039,17 @@ ROUTES = [
               _sailor("route19-sailor-tide", ["Tide: The boards creak but they hold. Mostly.",
                                               "Tide: Seaglass Isles sparkle at noon. Worth the walk, {name}."])]),
     Route("route20", "Route 20", 120, 20, "sea", 40, {"w": 9, "e": 9},
-          rows=ROUTE20_ROWS, start=(3, 9), sign_tiles=[(64, 8), (68, 14)], traveler_tiles=[(30, 9)],
+          rows=ROUTE20_ROWS, start=(3, 9), sign_tiles=[(64, 8), (68, 14)], traveler_tiles=[(30, 9), (70, 9)],
           signs=[_sign("Route 20", ["East: Seaglass Isles.", "West: Cinderfall Island - the piers are warm."]),
                  _sign("Route 20", ["The Seafoam crossing - the caves mark the middle of the channel."])],
           travelers=[
               _sailor("route20-sailor-swell", ["Swell: Two islands, one road, zero boats.",
-                                               "Swell: The walking's honest though, {name}."])]),
+                                               "Swell: The walking's honest though, {name}."]),
+              _sailor("route20-fisher-brine", ["Brine: The open sea asks for a deep-water rig.",
+                                               "Brine: Shallow tackle snaps at the first big pull."],
+                      gives="deep_rod",
+                      gift_line="Brine: The Deep Rod - my spare. Cast off the sand, {name}, and hold "
+                                "tight. The open sea pulls back.")]),
     Route("route21", "Route 21", 24, 100, "sea", 41, {"n": 6, "s": 12},
           rows=ROUTE21_ROWS, start=(6, 2), sign_tiles=[(13, 1)], traveler_tiles=[(12, 40)],
           signs=[_sign("Route 21", ["South: Cinderfall Island.", "North: Riven Town - home of the Astrion Lab.",
@@ -2041,23 +2060,31 @@ ROUTES = [
     Route("route22", "Route 22", 48, 24, "grass", 42, {"n": 8, "e": 7},
           rows=ROUTE22_ROWS, start=(44, 7), sign_tiles=[(7, 12)], traveler_tiles=[(34, 10)],
           buildings=[_gate_hut("route22", "League Gate", 6, 2, [
-              "Gate Warden Stamp: The League road starts here. The gate checks legs, not stamps - yet.",
+              "Gate Warden Stamp: The League road starts here - and it checks stamps now, all eight.",
               "Gate Warden Stamp: Route 23 climbs to the Ascent. The Plateau waits above."])],
           signs=[_sign("Route 22", ["East: Epidimy Town.", "West: Route 23 - the League road begins."])],
           travelers=[
               _ranger("route22-ranger-pilgrim", ["Pilgrim: Everyone who walks west is heading for the Plateau.",
                                                  "Pilgrim: The League road asks one thing: keep walking, {name}."])]),
     Route("route23", "Route 23", 24, 160, "mountain", 43, {"s": 9, "n": 11},
-          rows=ROUTE23_ROWS, start=(9, 157), sign_tiles=[(2, 16)], traveler_tiles=[(9, 80)],
+          rows=ROUTE23_ROWS, start=(9, 157), sign_tiles=[(2, 16)], traveler_tiles=[(9, 80), (10, 156)],
           encounters=False,
           buildings=[_gate_hut("route23", "League Checkpoint", 11, 147, [
               "Checkpoint Clerk Seal: The checkpoint records every challenger by name.",
-              "Checkpoint Clerk Seal: One day the gate will ask for stamps. The case in your Pack is ready."])],
+              "Checkpoint Clerk Seal: The gate asks for all eight gym stamps. Your case speaks for you."])],
           signs=[_sign("Route 23", ["North: the Ascent Road - the final climb.",
                                     "South: Route 22 - the League gate road.", "The gate checks stamps. The road checks legs."])],
           travelers=[
               _hiker("route23-hiker-summit", ["Summit: I've walked this road nine times.",
-                                              "Summit: The tenth time's for the stamp case, {name}."])]),
+                                              "Summit: The tenth time's for the stamp case, {name}."]),
+              towns._npc("route23-warden", 0, 0, "#c9c4d6", "#6a6f7a", "Gate Warden Stamp", [
+                  "Gate Warden Stamp: Eight stamps, all in order. The Ascent is yours, {name}.",
+                  "Gate Warden Stamp: The Plateau waits above. Walk it with your whole case."],
+                  require_stamps=8,
+                  stamp_locked=["Gate Warden Stamp: Hold it right there, challenger.",
+                                "Gate Warden Stamp: The checkpoint asks for all eight gym stamps - your case says otherwise.",
+                                "Gate Warden Stamp: Seven gyms stand in the region's towns. Walk them all, then come back."],
+                  aside=(11, 157))]),
     Route("route24", "Route 24", 24, 40, "grass", 44, {"s": 14, "e": 4},
           rows=ROUTE24_ROWS, start=(13, 37), sign_tiles=[(10, 25)], traveler_tiles=[(10, 10), (14, 20)],
           signs=[_sign("Route 24", ["North: the road to Route 25.", "South: Tidebrook Town.",
@@ -2219,10 +2246,20 @@ for (_a, _sa), (_b, _sb) in EDGES:
 
 # Route 4 hides a supply chest in a sealed clearing off the road
 CHESTS = {}
-for _r in ROUTES:
+for _r in ROUTES + PLACES:
     if _r.chest:
         CHESTS[_r.id] = [dict(tile=_r.chest, key=f"{_r.id}:chest",
-                              loot=(("biotrellis", 1), ("repaircell", 3)))]
+                              loot=(("biotrellis", 1), ("abl_excavator", 1), ("repaircell", 3)))]
+# the Ascent's waterfall pocket (the Hydroclimb reward nook, behind the falls)
+if "ascent" in CHESTS:
+    CHESTS["ascent"] = [dict(tile=CHESTS["ascent"][0]["tile"], key="ascent:falls-pocket",
+                             loot=(("plating", 1), ("nanorepair", 2)))]
+
+# FRLG-style item balls: a pickup lying in the road (distinct from the hidden supply chests).
+# The Ascent Road's ball holds the Hydroclimb Module, exactly where its waterfall waits.
+ITEM_BALLS = {
+    "ascent": [dict(tile=(22, 8), key="ascent:falls-ball", loot=(("abl_hydroclimb", 1),))],
+}
 
 # the Route 10 nook is a real healer on the road (FRLG's Route 10 centre)
 HEALERS = [dict(id="route10-center", name="Cush's Repair Nook", area="route10",

@@ -29,7 +29,7 @@ for step in range(60 * 40):                      # forty simulated seconds at 60
     if not eng.scenes: eng.push(TitleScene())
     st = eng.state
     if st.party:
-        for m in st.party: assert 0 <= m.hp <= m.max_hp and 0 <= m.stability <= m.max_stability, m
+        for m in st.party: assert 0 <= m.hp <= m.max_hp and 0 <= m.energy <= m.max_energy, m
         assert len(st.party) <= 6
     if isinstance(top, ow.OverworldScene):
         assert not top.map.blocked(*top.player.tile) or top.map.tile_at(*top.player.tile) in "DE" , (top.player.tile)

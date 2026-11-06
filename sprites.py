@@ -300,6 +300,12 @@ class NPC(Character):
         self.id, self.name, self.lines = d["id"], d["name"], d["lines"]
         self.heals, self.service = d.get("heals", False), d.get("service")
         self.gives = d.get("gives")                    # key item handed over on first talk (Town Pass)
+        self.gate = d.get("gate")                      # grant gate: "flag:<story flag>" or "dex:<n>" (abilities.gate_met)
+        self.gift_line = d.get("gift_line")            # the line spoken while handing over a non-pass gift
+        self.gate_hint = d.get("gate_hint")            # the line spoken while the gate is still locked
+        self.require_stamps = d.get("require_stamps")  # badge-gate guard: refuses passage below this stamp count
+        self.stamp_locked = d.get("stamp_locked") or []  # the refusal while the stamps are missing
+        self.module = d.get("module")                  # field module a gym leader awards with their stamp
         self.trainer_battle = d.get("battle")          # (species_id, level): this trainer battles on sight
         self.post = d.get("post", [])                  # lines after the player wins
         self.rematch = d.get("rematch", False)         # beaten trainer offers a new battle when talked to

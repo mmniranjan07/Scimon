@@ -829,11 +829,94 @@ def greenhouse_b():
     return finish(im, "bld_farm_b", OUTDIR)
 
 
+def gym(kind):
+    """The seven FireRed-badge gyms: one shared design, palette + emblem per gym type (the pack's
+    gym art set).  5x4-footprint canvas like the hall."""
+    W, H = 80, 96
+    im = new(W, H)
+    p = Pen(im)
+    roof_c, banner_c, emblem_c = {
+        "geologic": ("#8a6a4a", "#a98150", "#f0d8a8"),
+        "hydro":    ("#3d6a9f", "#3d84c6", "#d8ecff"),
+        "electric": ("#b59a2a", "#e8c33a", "#fff3c0"),
+        "botanic":  ("#4a8a3a", "#5aa63f", "#e0f5c8"),
+        "chemical": ("#7a4a9a", "#8e5bb0", "#eadcf8"),
+        "quantum":  ("#4448a0", "#5b5bd6", "#dcdcff"),
+        "thermal":  ("#b04a2a", "#e0592f", "#ffd8b0"),
+    }[kind]
+    roof, banner, emblem = rgb(roof_c), rgb(banner_c), rgb(emblem_c)
+    wall, trim = rgb("#eee4cc"), rgb("#f7f1de")
+    # body + roof
+    plaster(p, 3, 52, 74, 40, wall, f"gym{kind}", speck=0.04)
+    p.hline(3, 52, 74, shade(wall, 0.8))
+    plinth(p, 3, 88, 74)
+    hip_roof(p, 0, 24, 80, 30, roof, inset=10, seed=f"roof{kind}")
+    # the type emblem on the gable
+    cx = 40
+    if kind == "geologic":
+        for i, (dx, dy) in enumerate(((0, -6), (6, 0), (0, 6), (-6, 0))):
+            p.line(cx, 39 + dy, cx + dx, 39, emblem)
+        p.rect(cx - 3, 36, 6, 6, emblem)
+        p.rect(cx - 1, 38, 2, 2, roof)
+    elif kind == "hydro":
+        p.ellipse(cx - 5, 36, 10, 8, emblem)
+        p.rect(cx - 5, 40, 10, 2, emblem)
+        p.line(cx, 30, cx - 5, 38, emblem)
+        p.line(cx, 30, cx + 5, 38, emblem)
+    elif kind == "electric":
+        p.line(cx + 2, 30, cx - 3, 40, emblem)
+        p.line(cx - 3, 40, cx + 1, 40, emblem)
+        p.line(cx + 1, 40, cx - 2, 50, emblem)
+        p.line(cx - 2, 50, cx + 4, 38, emblem)
+        p.line(cx + 4, 38, cx, 38, emblem)
+        p.line(cx, 38, cx + 2, 30, emblem)
+    elif kind == "botanic":
+        p.ellipse(cx - 6, 34, 12, 8, emblem)
+        p.line(cx, 50, cx, 36, shade(emblem, 0.7))
+        p.line(cx, 44, cx - 5, 40, shade(emblem, 0.7))
+        p.line(cx, 44, cx + 5, 40, shade(emblem, 0.7))
+    elif kind == "chemical":
+        p.rect(cx - 3, 30, 6, 3, emblem)
+        p.line(cx - 3, 33, cx - 6, 48, emblem)
+        p.line(cx + 3, 33, cx + 6, 48, emblem)
+        p.hline(cx - 6, 48, 13, emblem)
+        p.hline(cx - 5, 45, 11, shade(emblem, 0.85))
+    elif kind == "quantum":
+        p.ellipse(cx - 3, 37, 6, 6, emblem)
+        for tilt in (-1, 1):
+            for t in range(0, 21):
+                import math as _m
+                a = t / 20 * 6.283
+                p.dot(int(cx + 9 * _m.cos(a)), int(40 + tilt * 4 * _m.sin(a)), shade(emblem, 0.9))
+    elif kind == "thermal":
+        for dx in (-4, -2, 0, 2, 4):
+            p.line(cx + dx, 48 - abs(dx) // 2, cx + dx // 2, 31 + abs(dx), emblem)
+        p.ellipse(cx - 3, 38, 6, 9, emblem)
+    # frieze banner with the name + pennant poles
+    p.rect(15, 55, 50, 12, banner)
+    p.hline(15, 55, 50, rgb("#ffffff"))
+    p.hline(15, 66, 50, shade(banner, 0.78))
+    text(im, "GYM", 40, 57, rgb("#ffffff"), 8)
+    for px_ in (7, 71):
+        p.vline(px_, 44, 40, IRON_)
+        p.rect(px_ - 1, 44, 8, 6, banner)
+        p.rect(px_ - 1, 44, 8, 2, shade(banner, 1.2))
+    # doors (double) + windows + steps
+    door(p, 31, 68, 8, 18, color=rgb("#5a3f26"), trim=trim)
+    door(p, 41, 68, 8, 18, color=rgb("#5a3f26"), trim=trim)
+    for wx in (12, 22, 50, 60):
+        window(p, wx, 70, 8, 12, lit=True)
+    steps(p, 30, 90, 20, n=2)
+    return finish(im, f"bld_gym_{kind}", OUTDIR)
+
+
 def build_all():
     os.makedirs(OUTDIR, exist_ok=True)
     for v in range(3):
         house(v)
     lab(); hall(); library(); mart(); cush(); greenhouse_a(); greenhouse_b()
+    for kind in ("geologic", "hydro", "electric", "botanic", "chemical", "quantum", "thermal"):
+        gym(kind)
 
 
 if __name__ == "__main__":

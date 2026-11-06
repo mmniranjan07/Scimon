@@ -73,8 +73,18 @@ class Grid:
 
 
 # --------------------------------------------------------------------------- shared buildings
-MART_STOCK = [("repaircell", 200), ("nanorepair", 600), ("stabilizer", 300), ("standard", 200),
-              ("cryo", 600), ("magnetic", 600), ("bio", 600)]
+MART_STOCK = [("repaircell", 200), ("nanorepair", 600), ("stabilizer", 300), ("chargecell", 450), ("standard", 200),
+              ("cryo", 600), ("magnetic", 600), ("bio", 600),
+              # FireRed's convenience shelf: repel fields, the six vitamin serums, the Grow Cell
+              ("repel", 350), ("superrepel", 700),
+              ("hpup", 980), ("proteinvit", 980), ("ironvit", 980), ("calciumvit", 980),
+              ("zincvit", 980), ("carbosvit", 980), ("growcell", 2400)]
+
+# the Verdance Grand Mart additionally stocks the held battle-gear shelf (FireRed's held items)
+GRAND_MART_STOCK = MART_STOCK + [
+    ("expshare", 3000), ("leftloop", 4800), ("holdband", 2400),
+    ("torqueband", 4800), ("logicclip", 4800), ("reticle", 3600), ("luckymote", 6000),
+]
 
 
 def _house(area, id_, name, sprite, fx, fy, npc):
@@ -115,7 +125,8 @@ def _hall(area, id_, name, fx, fy, npc):
 
 # landmark buildings of the wider region (tower, museum, grand mart, gate huts, the mansion, the lab)
 LANDMARK_SPECS = {"tower": ("hall", "hall"), "museum": ("library", "library"), "deptstore": ("mart", "store"),
-                  "gatehouse": ("house", "store"), "mansion": ("house", "store"), "lab": ("lab", "lab")}
+                  "gatehouse": ("house", "store"), "mansion": ("house", "store"), "lab": ("lab", "lab"),
+                  "gamecorner": ("mart", "store"), "safari": ("house", "store")}
 
 
 def _landmark(area, id_, name, sign, kind, fx, fy, npcs, shop=None, repairs=False, has_database=False):
@@ -123,10 +134,11 @@ def _landmark(area, id_, name, sign, kind, fx, fy, npcs, shop=None, repairs=Fals
     gate hut 2x3), door bottom-centre, interior from the shared room set with themed NPCs."""
     spec, palette = LANDMARK_SPECS[kind]
     sizes = {"tower": (3, 8), "museum": (4, 5), "deptstore": (4, 6), "gatehouse": (2, 3), "mansion": (4, 6),
-             "lab": (5, 6)}
+             "lab": (5, 6), "gamecorner": (7, 4), "safari": (5, 6)}
     fw, fh = sizes[kind]
     sprite = {"tower": "bld_tower", "museum": "bld_museum", "deptstore": "bld_deptstore",
-              "gatehouse": "bld_gatehouse", "mansion": "bld_mansion", "lab": "bld_lab"}[kind]
+              "gatehouse": "bld_gatehouse", "mansion": "bld_mansion", "lab": "bld_lab",
+              "gamecorner": "bld_casino", "safari": "bld_safarigate"}[kind]
     exit_tile = (6, 12) if spec == "mart" else (5, 9)
     spawn = (6, 11) if spec == "mart" else (5, 8)
     return Building(id_, name, sign, "hall", (fx + fw // 2, fy + fh - 1), (fx + fw // 2, fy + fh),
@@ -137,7 +149,7 @@ def _landmark(area, id_, name, sign, kind, fx, fy, npcs, shop=None, repairs=Fals
 
 
 def _gym_lot(g, x0, y0, x1, y1):
-    """A fenced gym lot (the region runs one gym - Fern's - so every other town's lot waits, signposted)."""
+    """A fenced gym lot (kept for Dusklight-free towns that don't host a gym)."""
     for x in range(x0, x1 + 1):
         g.g[y0][x] = "f"
         g.g[y1][x] = "f"
@@ -145,6 +157,30 @@ def _gym_lot(g, x0, y0, x1, y1):
         g.g[y][x0] = "f"
         g.g[y][x1] = "f"
     g.g[y1][(x0 + x1) // 2] = "G"          # the gate gap on the south side
+
+
+def _gym(area, id_, name, leader, leader_lines, leader_post, team, coaches, stamp, disc, fx, fy, kind, look):
+    """A FireRed-badge gym: the type-tinted gym building (5x4, one sprite per type), Fern's gym-ring
+    interior with two type-themed coaches gating the leader (the same requires/aside ring order), and
+    the leader's stamp + signature move disc handed over on their first defeat."""
+    ring_npcs = []
+    for i, (cname, clines, cpost, cbattle) in enumerate(coaches):
+        cid = f"{id_}-coach-{i + 1}"
+        ring_npcs.append(_trainer(
+            cid, (4, 10)[i], 7, cname, clines, cbattle, post=cpost, facing="down",
+            requires=(f"{id_}-coach-1",) if i else (),
+            locked=[f"{cname}: Gym rules - {coaches[0][0]} tests everyone first."] if i else [],
+            aside=(5, 9) if i == 0 else (9, 9)))
+    ring_npcs.append(_trainer(
+        f"{id_}-leader", 7, 4, leader, leader_lines, team, post=leader_post, facing="down",
+        stamp=stamp, disc=disc,
+        requires=(f"{id_}-coach-1", f"{id_}-coach-2"),
+        locked=[f"{leader}: Not so fast - the ring has an order. Beat both of my coaches first."],
+        look=area_look(area, leader, sheet=look)))
+    return Building(id_, name, name, "gym", (fx + 2, fy + 3), (fx + 2, fy + 4), (fx, fy, 5, 4),
+                    f"town/bld_gym_{kind}.png",
+                    Interior(f"{id_}-interior", ROOM_ROWS["gym-ring"], (7, 12), (7, 11), ring_npcs,
+                             PALETTES["hall"], spec="gym-ring"), area=area)
 
 
 class Town:
@@ -262,7 +298,7 @@ def _stonreach_build(g, gates):
     g.rect(8, 12, 28, 13, "P")                     # quarry road (east gate)
     g.rect(12, 15, 17, 18, "p")                    # plaza
     g.g[16][14] = "q"                              # the well
-    _gym_lot(g, 11, 3, 13, 5)                      # the gym lot, north-centre like Pewter's
+    # the gym stands north-centre like Pewter's (the old fenced lot is now the building's yard)
     # the quarry: walled diggings north-east with an opening on the south side
     g.rect(22, 2, 28, 7, "h")
     g.rect(23, 3, 27, 6, "G")
@@ -284,7 +320,7 @@ def _tidebrook_build(g, gates):
         g.g[y][14] = g.g[y][15] = "R"              # plank bridges where the street crosses the water
     g.rect(9, 16, 12, 19, "p")
     g.g[17][10] = "q"
-    _gym_lot(g, 17, 16, 19, 18)                    # the gym lot, south-centre like Cerulean's
+    # the gym stands north-centre-east above the bridge road (Cerulean's south lot is river-bound here)
     g.rect(20, 17, 24, 20, "w")                    # the mill pond
     g.put(((3, 14), (7, 10), (17, 14), (27, 15), (19, 14), (6, 22)), "T", only="G")
     g.put(((8, 15), (17, 10), (25, 15), (12, 20)), "u", only="G")
@@ -298,7 +334,7 @@ def _aurum_build(g, gates):
     g.rect(11, 9, 20, 18, "p")                     # the grand plaza
     g.g[13][15] = g.g[13][16] = "p"
     g.g[12][15] = "q"                              # the plaza well
-    _gym_lot(g, 4, 9, 6, 11)                       # the gym lot, west-centre like Saffron's
+    # the gym stands west of the plaza, like Saffron's gym lot
     g.put(((10, 8), (21, 8), (10, 19), (21, 19)), "O", only="G")       # planters
     g.put(((13, 10), (18, 17), (14, 19)), "b", only="G")
     g.put(((9, 12), (22, 12), (9, 16), (22, 16)), "F", only="G")
@@ -311,7 +347,7 @@ def _emberport_build(g, gates):
     g.rect(16, 12, 28, 13, "P")                    # east road (Route 11 gate)
     g.rect(11, 14, 16, 17, "p")
     g.g[15][13] = "q"
-    _gym_lot(g, 4, 14, 6, 16)                      # the gym lot, west like Vermilion's
+    # the gym stands west like Vermilion's
     g.rect(9, 20, 10, 25, "I")                     # the fishing pier, out into the ocean
     g.rect(26, 19, 27, 20, "J")                    # the lighthouse footprint (2x2)
     g.put(((12, 21), (16, 21)), "d", only="s")     # mooring posts along the quay
@@ -326,7 +362,7 @@ def _verdance_build(g, gates):
     g.rect(14, 6, 15, 11, "P")                     # the garden walk
     g.rect(12, 9, 17, 15, "p")
     g.g[11][14] = "q"
-    _gym_lot(g, 3, 15, 5, 17)                      # the gym lot, west-centre like Celadon's
+    # the gym stands west-centre like Celadon's
     g.rect(4, 4, 10, 4, "H")                       # hedge parterres
     g.rect(18, 4, 24, 4, "H")
     g.put(((13, 6), (16, 6)), "K", only="G")       # garden arches flanking the walk
@@ -353,7 +389,7 @@ def _vespera_build(g, gates):
     g.rect(1, 12, 13, 13, "P")
     g.rect(11, 9, 16, 14, "p")
     g.g[11][13] = "q"
-    _gym_lot(g, 11, 16, 13, 18)                    # the gym lot, centre like Fuchsia's
+    # the gym stands centre-south, like Fuchsia's
     g.rect(4, 4, 9, 4, "H")                        # hedge walks
     g.rect(18, 4, 24, 4, "H")
     g.rect(4, 16, 8, 16, "H")
@@ -372,7 +408,7 @@ def _cinderfall_build(g, gates):
     g.rect(24, 12, 29, 13, "I")
     g.rect(6, 12, 23, 13, "P")                     # the island road
     g.rect(11, 15, 16, 18, "p")
-    _gym_lot(g, 20, 16, 22, 18)                    # the gym lot, south like Cinnabar's
+    # the gym stands south like Cinnabar's
     g.rect(8, 4, 12, 6, "o")                       # the lava fields
     g.rect(17, 5, 20, 7, "o")
     g.put(((7, 7), (13, 5), (16, 8), (21, 4), (9, 16), (20, 16), (24, 17), (5, 16)), "n", only="V")
@@ -398,8 +434,8 @@ def _cabin_build(g, gates):
     g.put(((9, 6), (12, 10)), "F", only="G")
 
 
-def _gate_guard(name, lines):
-    return _npc(name, 6, 6, "#7f9ec9", "#3f4a5a", name.split("-", 1)[1].replace("-", " ").title(), lines)
+def _gate_guard(name, lines, service=None):
+    return _npc(name, 6, 6, "#7f9ec9", "#3f4a5a", name.split("-", 1)[1].replace("-", " ").title(), lines, service=service)
 
 
 TOWNS = [
@@ -407,6 +443,22 @@ TOWNS = [
          {"s": [(14, 25), (15, 25)], "e": [(29, 12), (29, 13)]},
          _stonreach_build,
          [_center("stonreach", 4, 8),
+          _gym("stonreach", "stonreach-gym", "Stonreach Gym", "Leader Bastian", [
+                   "Bastian: Welcome to the Stonreach Gym, {name}!",
+                   "Bastian: The quarry taught us one lesson - stand like stone, strike like an avalanche.",
+                   "Bastian: My Pebblon and Monolithor will show you what that means. Let's battle!"],
+               ["Bastian: Solid as bedrock, {name}.",
+                "Bastian: Take the Boulder Disc - its art is yours to teach."],
+               [("pebblon", 18), ("boulderon-final", 21)],
+               [("Coach Dorn", ["Dorn: The ring has an order - I hold the west gate.",
+                                "Dorn: Show me your form!"],
+                 ["Dorn: Good footwork.", "Dorn: Mina holds the east gate - and she doesn't move."],
+                 [("pebblon", 15)]),
+                ("Coach Mina", ["Mina: So you're climbing the ring. Bold.",
+                                "Mina: Beat Dorn first - gym rules."],
+                 ["Mina: Hah! Clean win.", "Mina: Bastian's waiting at the top of the ring."],
+                 [("shalebit", 17)])],
+               "boulder", "boulddisc", 9, 2, "geologic", 4),
           _landmark("stonreach", "stonreach-museum", "Museum of Science", "Museum", "museum", 17, 3, [
               _npc("stonreach-curator", 5, 4, "#c9b06f", "#3a3a4a", "Curator Slate", [
                   "Slate: Welcome to the Museum of Science, {name}.",
@@ -429,7 +481,7 @@ TOWNS = [
           _npc("stonreach-kid", 18, 13, "#e0c48a", "#6a4a2a", "Young Cob", [
               "Cob: I found a glowing rock up in the diggings once!",
               "Cob: Dad says it was just quartz. It HUMMED, though."])],
-         {(14, 4): ["Signpost: Stonreach Gym - the lot is ready, the League says one gym per region. For now the ring waits."],
+         {(14, 4): ["Signpost: Stonreach Gym - Leader Bastian stands ready. Beat his coaches to reach the ring."],
           (13, 14): ["Signpost: Stonreach Town.", "South: Route 2 North - back through Mossmere Wood.",
                      "East: Route 3, then Mt. Crescent.", "The Museum of Science is north-east - exhibits daily."],
           (21, 14): ["Signpost: Stonreach Supply Mart - open daily. Containment Modules and repair kits."]},
@@ -439,13 +491,33 @@ TOWNS = [
          {"w": [(0, 12), (0, 13)], "e": [(29, 12), (29, 13)], "n": [(14, 0), (15, 0)], "s": [(14, 25), (15, 25)]},
          _tidebrook_build,
          [_center("tidebrook", 17, 4),
+          _gym("tidebrook", "tidebrook-gym", "Tidebrook Gym", "Leader Nerissa", [
+                   "Nerissa: The river decides everything here, {name} - when the bridges freeze, when the mills turn.",
+                   "Nerissa: My Tideshear and Hydrohammer move the same way. Let's see how you move!"],
+               ["Nerissa: The tide turns for you this time.",
+                "Nerissa: Take the Cascade Disc - teach its art to a Hydro Sci-Mon."],
+               [("tidefin", 21), ("tidefin-final", 24)],
+               [("Coach Rhys", ["Rhys: I hold the west gate - gym rules.",
+                                "Rhys: Show me your form!"],
+                 ["Rhys: Water always finds a way.", "Rhys: Marla holds the east gate."],
+                 [("droplite", 19)]),
+                ("Coach Marla", ["Marla: The east gate is mine. Beat Rhys first.",
+                                 "Marla: Gym rules - the ring has an order."],
+                 ["Marla: Clean win.", "Marla: Nerissa's at the top of the ring. Don't keep her waiting."],
+                 [("mistfin", 21)])],
+               "cascade", "cascadedisc", 16, 8, "hydro", 6),
           _mart("tidebrook", "Tidebrook Supply Mart", 24, 4, "Clerk Marilla",
                 ["Marilla: Welcome to the Tidebrook Supply Mart, {name}!",
                  "Marilla: River damp is hard on gears - stock up on repair cells."]),
           _house("tidebrook", "tidebrook-wheelworks", "Tidebrook Wheelworks", 0, 3, 17,
                  _npc("tidebrook-wade", 6, 6, "#4f8fae", "#2a3a4a", "Mechanic Wade", [
                      "Wade: Wheels, propellers, hover skirts - I true them all.",
-                     "Wade: The river hums at dusk. Even my balances agree."])),
+                     "Wade: The river hums at dusk. Even my balances agree."],
+                     gives="cycle_rig", gate="stamps:1",
+                     gift_line="Wade: A researcher with a gym stamp earns long roads - and long roads need wheels. "
+                               "Take my folding Cycle Rig! Press B outdoors to hop on.",
+                     gate_hint="Wade: I'd lend you my Cycle Rig, but it only goes to someone with a gym stamp. "
+                               "Come back once a leader has stamped your card."),),
           _house("tidebrook", "tidebrook-house2", "Brooke's House", 1, 24, 17,
                  _npc("tidebrook-brooke", 6, 6, "#c98a4a", "#5a3a24", "Brooke", [
                      "Brooke: I skip stones off the bridge every morning.",
@@ -456,7 +528,7 @@ TOWNS = [
           _npc("tidebrook-angler", 20, 15, "#8fae6f", "#4a5a34", "Angler Nel", [
               "Nel: Nothing bites in the mill pond. I keep trying anyway.",
               "Nel: The east road goes to Hollowgate Tunnel. Bring a lamp."])],
-         {(21, 15): ["Signpost: Tidebrook Gym - the League says one gym per region. The lot echoes with old battle cries."],
+         {(21, 15): ["Signpost: Tidebrook Gym - Leader Nerissa's ring waits above the bridge road. Beat her coaches first."],
           (11, 11): ["Signpost: Tidebrook Town.", "West: Route 4 - Mt. Crescent road.",
                      "East: Route 9, then Hollowgate Tunnel.", "North: Route 24. South: Route 5 to Aurum City."],
           (16, 14): ["Signpost: The mill pond - no swimming, no fishing, no skipping stones. (The stones skip themselves sometimes.)"]},
@@ -469,6 +541,22 @@ TOWNS = [
                 _npc("aurum-magnate", 6, 4, "#c9b06f", "#5a4a2a", "Magnate Auric", [
                     "Auric: Aurum City runs on Scimon trades, {name}.",
                     "Auric: Every trainer that passes through raises the market. Do good business."])),
+          _gym("aurum", "aurum-gym", "Aurum Gym", "Leader Cerebra", [
+                   "Cerebra: I saw you coming, {name}. I see most things before they arrive.",
+                   "Cerebra: Probability bends around a prepared mind - and my Quantum ring is very prepared.",
+                   "Cerebra: Show me a future where you beat me. Let's battle!"],
+               ["Cerebra: An improbable result. How wonderful.",
+                "Cerebra: The Marsh Disc is yours - its art bends states, not plates."],
+               [("entanglit", 41), ("phaseling", 43), ("phaseling-final", 47)],
+               [("Coach Hallis", ["Hallis: I hold the west gate. Gym rules apply.",
+                                  "Hallis: Show me your form!"],
+                 ["Hallis: The odds held.", "Hallis: Wynn holds the east gate."],
+                 [("qubit", 39)]),
+                ("Coach Wynn", ["Wynn: The east gate. Beat Hallis first.",
+                                "Wynn: The ring has an order - always."],
+                 ["Wynn: Improbable.", "Wynn: Cerebra waits at the top. She saw you coming."],
+                 [("wavicle", 42)])],
+               "marsh", "minddisc", 2, 8, "quantum", 3),
           _landmark("aurum", "aurum-spire", "The Aurum Spire", "Spire", "tower", 12, 2, [
               _npc("aurum-director", 6, 4, "#c9c4d6", "#6a6f7a", "Director Celia", [
                   "Celia: The Spire broadcasts the region's trade signals from the top floor.",
@@ -496,7 +584,7 @@ TOWNS = [
          {(14, 8): ["Signpost: Aurum City.", "North: Route 5 - Tidebrook road.", "South: Route 6 - Emberport road.",
                     "West: Route 7 to Verdance. East: Route 8 to Dusklight.",
                     "The Spire towers over the plaza - trade tours on the hour."],
-          (7, 10): ["Signpost: Aurum Gym - the League says one gym per region. The lot is wired for lights anyway."],
+          (7, 10): ["Signpost: Aurum Gym - Leader Cerebra's ring, west of the plaza. Beat her coaches to enter the order."],
           (17, 19): ["Signpost: Aurum Grand Mart - everything a trader needs, priced in good faith. Mostly."]},
          (15, 24),
          "The golden crossroads of the region."),
@@ -504,6 +592,22 @@ TOWNS = [
          {"n": [(14, 0), (15, 0)], "e": [(29, 12), (29, 13)]},
          _emberport_build,
          [_center("emberport", 3, 4),
+          _gym("emberport", "emberport-gym", "Emberport Gym", "Lt. Volta", [
+                   "Volta: Welcome to the Emberport Gym - the loudest room in the region!",
+                   "Volta: The harbour runs on current, and so do my Scimons. Full current!",
+                   "Volta: My Teslarch, Jouleape and Dynamorilla will light you up. Let's battle!"],
+               ["Volta: HA! You shorted out my whole ring!",
+                "Volta: Take the Thunder Disc - teach its art to an Electric Sci-Mon."],
+               [("voltling", 24), ("joulebot", 27), ("joulebot-final", 29)],
+               [("Coach Rav", ["Rav: I hold the west gate - gym rules!",
+                               "Rav: Show me your form!"],
+                 ["Rav: Sparks fly, huh?", "Rav: Jules holds the east gate."],
+                 [("faradot", 24)]),
+                ("Coach Jules", ["Jules: The east gate is mine. Beat Rav first.",
+                                 "Jules: The ring has an order - always."],
+                 ["Jules: Fully discharged.", "Jules: Lt. Volta's at the top. Bring earplugs."],
+                 [("ohmite", 26)])],
+               "thunder", "thunddisc", 2, 13, "electric", 10),
           _mart("emberport", "Emberport Supply Mart", 20, 4, "Clerk Salty",
                 ["Salty: Welcome aboard the Emberport Supply Mart, {name}!",
                  "Salty: Sea air rusts everything - buy two repair cells, use one."]),
@@ -524,8 +628,14 @@ TOWNS = [
               "Brie: Walk the sea routes if you must - watch the tide tables."]),
           _npc("emberport-harbour", 13, 12, "#8fae6f", "#4a5a34", "Harbourmaster Gale", [
               "Gale: Emberport moves half the region's freight, {name}.",
-              "Gale: All of it by road now. The north gate stays busy."])],
-         {(7, 15): ["Signpost: Emberport Gym - the League says one gym per region. The lot doubles as a stage on fair days."],
+              "Gale: All of it by road now. The north gate stays busy."]),
+          _npc("emberport-clubscout", 20, 10, "#d6478f", "#5a3a4a", "Club Scout Pella", [
+              "Pella: The Scimon Club rates every trainer in the harbour - twice, if you ask nicely.",
+              "Pella: My scanner pings the ones you've already beaten. They live for a rematch."],
+              gives="vsseeker",
+              gift_line="Pella: Here - my spare Vs. Scanner. Walk a hundred steps and it recharges; then "
+                        "just talk to anyone you've beaten and they'll battle you again."),],
+         {(7, 15): ["Signpost: Emberport Gym - Lt. Volta's ring, west of the plaza. Beat his coaches to climb it."],
           (13, 13): ["Signpost: Emberport City.", "North: Route 6 - Aurum City road.",
                      "East: Route 11 (it ends at a bench).", "The pier is open - the ferry is not."],
           (8, 21): ["Signpost: Emberport Pier. Fishing by permit. The lighthouse is not a climbing frame."]},
@@ -534,16 +644,35 @@ TOWNS = [
     Town("verdance", "Verdance City", 30, 26,
          {"e": [(29, 12), (29, 13)], "w": [(0, 12), (0, 13)]},
          _verdance_build,
-         [_landmark("verdance", "verdance-grandmart", "Verdance Grand Mart", "Grand Mart", "deptstore", 3, 4, [
+         [_gym("verdance", "verdance-gym", "Verdance Gym", "Leader Sylva", [
+                   "Sylva: Welcome to the Verdance Gym - the whole city grows around it, and so does the ring.",
+                   "Sylva: Gardens and battles reward the same virtue: patience, then everything at once.",
+                   "Sylva: My Thistlewing, Spinadrone and Floracervus bloom on your word. Let's battle!"],
+               ["Sylva: A harvest worth the season, {name}.",
+                "Sylva: The Rainbow Disc is yours - its art flowers once, then never again."],
+               [("thistledrone", 38), ("thistledrone-final", 43), ("bloomxell-final", 43)],
+               [("Coach Fen", ["Fen: I hold the west gate - gym rules.",
+                               "Fen: Show me your form!"],
+                 ["Fen: Perennial, that one.", "Fen: Rosa holds the east gate."],
+                 [("cactopod", 35)]),
+                ("Coach Rosa", ["Rosa: The east gate. Beat Fen first - the ring has an order.",
+                                "Rosa: Everything here is pruned for battle."],
+                 ["Rosa: Dead-headed.", "Rosa: Sylva's at the top of the ring."],
+                 [("mosswing", 38)])],
+               "rainbow", "bloomdisc", 1, 15, "botanic", 2),
+          _landmark("verdance", "verdance-grandmart", "Verdance Grand Mart", "Grand Mart", "deptstore", 3, 4, [
               _npc("verdance-clerk", 4, 6, "#6fae86", "#3f5f4a", "Clerk Flora", [
                   "Flora: Welcome to the Verdance Grand Mart - every floor a garden!",
                   "Flora: Seven stories in the old catalogues. We grown-fitted the rest."])],
-              shop=MART_STOCK + [("nanorepair", 600), ("stabilizer", 300)], has_database=True),
+              shop=GRAND_MART_STOCK, has_database=True),
           _center("verdance", 10, 19),
-          _house("verdance", "verdance-gamecorner", "The Hedge Corner", 2, 24, 16,
-                 _npc("verdance-coyn", 6, 6, "#8e5bb0", "#3a2a4a", "Attendant Coyn", [
-                     "Coyn: The Corner is quiet since the coin games moved on.",
-                     "Coyn: Try a round of 'guess the hedge' - I always win."])),
+          _landmark("verdance", "verdance-gamecorner", "Verdance Game Corner", "Game Corner", "gamecorner", 23, 15, [
+              _npc("verdance-coyn", 5, 6, "#8e5bb0", "#3a2a4a", "Attendant Coyn", [
+                  "Coyn: The reels are back, {name}! Buy your coins at the counter - 10 credits apiece.",
+                  "Coyn: Line up three sevens and the jackpot is yours."], service="casino"),
+              _npc("verdance-dealer", 8, 6, "#c9a04a", "#4a3a2a", "Dealer Vera", [
+                  "Vera: Five-card draw, Jacks or better. One hand at a time, no blinking.",
+                  "Vera: The prize shelf restocks whenever the house feels generous."], service="poker")]),
           _house("verdance", "verdance-house1", "Ivy's House", 0, 16, 19,
                  _npc("verdance-ivy", 6, 6, "#8fae6f", "#4a5a34", "Ivy", [
                      "Ivy: My hedge maze took thirty years to grow in.",
@@ -558,7 +687,7 @@ TOWNS = [
           _npc("verdance-florist", 20, 15, "#d98aa6", "#6a3a4a", "Florist Peony", [
               "Peony: Take the west road to Route 16 - the hedgerows hum in spring.",
               "Peony: East is Route 7, straight to Aurum City."])],
-         {(6, 16): ["Signpost: Verdance Gym - the League says one gym per region. The lot grew over twice already."],
+         {(6, 16): ["Signpost: Verdance Gym - Leader Sylva's ring, west-centre. Beat her coaches to walk the order."],
           (11, 11): ["Signpost: Verdance City.", "East: Route 7 - Aurum City road.",
                      "West: Route 16 - the hedge roads south.", "The Grand Mart is the big glass one, north-west."],
           (18, 14): ["Signpost: Please stay on the paths. The hedges are older than the town and stricter about it."]},
@@ -597,10 +726,28 @@ TOWNS = [
          {"n": [(14, 0), (15, 0)], "w": [(0, 12), (0, 13)], "s": [(14, 25), (15, 25)]},
          _vespera_build,
          [_center("vespera", 4, 4),
-          _landmark("vespera", "vespera-safarigate", "Vespera Safari Gate", "Safari", "gatehouse", 18, 2, [
+          _gym("vespera", "vespera-gym", "Vespera Gym", "Warden Vexa", [
+                   "Vexa: The hedge walks sent you, {name}? They should have warned you.",
+                   "Vexa: My ring fights the way the reserve does - patience, fog, and one clean strike.",
+                   "Vexa: My Chemical line will strip that confidence down. Let's battle!"],
+               ["Vexa: Stripped clean. Good.",
+                "Vexa: The Soul Disc is yours - its art eats plating for breakfast."],
+               [("catalyxt", 37), ("vapomite", 39), ("sludgebot", 41), ("sludgebot-final", 43)],
+               [("Coach Dorn", ["Dorn: I hold the west gate - gym rules.",
+                                "Dorn: Show me your form!"],
+                 ["Dorn: Eroded, not beaten. Almost.", "Dorn: Hessa holds the east gate."],
+                 [("reagentot", 35)]),
+                ("Coach Hessa", ["Hessa: The east gate. Beat Dorn first.",
+                                 "Hessa: The ring has an order, and the order is the test."],
+                 ["Hessa: Dissolved.", "Hessa: Warden Vexa's at the top. Breathe shallow."],
+                 [("toxigerm", 38)])],
+               "soul", "veildisc", 9, 18, "chemical", 6),
+          _landmark("vespera", "vespera-safarigate", "Vespera Safari Gate", "Safari", "safari", 16, 0, [
               _gate_guard("vespera-warden", [
-                  "Warden Bramble: The Safari Reserve is north - CLOSED for a wild survey.",
-                  "Warden Bramble: The hedge walks keep their own wilds. Ask them politely."])]),
+                  "Warden Bramble: The Safari Reserve survey is over - the gates are open!",
+                  "Warden Bramble: Two hundred credits buys the trip: twenty Safari Modules, four hundred steps.",
+                  "Warden Bramble: In the reserve you don't battle - you bait, you go near, you throw. Go on."],
+                  service="safari")]),
           _mart("vespera", "Vespera Supply Mart", 20, 17, "Clerk Orchid",
                 ["Orchid: Welcome to the Vespera Supply Mart, {name}!",
                  "Orchid: Half the town trains Scimons in the hedges. Stock reflects that."]),
@@ -614,7 +761,7 @@ TOWNS = [
           _npc("vespera-runner", 17, 13, "#e0c48a", "#6a4a2a", "Hedge Runner Wren", [
               "Wren: I can cross the whole town without touching a road!",
               "Wren: ...the hedges moved. They do that."])],
-         {(10, 17): ["Signpost: Vespera Gym - the League says one gym per region. The lot trains hedges meanwhile."],
+         {(10, 17): ["Signpost: Vespera Gym - Warden Vexa's ring, centre-south. Beat her coaches to climb it."],
           (13, 8): ["Signpost: Vespera City.", "North: Route 15 - the coast road in.",
                     "West: Route 18 - the hedge roads north.", "South: Route 19 - the sea crossing.",
                     "The Safari Gate is north-east: closed for a wild survey."],
@@ -624,7 +771,23 @@ TOWNS = [
     Town("cinderfall", "Cinderfall Island", 30, 26,
          {"w": [(0, 12), (0, 13)], "e": [(29, 12), (29, 13)]},
          _cinderfall_build,
-         [_landmark("cinderfall", "cinderfall-lab", "Cinderfall Research Lab", "Lab", "lab", 4, 4, [
+         [_gym("cinderfall", "cinderfall-gym", "Cinderfall Gym", "Prof. Calder", [
+                   "Calder: Ah, a challenger! The island heated up the moment you stepped ashore, {name}.",
+                   "Calder: My research says this ring sits on a live magma shelf. My Scimons agree - loudly.",
+                   "Calder: Four of them, all Thermal, all hungry. Let's battle!"],
+               ["Calder: Magnificent! The readings spiked on every throw!",
+                "Calder: The Volcano Disc is yours - handle its art with oven gloves."],
+               [("scorchit", 43), ("flarebit", 45), ("ashling", 47), ("scorchit-final", 50)],
+               [("Coach Kin", ["Kin: I hold the west gate - gym rules!",
+                               "Kin: Show me your form!"],
+                 ["Kin: Warm enough for you?", "Kin: Ember holds the east gate."],
+                 [("cindermite", 41)]),
+                ("Coach Ember", ["Ember: The east gate. Beat Kin first.",
+                                 "Ember: The ring has an order - it's the magma."],
+                 ["Ember: Cooled off.", "Ember: Prof. Calder's at the top. Mind the floor - it's warm."],
+                 [("emberling", 44)])],
+               "volcano", "cinderdisc", 17, 15, "thermal", 7),
+          _landmark("cinderfall", "cinderfall-lab", "Cinderfall Research Lab", "Lab", "lab", 4, 4, [
               _npc("cinderfall-researcher", 5, 5, "#e4e4ee", "#6a6f7a", "Researcher Pyx", [
                   "Pyx: The lab reads the island's breathing - magma tides, gas vents, the works.",
                   "Pyx: The mansion up the hill? We don't. It reads you."])],
@@ -648,7 +811,7 @@ TOWNS = [
           _npc("cinderfall-geologist", 14, 16, "#8e5bb0", "#3a2a4a", "Geologist Flux", [
               "Flux: The island grows a hand-span a year!",
               "Flux: The mart complains. I celebrate."])],
-         {(23, 17): ["Signpost: Cinderfall Gym - the League says one gym per region. The lot is warm to the touch."],
+         {(23, 17): ["Signpost: Cinderfall Gym - Prof. Calder's ring, south of the avenue. Beat his coaches to climb it."],
           (9, 11): ["Signpost: Cinderfall Island.", "West pier: Route 21 - the mainland crossing.",
                     "East pier: Route 20 - the isles crossing.",
                     "The Research Lab is west; the Old Mansion north-west. The mansion keeps its own hours."],

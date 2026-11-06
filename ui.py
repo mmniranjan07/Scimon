@@ -10,7 +10,7 @@ import pygame
 
 import assets
 from data import STATUS_INFO, TYPE_COLORS
-from settings import (CREAM, CREAM_2, EXP_BLUE, HP_GREEN, HP_RED, HP_YELLOW, INK, ORANGE, SHADE, STAB_BLUE,
+from settings import (CREAM, CREAM_2, EXP_BLUE, HP_GREEN, HP_RED, HP_YELLOW, INK, ORANGE, SHADE,
                       TEAL_DARK, W, H, hexc)
 
 # --------------------------------------------------------------------------- input helpers
@@ -389,13 +389,18 @@ def draw_button(surf, b, selected=False, size=24, kind="display", t=0.0):
         ic = assets.item_icon(b.icon, 2)                                  # item / disc / module icon when one exists
         if ic is None:
             name = ICON_SELECTED.get(b.icon, b.icon) if selected else b.icon
-            ic = assets.ui_icon(name, 2)
-        if not b.enabled:
-            ic = ic.copy()
-            ic.set_alpha(110)
-        surf.blit(ic, (b.rect.x + 12, b.rect.centery - ic.get_height() // 2))
-        if b.right is not None:
-            surf.blit(img, (b.rect.x + 22 + ic.get_width() + 6, b.rect.centery - img.get_height() // 2))
+            ic = assets.ui_icon(name, 2)                                  # MPW UI icon; None when absent
+        if ic is not None:
+            if not b.enabled:
+                ic = ic.copy()
+                ic.set_alpha(110)
+            surf.blit(ic, (b.rect.x + 12, b.rect.centery - ic.get_height() // 2))
+            if b.right is not None:
+                surf.blit(img, (b.rect.x + 22 + ic.get_width() + 6, b.rect.centery - img.get_height() // 2))
+            else:
+                surf.blit(img, img.get_rect(center=(b.rect.centerx + 14, b.rect.centery)))
+        elif b.right is not None:                       # no icon art anywhere: draw like a plain list row
+            surf.blit(img, (b.rect.x + 22, b.rect.centery - img.get_height() // 2))
         else:
             surf.blit(img, img.get_rect(center=(b.rect.centerx + 14, b.rect.centery)))
     elif b.sub:

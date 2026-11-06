@@ -2,25 +2,28 @@
 
 Port of V34's inventory section of engine.ts. Operations return (ok, message) so any UI -- the
 pack, the in-world Sci-Database terminal, the shop -- reports results the same way."""
-from data import (CATALOG, MODULES, ITEMS, SPECIES, SPECIES_COUNT, STARTING_CREDITS, sell_price, item_name, TECHNIQUES)
+from data import (CATALOG, MODULES, ITEMS, SPECIES, SPECIES_COUNT, STARTING_CREDITS, sell_price, item_name,
+                  TECHNIQUES, LEVEL_CAP, VITAMIN_EV_CAP, VITAMIN_EV_GAIN, EV_TOTAL_CAP)
 from monsters import PARTY_LIMIT, Scimon
+from settings import COIN_PRICE
 
 BOX_COLS, BOX_ROWS = 6, 5
 BOX_SIZE = BOX_COLS * BOX_ROWS
 BOX_COUNT = 8                         # the Sci-Database always has this many boxes, empty or not
 
-# The trainer profile's stamp case: one slot per gym in the league.  A gym leader hands over their stamp the
-# first time they are beaten (their NPC carries `stamp`: worldmap._trainer(stamp=...) -> overworld awards it).
-# Gyms that don't exist yet keep id=None so their slot shows as an undiscovered "???".
+# The trainer profile's stamp case: one slot per gym in the league, in FireRed badge order.  A gym leader
+# hands over their stamp the first time they are beaten (their NPC carries `stamp`:
+# worldmap._trainer(stamp=...) -> overworld awards it).  Slot 0 is the region's founding gym (Fern's
+# Green Gym, Epidimy); slots 1-7 are the FireRed-badge-analog gyms of the wider network's towns.
 GYM_STAMPS = (
     dict(id="green", name="Green Stamp", gym="Green Gym", leader="Fern", color=(110, 190, 90)),
-    dict(id=None, name="???", gym="???", leader="???", color=(150, 152, 150)),
-    dict(id=None, name="???", gym="???", leader="???", color=(150, 152, 150)),
-    dict(id=None, name="???", gym="???", leader="???", color=(150, 152, 150)),
-    dict(id=None, name="???", gym="???", leader="???", color=(150, 152, 150)),
-    dict(id=None, name="???", gym="???", leader="???", color=(150, 152, 150)),
-    dict(id=None, name="???", gym="???", leader="???", color=(150, 152, 150)),
-    dict(id=None, name="???", gym="???", leader="???", color=(150, 152, 150)),
+    dict(id="boulder", name="Boulder Stamp", gym="Stonreach Gym", leader="Bastian", color=(169, 129, 80)),
+    dict(id="cascade", name="Cascade Stamp", gym="Tidebrook Gym", leader="Nerissa", color=(61, 132, 198)),
+    dict(id="thunder", name="Thunder Stamp", gym="Emberport Gym", leader="Lt. Volta", color=(232, 195, 58)),
+    dict(id="rainbow", name="Rainbow Stamp", gym="Verdance Gym", leader="Sylva", color=(90, 166, 63)),
+    dict(id="soul", name="Soul Stamp", gym="Vespera Gym", leader="Vexa", color=(142, 91, 176)),
+    dict(id="marsh", name="Marsh Stamp", gym="Aurum Gym", leader="Cerebra", color=(91, 91, 214)),
+    dict(id="volcano", name="Volcano Stamp", gym="Cinderfall Gym", leader="Calder", color=(224, 89, 47)),
 )
 
 
@@ -73,6 +76,13 @@ class GameState:
         self.abilities = set()               # field ability ids: aquaboard, aerolift, lumen, excavator, hydroclimb
         self.snatched = None                 # a party Sci-Mon taken by the Bandits (Act 2 loss) until it is recovered
         self.playtime = 0.0                  # seconds of play, ticked by Engine.step
+        self.repel_steps = 0                 # steps left on the active Repel Field (wild encounters are suppressed)
+        self.vs_charge = 0                   # steps walked since the Vs. Scanner was last used (rematches)
+        self.cycling = False                 # the Cycle Rig is mounted (outdoors, toggled with B)
+        self.coins = 0                       # Game Corner coins (bought with credits at the counter)
+        self.daycare = []                    # the Day-Care: [{"mon": Scimon, "steps": int}] in slot order
+        self.daycare_egg = None              # species id of an egg waiting at the Day-Care (compatibility roll won)
+        self.safari = None                   # the Safari Reserve session: {"balls", "steps"} while inside
 
     # ---- trainer profile ------------------------------------------------------------------
     def award_stamp(self, gym_id):
@@ -150,6 +160,15 @@ class GameState:
         self.add_item(item_id, qty)
         return True, f"Bought {qty}x - \u00a2{cost}"
 
+    def buy_coins(self, qty=1):
+        """The Game Corner counter: credits -> coins (FireRed's coin purchase, no sell-back)."""
+        cost = COIN_PRICE * qty
+        if self.credits < cost:
+            return False, "Not enough credits!"
+        self.add_credits(-cost)
+        self.coins += qty
+        return True, f"Bought {qty} coin{'s' if qty != 1 else ''} - \u00a2{cost}"
+
     def sell(self, item_id, qty=1):
         d = CATALOG.get(item_id)
         if d and d.permanent:
@@ -208,6 +227,22 @@ class GameState:
         self.party.append(mon)
         return True, f"{mon.name} joined your party."
 
+    # ---- field items (no Sci-Mon target: the Repel Fields) -------------------------------
+    def use_field_item(self, item_id):
+        """Use a bag item that acts on the world rather than on a Scimon.  Returns (ok, message)."""
+        d = CATALOG.get(item_id)
+        if not d:
+            return False, "Unknown item."
+        if self.qty(item_id) <= 0:
+            return False, f"You're out of {d.name}."
+        if d.repel_steps:
+            if self.repel_steps > 0:
+                return False, "A Repel Field is already active."
+            self.repel_steps = d.repel_steps
+            self.remove_item(item_id, 1)
+            return True, f"A {d.name} hums to life - wild Scimons will keep away for {d.repel_steps} steps."
+        return False, f"{d.name} can't be used that way."
+
     # ---- using / holding items ------------------------------------------------------------
     def use_item(self, item_id, uid):
         d = CATALOG.get(item_id)
@@ -222,6 +257,33 @@ class GameState:
             return False, f"{d.name} can't be used that way."
 
         changed, notes = False, []
+        if d.vitamin:
+            # a vitamin serum grants effort in one stat (FireRed's vitamins): +10 EVs, but serums only
+            # train a stat up to 100 effort, and the region's 510 total effort cap always holds
+            stat = d.vitamin
+            names = {"hp": "HP", "power": "Power", "defense": "Defense", "sp_power": "Sp. Power",
+                     "sp_defense": "Sp. Defense", "speed": "Speed"}
+            cur = int(target.evs.get(stat, 0))
+            if cur >= VITAMIN_EV_CAP:
+                return False, f"{target.name}'s {names[stat]} is already serum-trained to the cap."
+            total = sum(int(v) for v in target.evs.values())
+            if total >= EV_TOTAL_CAP:
+                return False, f"{target.name} can't gain any more effort."
+            gain = min(VITAMIN_EV_GAIN, VITAMIN_EV_CAP - cur, EV_TOTAL_CAP - total)
+            target.evs[stat] = cur + gain
+            abs_hp = target.hp
+            target.recalc_stats(keep_hp_ratio=True)
+            if stat == "hp":
+                target.hp = abs_hp                      # HP Patch raises the cap without healing (FireRed)
+            changed = True
+            notes.append(f"{names[stat]} training rose")
+        if d.level_up:
+            # the Grow Cell (Rare Candy): one level, up to the encounter policy's level cap
+            if target.level >= LEVEL_CAP:
+                return False, f"{target.name} is already at the level cap ({LEVEL_CAP})."
+            target.level_up_to(target.level + 1)
+            changed = True
+            notes.append(f"grew to Lv. {target.level}")
         if d.revive and target.hp <= 0:
             target.hp = max(1, int(target.max_hp * d.revive))
             target.status = None
@@ -238,13 +300,13 @@ class GameState:
                 notes.append(f"recovered {target.hp - before} HP")
         elif d.heal and target.hp <= 0:
             return False, f"{target.name} is offline - it needs reviving first."
-        if d.restore_stability:
-            if target.stability < target.max_stability or target.status is not None:
-                target.stability, target.status = target.max_stability, None
+        if d.energy_restore:
+            if target.energy < target.max_energy:
+                target.restore_energy()
                 changed = True
-                notes.append("stabilized")
+                notes.append("energy restored")
             elif not changed:
-                return False, f"{target.name} is already stable."
+                return False, f"{target.name}'s energy is already full."
         if d.cure and target.status is not None:
             target.status = None
             changed = True

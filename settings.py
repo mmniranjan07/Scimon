@@ -14,6 +14,33 @@ WALK_TILES_PER_SEC = 6.5
 ENCOUNTER_CHANCE = 0.12    # per step in tall grass (V34)
 FADE_TIME = 0.18           # seconds per half of a map/scene transition
 
+# FireRed QoL: hold B / Shift to run, mount the Cycle Rig with B (outdoors only, needs the key item).
+RUN_MULT = 1.6             # Running Shoes multiplier (hold B / Shift)
+BIKE_MULT = 2.1            # Cycle Rig multiplier (toggle with B)
+VS_CHARGE_STEPS = 100      # steps of walking that recharge the Vs. Scanner (FireRed's Vs. Seeker)
+POISON_STEP_PERIOD = 4     # one nanite (poison) overworld tick every N steps, like FireRed's poison walk
+
+# Day-Care (FireRed's breeding, scaled to the game's pace): two deposited Scimons bank steps as EXP,
+# may leave an egg (compatibility roll every EGG_ROLL_STEPS while both slots are filled), and eggs
+# hatch after HATCH_CYCLES * HATCH_CYCLE_STEPS of walking in the party.
+DAYCARE_SLOTS = 2
+DAYCARE_LEVEL_COST = 100   # withdrawal costs 100 credits + 100 per level gained (FireRed's formula)
+EGG_ROLL_STEPS = 100       # one compatibility roll per this many steps
+HATCH_CYCLE_STEPS = 60     # one hatch cycle per this many steps
+EGG_HATCH_LEVEL = 5        # a hatched Scimon joins the party at this level (FireRed's EGG_HATCH_LEVEL)
+INHERITED_IVS = 3          # how many IVs an egg inherits from its parents (FireRed's INHERITED_IV_COUNT)
+
+# Safari Reserve (FireRed's Safari Zone, scaled down): one session = entry fee, a fistful of Safari
+# Modules and a step budget.  The session lives on GameState (saved, like FireRed's visit).
+SAFARI_COST = 200          # entry fee in credits
+SAFARI_BALLS = 20          # Safari Modules handed over at entry
+SAFARI_STEPS = 400         # steps before the reserve escort you out
+SAFARI_FLEE_BASE = 4       # how fast skittishness rises with rarity (see safari._frlg_flee_rate)
+
+# Game Corner (Verdance): coin purse + slot machine + five-card draw.
+COIN_PRICE = 10            # credits per Game Corner coin at the counter
+SLOT_BETS = (1, 3, 10)     # coin bets per spin
+
 
 # --- SPRITE PACKS: every raw sprite path lives here (paths are relative to ASSETS) ------------------------------
 # To swap art, change a path or a grid size here -- no game logic references a file name directly.
@@ -90,6 +117,6 @@ HP_GREEN = hexc("#78c850")
 HP_YELLOW = hexc("#f0c020")
 HP_RED = hexc("#e04838")
 EXP_BLUE = hexc("#38a8e0")
-STAB_BLUE = hexc("#5b8fd6")
+ENERGY_GOLD = hexc("#e8b232")
 VOID = hexc("#0a0c10")
 WHITE = (255, 255, 255)

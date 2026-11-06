@@ -124,7 +124,10 @@ NPCS = [
         "Pim: Folks say a Scimon sleeps in the cave, but the survey team won't let anyone near it."]),
     _npc("epi-odo", 6, 17, "#7f9ec9", "#3f4a5a", "Fisher Ora", [
         "Ora: Nothing bites in the west lake, but it's calming just to sit here.",
-        "Ora: The lake feeds the fountain through an old channel under the road."]),
+        "Ora: The lake feeds the fountain through an old channel under the road."],
+        gives="probe_rod",
+        gift_line="Ora: You'll want this, {name} - my old Probe Rod. Face the water, cast, and see "
+                  "what bites."),
     _npc("epi-fenn", 22, 15, "#8fae6f", "#4a5a34", "Gardener Fenn", [
         "Fenn: These cottages all have window boxes - I plant them every spring.",
         "Fenn: Mind the pond, {name}, the bank is slippery."]),
@@ -183,7 +186,7 @@ BUILDINGS = [
                   ], [("petalug", 12), ("florabot", 14)],
                       post=["Fern: Magnificent, {name}!",
                             "Fern: The Green Gym is proud to have rooted for you. Come back any time."],
-                      facing="down", stamp="green", disc="verdantdisc",
+                      facing="down", stamp="green", disc="verdantdisc", module="abl_aerolift",
                      requires=("gym-sora", "gym-rook"),
                      locked=["Fern: Not so fast, {name}!",
                              "Fern: The ring has an order - Sora first, then Rook.",
@@ -223,7 +226,7 @@ BUILDINGS = [
                      "Bram: Welcome to the Epidimy Supply Mart, {name}!",
                      "Bram: Same stock as the Riven shop, just closer to the highland."], service="shop")],
                       PALETTES["store"], spec="mart"),
-              shop=[("repaircell", 200), ("nanorepair", 600), ("stabilizer", 300), ("standard", 200),
+              shop=[("repaircell", 200), ("nanorepair", 600), ("stabilizer", 300), ("chargecell", 450), ("standard", 200),
                     ("cryo", 600), ("magnetic", 600), ("bio", 600)], area=AREA_ID, pass_item="epipass"),
 ]
 DOOR_INDEX = {b.door: b for b in BUILDINGS}

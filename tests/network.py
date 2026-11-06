@@ -22,15 +22,18 @@ missing = EXPECT - set(routes.AREAS) - {"overworld"}
 assert not missing, f"missing areas: {sorted(missing)}"
 assert routes.validate()
 
-# ---- 2) the hidden-chest rule: at most one town + one route, both with real catalogue loot
+# ---- 2) the hidden-chest rule: at most one town + one route + one wild place, real catalogue loot
 chest_areas = list(routes.CHESTS)
 styled = [a for a in chest_areas if a == "overworld" or routes.AREAS[a].styled]
-assert len(styled) <= 1 and len(chest_areas) - len(styled) <= 1, chest_areas
+places = [a for a in chest_areas if a in routes.PLACE_AREAS]
+assert len(styled) <= 1, chest_areas
+assert len(chest_areas) - len(styled) - len(places) <= 1, chest_areas
+assert len(places) <= 1, chest_areas
 for area, chests in routes.CHESTS.items():
     for c in chests:
         for item, n in c["loot"]:
             assert item in CATALOG and n > 0, (area, c)
-assert {"epidimy", "route4"} <= set(routes.CHESTS), routes.CHESTS
+assert {"epidimy", "route4", "ascent"} <= set(routes.CHESTS), routes.CHESTS
 
 # ---- 3) every new map renders (props, buildings, glows, chest props)
 pygame.init(); pygame.display.set_mode((320, 240))
@@ -172,6 +175,49 @@ assert eng.top is ovs
 for item, n in ec["loot"]:
     assert eng.state.qty(item) == before_e[item] + n, (item, eng.state.qty(item))
 
+# ---- 7) the Ascent: the Hydroclimb item ball, the waterfall shortcut and the sealed pocket
+import map as map_mod
+ovs.building = None
+ovs.map = ovs._get_map(None, "ascent")
+ovs._load_npcs()
+ovs.player.place(*ow.AREA_STARTS["ascent"], "up")
+ovs.map.sync_state(eng.state)
+run(0.3)
+ball = routes.ITEM_BALLS["ascent"][0]
+bx, by = ball["tile"]
+before_b = {i: eng.state.qty(i) for i, _ in ball["loot"]}
+approach = next((bx + dx, by + dy) for dx, dy in DIRS.values()
+                if not ovs.map.blocked(bx + dx, by + dy, ovs._npc_rects()))
+goto(approach)
+face = next(d for d, (dx, dy) in DIRS.items() if ovs.player.tile[0] + dx == bx and ovs.player.tile[1] + dy == by)
+held["d"] = face; run(0.12); held["d"] = None
+key(pygame.K_RETURN); run(0.2)
+for _ in range(12):
+    if eng.top is ovs: break
+    key(pygame.K_RETURN); run(0.15)
+for item, n in ball["loot"]:
+    assert eng.state.qty(item) == before_b[item] + n, (item, eng.state.qty(item), before_b[item])
+assert "ascent:falls-ball" in eng.state.opened_chests
+assert "hydroclimb" in eng.state.abilities, "the item ball did not unlock Hydroclimb"
+from monsters import create_scimon
+eng.state.party = [create_scimon("aquabit", 20)]       # Hydro in party: the ability becomes usable
+ovs._sync_abilities()
+falls = [(x, y) for y in range(ovs.map.h) for x in range(ovs.map.w) if ovs.map.tile_at(x, y) == routes.FALLS_TILE]
+assert falls and not any(ovs.map.is_solid(x, y) for x, y in falls), "Hydroclimb did not open the falls"
+shot("net_falls")
+# the pocket chest behind the falls opens and syncs like every other chest
+pc = routes.CHESTS["ascent"][0]
+px_, py_ = pc["tile"]
+pocket_map = map_mod.TileMap.route("ascent")
+assert pocket_map.interactable_at(px_, py_) is not None, "the pocket chest prop is missing"
+pocket_map.sync_state(eng.state)                      # still closed (never opened yet)
+before_p = {i: eng.state.qty(i) for i, _ in pc["loot"]}
+pocket_map.interactable_at(px_, py_).interact(eng.state)
+for item, n in pc["loot"]:
+    assert eng.state.qty(item) == before_p[item] + n, (item, eng.state.qty(item))
+assert "ascent:falls-pocket" in eng.state.opened_chests
+shot("net_ascent_pocket")
+
 # a wipe in a far town sends the player back to the nearest *visited* healer (never forward to an unseen area)
 eng.state.visited_areas |= {"stonreach"}
 ovs.building = None
@@ -185,4 +231,5 @@ assert ovs.map.area == healer["area"], ovs.map.area
 shot("net_blackout")
 
 print("OK network: 42 areas validated + rendered; Riven->Epidimy->Mossmere->Stonreach->Crescent->Tidebrook walked;"
-      " both hidden chests opened and synced; far-wipe returns to the nearest visited healer")
+      " hidden chests + the Ascent item ball and falls pocket opened and synced;"
+      " far-wipe returns to the nearest visited healer")

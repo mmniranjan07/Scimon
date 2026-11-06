@@ -970,7 +970,7 @@ class TitleScene(Scene):
             b = Button("PRESS START", (W // 2 - 190, 440, 380, 62), accent=True)
             draw_button(surf, b, selected=True, size=24)
         text(surf, "A world of autonomous machines awaits.", (W // 2, 540), "body", 36, (190, 214, 204), anchor="center")
-        text(surf, "Arrows/WASD move   Enter/Space/Z confirm   Esc/X back   I pack   H type guide   M sound   F3 hitboxes",
+        text(surf, "Arrows/WASD move   Enter/Space/Z confirm   Esc/X back   I pack   H help   M sound   F3 hitboxes",
              (W // 2, 604), "body", 24, (150, 180, 170), anchor="center")
 
 
@@ -1042,7 +1042,7 @@ class StarterScene(Scene):
         for k, ln in enumerate(wrap_text(sp.desc, "body", 28, info.w - 48)[:2]):
             text(surf, ln, (info.x + 24, info.y + 48 + k * 24), "body", 28, INK)
         rows = [[("HP", sp.b_hp), ("PWR", sp.b_power), ("DEF", sp.b_def), ("SPD", sp.b_speed)],
-                [("S.PWR", sp.b_sp), ("S.DEF", sp.b_spdef), ("STB", sp.b_stab)],
+                [("S.PWR", sp.b_sp), ("S.DEF", sp.b_spdef), ("EN", sp.b_energy)],
                 [("ABL", sp.ability)]]
         for r, row in enumerate(rows):
             for c, (lab, v) in enumerate(row):

@@ -35,6 +35,8 @@ class StateId(enum.Enum):
     DATABASE = "database"
     SERVICE = "service"
     HELP = "help"
+    CASINO = "casino"
+    DAYCARE = "daycare"
 
 
 class Scene:
@@ -233,7 +235,7 @@ class Engine:
                 self._saw_touch_mouse = True
             if self.layout.mode != "plain":
                 # only clicks inside the game reach it (with game coordinates); clicks on a control are swallowed
-                if (self.controls and self.controls.hit(e.pos)) or not self._in_game(e.pos):
+                if (self.controls and self.controls.hit(e.pos, self)) or not self._in_game(e.pos):
                     return
                 e.pos = self._to_game(e.pos)
         if e.type == pygame.QUIT:
@@ -265,7 +267,7 @@ class Engine:
         self._draw_scenes(self.canvas)             # touch layout: game on its own 960x640 surface ...
         self.screen.fill(touch.BG)
         self.screen.blit(self.canvas, self.layout.game_pos)
-        self.controls.draw(self.screen)            # ... with the controls drawn around / over it
+        self.controls.draw(self.screen, self)      # ... with the controls drawn around / over it
         return self.screen
 
     async def run_async(self):

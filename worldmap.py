@@ -47,7 +47,7 @@ LEDGE_DOWN = "l"                                 # one-way ledge: hop DOWN over 
 # Solid scenery letters shared by every outdoor area (town + routes/places, see routes.py):
 #   X loot chest   n cinder rock   o lava pool   Z monument   C moon crystal   t tunnel beam   K garden arch
 #   d mooring post   J lighthouse (2x2 footprint, prop drawn from its top-left tile)
-OVERWORLD_SOLID = set("TWwBhkHfcbNMOxyYSmauqrQijvlL" "XnZoctKdJ")
+OVERWORLD_SOLID = set("TWwBhkHfcbNMOxyYSmauqrQijvlL" "XnZoctKdJ" "^*")
 INTERIOR_SOLID = set("#CSMKbp@ ")
 PLAYER_START = (38, 5)
 
@@ -79,28 +79,36 @@ POND_REGIONS = _water_regions()
 
 
 # --------------------------------------------------------------------------- NPCs
-def _npc(id, x, y, color, hair, name, lines, heals=False, service=None, gives=None, look=None):
-    """`gives`: item id this NPC hands over the first time the player talks to them and lacks it (Town Pass).
-    `look`: an explicit MPW look code (see sprites.make_look); None = the stable per-id look."""
+def _npc(id, x, y, color, hair, name, lines, heals=False, service=None, gives=None, look=None,
+         gate=None, gift_line=None, gate_hint=None, require_stamps=None, stamp_locked=(), aside=None):
+    """`gives`: item id this NPC hands over the first time the player talks to them and lacks it (Town Pass,
+    field modules, fishing rods).  `gate` restricts the handover: "flag:<story flag>" (a story milestone) or
+    "dex:<n>" (n Sci-Mon captured -- FireRed's 10-dex Flash gate); `gift_line` is spoken while handing a
+    non-pass gift over, `gate_hint` while the gate is still locked.  `require_stamps`: a badge-gate guard
+    (FireRed's Route 23 checkpoint) -- they refuse passage (`stamp_locked` lines) until the player holds that
+    many gym stamps, then step `aside` (Fern's gate-guard mechanic).  `look`: an explicit MPW look code
+    (see sprites.make_look); None = the stable per-id look."""
     d = dict(id=id, x=x, y=y, color=color, hair=hair, name=name, lines=lines, heals=heals, service=service,
-             gives=gives)
+             gives=gives, gate=gate, gift_line=gift_line, gate_hint=gate_hint,
+             require_stamps=require_stamps, stamp_locked=list(stamp_locked), aside=aside)
     if look is not None:
         d["look"] = look
     return d
 
 
 def _trainer(id, x, y, name, lines, battle, post=(), facing="down", rematch=False, ask=(), requires=(), locked=(),
-             aside=None, stamp=None, disc=None, look=None):
+             aside=None, stamp=None, disc=None, module=None, look=None):
     """A trainer NPC: scans for challengers, walks up when the player enters the 3-tile line of sight
     (overworld._trainers_think) and battles `battle` = (species id, level).  With `rematch` a beaten trainer
     offers another battle when talked to (choice: accept or deny).  With `requires`, the trainer refuses to
     battle (`locked` lines) until every listed trainer id is in GameState.beaten_trainers.  With `aside`, a
     beaten trainer steps out of the way (gym gate guards stand in single-file corridors).  A gym leader with
-    `stamp` hands their GYM_STAMPS entry to the player the first time they are beaten, and with `disc` their
-    exclusive move disc (a technique no Sci-Mon can learn any other way).  `look` pins their MPW look."""
+    `stamp` hands their GYM_STAMPS entry to the player the first time they are beaten, with `disc` their
+    exclusive move disc (a technique no Sci-Mon can learn any other way) and with `module` a field module
+    (an ability unlock, alongside the stamp).  `look` pins their MPW look."""
     d = dict(id=id, x=x, y=y, name=name, lines=list(lines), battle=tuple(battle), post=list(post),
              facing=facing, rematch=rematch, ask=list(ask), requires=tuple(requires), locked=list(locked),
-             aside=tuple(aside) if aside else None, stamp=stamp, disc=disc)
+             aside=tuple(aside) if aside else None, stamp=stamp, disc=disc, module=module)
     if look is not None:
         d["look"] = look
     return d
@@ -112,7 +120,11 @@ NPCS = [
         "Prof. Venn: Wild Scimons roam the tall grass by the Farms.",
         "Prof. Venn: Step into it to trigger an encounter.",
         "Prof. Venn: Come see me anytime, {name} - I'll restore your Scimons to full.",
-    ], heals=True),
+    ], heals=True, gives="abl_lumen", gate="dex:10",
+        gift_line="Prof. Venn: Ten distinct entries in your Scanner - remarkable! As promised, "
+                  "your lamp array is calibrated. Take the Lumen Module.",
+        gate_hint="Prof. Venn: Your Scanner's lamp array stays dark until it has logged ten distinct "
+                  "Sci-Mon. The tall grass will fill it quickly."),
     _npc("kael", 23, 9, "#c96a4a", "#5a3a2a", "Kael", [
         "Kael: So the professor gave you a Scimon too, {name}?",
         "Kael: Weaken a wild one, lower its Stability,",
@@ -219,7 +231,7 @@ BUILDINGS = [
                      "Clerk Dax: Welcome to the Riven Supply Mart, {name}!",
                      "Clerk Dax: Containment Modules, repair kits - all in stock."], service="shop")],
                       PALETTES["store"], spec="mart"),
-              shop=[("repaircell", 200), ("nanorepair", 600), ("stabilizer", 300), ("standard", 200),
+              shop=[("repaircell", 200), ("nanorepair", 600), ("stabilizer", 300), ("chargecell", 450), ("standard", 200),
                     ("cryo", 600), ("magnetic", 600), ("bio", 600)], pass_item="townpass"),
     Building("farms-a", "Riven Farms Market", "Farms", "store", (5, 6), (5, 7), (3, 1, 5, 6),
              "town/bld_farm_a.png",

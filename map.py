@@ -14,7 +14,8 @@ import interiors
 import layered_room
 import townview
 import worldmap as wm
-from routes import AREAS, CHESTS
+import routes
+from routes import AREAS, CHESTS, ITEM_BALLS
 from settings import PX, TILE, VOID, W, H, hexc
 
 
@@ -61,12 +62,48 @@ def _grass_tile():
     return assets.scaled("tiles/nature/grass.png", TILE, TILE, smooth=False)
 
 
-def draw_overworld_tile(surf, t, sx, sy, mx, my, rows):
-    """One overworld tile at pixel (sx, sy) -- a port of V34 drawOverworldTile (static parts only)."""
+# Terrain themes per encounter-zone habitat: the ground takes the tint of the Scimon that live there.
+# meadow keeps the lush default; every other habitat shifts the grass underfoot and repaints the tall
+# grass tufts -- scorched blades under volcanic packs, withered lavender in ghost patches, glow-moss in
+# caves and tunnels, dry ochre on the highland, frosted gold on the plateau, sea-grass by the water.
+_HABITAT_THEME = {
+    "meadow":   dict(tint=None,              tuft=("#4f8f3a", "#5aa042", "#4f8f3a", "#3f7a2e"), spec=("#e8c33a", "#e05a72")),
+    "forest":   dict(tint=(198, 220, 182),   tuft=("#3d7a2f", "#4c8f3a", "#3d7a2f", "#2c5f22"), spec=("#7ec850", "#5aa042")),
+    "cave":     dict(tint=(184, 204, 196),   tuft=("#5a7a62", "#6d8f74", "#5a7a62", "#496550"), spec=("#8fd0a0", "#a5e8b8")),
+    "city":     dict(tint=(224, 234, 204),   tuft=("#5aa042", "#66ad4c", "#5aa042", "#4a8f38"), spec=("#8fd05a", "#a5dc70")),
+    "ghost":    dict(tint=(206, 200, 226),   tuft=("#7a7a92", "#8f8fa8", "#7a7a92", "#66667f"), spec=("#b9b9d2", "#cfcae0")),
+    "water":    dict(tint=(194, 224, 218),   tuft=("#3a9f8f", "#4fb5a5", "#3a9f8f", "#2f8375"), spec=("#7ee0d0", "#a5ecdf")),
+    "sea":      dict(tint=(178, 214, 214),   tuft=("#2f8375", "#3f988a", "#2f8375", "#256a60"), spec=("#66d0c0", "#8fe0d5")),
+    "volcanic": dict(tint=(226, 204, 182),   tuft=("#7a5a38", "#8f6a42", "#7a5a38", "#5f462c"), spec=("#e06838", "#f0a03a")),
+    "highland": dict(tint=(231, 221, 190),   tuft=("#9a8f4a", "#b0a55a", "#9a8f4a", "#7d7438"), spec=("#cfc27a", "#e0d495")),
+    "plateau":  dict(tint=(231, 226, 199),   tuft=("#b0a578", "#c4b98c", "#b0a578", "#93865c"), spec=("#efe8c8", "#fdf8e0")),
+    "tunnel":   dict(tint=(190, 226, 224),   tuft=("#4a8a84", "#58a098", "#4a8a84", "#3a6e69"), spec=("#7ef2ff", "#a5f5ff")),
+}
+_grass_cache = {}
+
+
+def _habitat_grass(habitat):
+    """The base grass tile, multiplied by the habitat's tint (one cached surface per habitat)."""
+    theme = _HABITAT_THEME.get(habitat)
+    if not theme or not theme["tint"]:
+        return _grass_tile()
+    if habitat not in _grass_cache:
+        img = _grass_tile().copy()
+        img.fill(theme["tint"], special_flags=pygame.BLEND_MULT)
+        _grass_cache[habitat] = img
+    return _grass_cache[habitat]
+
+
+def draw_overworld_tile(surf, t, sx, sy, mx, my, rows, habitat=None):
+    """One overworld tile at pixel (sx, sy) -- a port of V34 drawOverworldTile (static parts only).
+    `habitat` (when given) themes the terrain after the area's wild Scimon: the ground underfoot takes
+    the habitat's tint and the tall-grass tufts are repainted (see _HABITAT_THEME)."""
     h = hash2(mx, my)
-    grass_like = t not in "Whrsk"
+    theme = _HABITAT_THEME.get(habitat) if habitat else None
+    base = _habitat_grass(habitat) if theme else _grass_tile()
+    grass_like = t not in "Whrsk^"
     if grass_like:
-        surf.blit(_grass_tile(), (sx, sy))
+        surf.blit(base, (sx, sy))
     ox = lambda v: sx + v * PX     # noqa: E731  16-unit -> pixels
     oy = lambda v: sy + v * PX     # noqa: E731
 
@@ -74,10 +111,17 @@ def draw_overworld_tile(surf, t, sx, sy, mx, my, rows):
         pygame.draw.rect(surf, _c(color), (ox(x), oy(y), w * PX, hh * PX))
 
     if t == "s":
-        R("#e8d3a0" if h > 0.5 else "#e0c890", 0, 0, 16, 16)
-        if h > 0.6: R("#d4b878", 4, 6, 2, 2)
-        if h < 0.25: R("#d4b878", 10, 10, 2, 2)
-        if 0.4 < h < 0.6: R("#cbab6a", 2, 11, 3, 1)
+        if habitat == "volcanic":                    # Cinderfall's shore: black ash with ember grains
+            R("#8a8078" if h > 0.5 else "#7e756d", 0, 0, 16, 16)
+            if h > 0.6: R("#5f564f", 4, 6, 2, 2)
+            if h < 0.25: R("#5f564f", 10, 10, 2, 2)
+            if 0.4 < h < 0.6: R("#e06838", 3, 10, 2, 2)
+            if h > 0.85: R("#f0a03a", 11, 4, 2, 2)
+        else:
+            R("#e8d3a0" if h > 0.5 else "#e0c890", 0, 0, 16, 16)
+            if h > 0.6: R("#d4b878", 4, 6, 2, 2)
+            if h < 0.25: R("#d4b878", 10, 10, 2, 2)
+            if 0.4 < h < 0.6: R("#cbab6a", 2, 11, 3, 1)
     elif t == "P":
         R("#cfd6dc", 0, 0, 16, 16)
         R("#bcc5cc", 0, 0, 16, 2)
@@ -85,7 +129,7 @@ def draw_overworld_tile(surf, t, sx, sy, mx, my, rows):
         if h > 0.6: R("#c3ccd2", 6, 8, 3, 3)
         if h < 0.2: R("#c3ccd2", 2, 3, 2, 2)
     elif t == "k":
-        surf.blit(_grass_tile(), (sx, sy))
+        surf.blit(base, (sx, sy))
         R("#5c6a76", 6, 4, 4, 11)
         R("#8894a0", 6, 4, 1, 11)
         R("#3f4a54", 5, 13, 6, 2)
@@ -95,16 +139,29 @@ def draw_overworld_tile(surf, t, sx, sy, mx, my, rows):
         R("#5aa0d0", 2, 3, 6, 2)
         R("#5aa0d0", 9, 9, 5, 2)
         R("#2f6f9f", 0, 14, 16, 2)
+    elif t == "^":                                       # waterfall column: the Hydroclimb shortcut
+        R("#3f86bd", 0, 0, 16, 16)
+        R("#5aa0d0", 0, 2, 16, 3)
+        R("#8fc8e8", 0, 11, 16, 3)
+        R("#eef7ff", 2 + int(h * 3), 0, 2, 12)           # a foam streak, its x varies per tile
+        R("#eef7ff", 10 - int(h * 2), 5, 1, 9)
+        R("#bfe4f5", 5, 9, 3, 4)
+        R("#2f6f9f", 0, 14, 16, 2)
     elif t == "F":
         colors = ["#e05a72", "#e8c33a", "#e88fb0", "#f0f0f0"]
         R(colors[int(h * 4) % 4], 3, 4, 3, 3)
         R("#e8c33a", 4, 5, 1, 1)
         R(colors[int(h * 7) % 4], 9, 9, 3, 3)
     elif t == "g":
-        R("#4f8f3a", 1, 5, 4, 9)
-        R("#5aa042", 6, 3, 4, 11)
-        R("#4f8f3a", 11, 6, 4, 8)
-        R("#3f7a2e", 2, 12, 12, 3)
+        c1, c2, c3, c4 = theme["tuft"] if theme else ("#4f8f3a", "#5aa042", "#4f8f3a", "#3f7a2e")
+        R(c1, 1, 5, 4, 9)
+        R(c2, 6, 3, 4, 11)
+        R(c3, 11, 6, 4, 8)
+        R(c4, 2, 12, 12, 3)
+        if theme:                                   # a habitat speck: flowers, embers, glow, frost
+            spec = theme["spec"][0 if h < 0.5 else 1]
+            sxp, syp = (3 if h > 0.3 else 12), (7 if h < 0.75 else 2)
+            R(spec, sxp, syp, 2, 2)
     elif t == "c":
         R("#5c6a76", 0, 0, 16, 16)
         R("#7a8896", 0, 2, 16, 2)
@@ -112,10 +169,10 @@ def draw_overworld_tile(surf, t, sx, sy, mx, my, rows):
             R("#3f7a2e", cx, top, 2, 6)
             R("#5be07f", cx, top - 1, 2, 2)
     elif t == "r":
-        surf.blit(_grass_tile(), (sx, sy))
+        surf.blit(base, (sx, sy))
         surf.blit(assets.scaled("tiles/nature/rocks.png", (16 + 4) * PX, 13 * PX), (sx - 2 * PX, sy + PX))
     elif t == "h":
-        surf.blit(_grass_tile(), (sx, sy))
+        surf.blit(base, (sx, sy))
         R("#8fa0ac", 0, 6, 16, 10)
         R("#c7d3da", 0, 6, 16, 2)
         R("#5f6f7a", 0, 13, 16, 3)
@@ -247,6 +304,7 @@ class TileMap:
         self.animated = []                 # props with update(dt)
         self.interactables = {}            # (tx, ty) -> object with interact(state)
         self.area, self.name = "overworld", "Riven Town"     # which outdoor area this is (routes.py) and its HUD name
+        self.dark = False                  # cave places: the Lumen ability widens the light around the player
         self.signs = {}                    # (tx, ty) of an S tile -> dialogue lines
 
     # ---- collision ----------------------------------------------------------------
@@ -313,12 +371,17 @@ class TileMap:
         a = AREAS[area_id]
         m = cls("overworld", a.rows, a.npcs)
         m.area, m.name, m.signs = a.id, a.name, dict(a.signs)
+        m.dark = getattr(a, "dark", False)
         m._render_styled(a) if a.styled else m._render_route()
         for ch in CHESTS.get(area_id, ()):                 # outdoor loot chests (layered_room.FieldChest)
             c = layered_room.field_chest(ch["tile"], ch["key"], ch["loot"])
             m.props.append(c)
             m.animated.append(c)
             m.interactables[c.tile] = c
+        for ib in ITEM_BALLS.get(area_id, ()):             # item balls lying in the road (layered_room.ItemBall)
+            b = layered_room.item_ball(ib["tile"], ib["key"], ib["loot"])
+            m.props.append(b)
+            m.interactables[b.tile] = b
         return m
 
     @classmethod
@@ -345,10 +408,16 @@ class TileMap:
 
     def _render_route(self):
         """The routes' renderer: same ground and scenery as the town, plus any landmark buildings (gate huts,
-        the Route 10 nook, the day-care) -- walk-behind, with name tags like the towns'."""
+        the Route 10 nook, the day-care) -- walk-behind, with name tags like the towns'.  The terrain is themed
+        per encounter zone: every tile takes the tint of the habitat of the Scimon that live there."""
         s = pygame.Surface((self.px_w, self.px_h))
         s.fill(VOID)
-        townview.draw_ground(s, self.rows, draw_overworld_tile)
+        habitats = routes.habitat_grid(self.area)
+
+        def themed_tile(surf, t, sx, sy, mx, my, rows, habitat=None):
+            draw_overworld_tile(surf, t, sx, sy, mx, my, rows,
+                                habitat=habitat or (habitats[my][mx] if habitats else None))
+        townview.draw_ground(s, self.rows, themed_tile, habitats)
         a = AREAS[self.area]
         origins = {}
         if getattr(a, "buildings", ()):

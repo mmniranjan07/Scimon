@@ -169,6 +169,11 @@ ovs.player.place(5, 6, "up"); ovs.interact(); eng.step(0.1)
 assert eng.top.state_id == StateId.DIALOGUE and eng.top.choices
 labels = [lab for lab, _ in eng.top.choices]
 assert labels == ["BATTLE!", "REPAIR", "NOT NOW"], labels
+for _ in range(8):                                         # dismiss the ask lines; the choice row opens after
+    key(pygame.K_RETURN); eng.step(0.1)
+    if getattr(eng.top, "asking", False):
+        break
+assert getattr(eng.top, "asking", False), "the rematch choice row never opened"
 key(pygame.K_RIGHT); key(pygame.K_RETURN); eng.step(0.2)   # choose REPAIR (middle choice: RIGHT from BATTLE!)
 assert all(m.hp == m.max_hp for m in st.party), "Kael's repair did not heal"
 print("kael: fights at the counter, rematches, and still repairs")

@@ -1,4 +1,4 @@
-"""Touch / mobile support: an on-screen D-pad with A, B and PACK buttons.
+"""Touch / mobile support: an on-screen D-pad with A, B, PACK and (once Aerolift works) AERO buttons.
 
 The game itself always renders to a fixed 960x640 surface.  On a touch device the engine opens a bigger
 window and places that surface inside it, so the controls never cover the game:
@@ -124,7 +124,8 @@ def compute_layout(win, touch):
 
 
 def geometry(layout):
-    """Control shapes in canvas pixels: dict(dpad=(cx,cy,r), a=(cx,cy,r), b=(cx,cy,r), pack=(x,y,w,h))."""
+    """Control shapes in canvas pixels: dict(dpad=(cx,cy,r), a=(cx,cy,r), b=(cx,cy,r), pack=(x,y,w,h),
+    aero=(x,y,w,h)).  The aero pill only exists once the Aerolift field ability is usable."""
     cw, ch = layout.size
     if layout.mode == "side":
         gx = layout.game_pos[0]
@@ -135,7 +136,8 @@ def geometry(layout):
         return dict(dpad=(gx // 2, 410, pr),
                     a=(rcx + int(br * 0.85), 410 - int(br * 0.8), br),
                     b=(rcx - int(br * 0.85), 410 + int(br * 0.8), br),
-                    pack=(rcx - pw // 2, 90, pw, 60))
+                    pack=(rcx - pw // 2, 90, pw, 60),
+                    aero=(rcx - pw // 2, 170, pw, 56))
     if layout.mode == "stack":
         top, ah = H, ch - H
         cy = top + int(ah * 0.56)
@@ -144,11 +146,13 @@ def geometry(layout):
         return dict(dpad=(260, cy, pr),
                     a=(730 + int(br * 0.85), cy - int(br * 0.8), br),
                     b=(730 - int(br * 0.85), cy + int(br * 0.8), br),
-                    pack=(420, top + int(ah * 0.12) - 32, 180, 64))
+                    pack=(420, top + int(ah * 0.12) - 32, 180, 64),
+                    aero=(420, top + int(ah * 0.12) + 44, 180, 56))
     return dict(dpad=(125, H - 130, 95),                         # overlay
                 a=(W - 60, H - 150, 52),
                 b=(W - 140, H - 72, 52),
-                pack=(W // 2 - 65, H - 62, 130, 50))
+                pack=(W // 2 - 65, H - 62, 130, 50),
+                aero=(W // 2 - 65, H - 128, 130, 50))
 
 
 def _dist(pos, c):
@@ -197,22 +201,35 @@ class TouchControls:
         engine.dispatch(pygame.event.Event(pygame.KEYDOWN, key=k, mod=0, unicode="", scancode=0))
 
     # ---- hit testing ---------------------------------------------------------------------
-    def _pick(self, pos):
-        """Name of the control under `pos` (generous touch radius, nearest centre wins), else None."""
+    def _pick(self, pos, engine=None):
+        """Name of the control under `pos` (generous touch radius, nearest centre wins), else None.
+        The aero pill only exists while the Aerolift ability is usable."""
         best, best_ratio = None, 1.0
         for name in ("dpad", "a", "b"):
             cx, cy, r = self.geo[name]
             ratio = _dist(pos, (cx, cy)) / (r * (1.3 if name == "dpad" else 1.25))
             if ratio <= best_ratio:
                 best, best_ratio = name, ratio
-        px, py, pw, ph = self.geo["pack"]
-        if px - 10 <= pos[0] <= px + pw + 10 and py - 10 <= pos[1] <= py + ph + 10:
-            return "pack"
+        if self._aero_usable(engine):
+            for name in ("pack", "aero"):
+                px, py, pw, ph = self.geo[name]
+                if px - 10 <= pos[0] <= px + pw + 10 and py - 10 <= pos[1] <= py + ph + 10:
+                    return name
+        else:
+            px, py, pw, ph = self.geo["pack"]
+            if px - 10 <= pos[0] <= px + pw + 10 and py - 10 <= pos[1] <= py + ph + 10:
+                return "pack"
         return best
 
-    def hit(self, pos):
+    def _aero_usable(self, engine):
+        if engine is None or getattr(engine, "state", None) is None:
+            return False
+        import abilities
+        return abilities.can_use(engine.state, "aerolift")
+
+    def hit(self, pos, engine=None):
         """True if a (mouse-style) point lies on a control: such clicks must not reach the game underneath."""
-        return self.layout.mode == "overlay" and self._pick(pos) is not None
+        return self.layout.mode == "overlay" and self._pick(pos, engine) is not None
 
     def _dir_at(self, pos):
         cx, cy, r = self.geo["dpad"]
@@ -235,7 +252,7 @@ class TouchControls:
         """Process a finger event at canvas position `pos`. Returns True when it landed on a control."""
         fid = getattr(e, "finger_id", 0)
         if e.type == _FINGER[0]:                                        # down
-            name = self._pick(pos)
+            name = self._pick(pos, engine)
             if name is None:
                 return False
             self.fingers[fid] = name
@@ -244,7 +261,8 @@ class TouchControls:
             else:
                 self.pressed.add(name)
                 vibrate(10)
-                self._key(engine, {"a": pygame.K_RETURN, "b": pygame.K_x, "pack": pygame.K_i}[name])
+                self._key(engine, {"a": pygame.K_RETURN, "b": pygame.K_x, "pack": pygame.K_i,
+                                   "aero": pygame.K_f}[name])
             return True
         name = self.fingers.get(fid)
         if name is None:
@@ -320,13 +338,23 @@ class TouchControls:
             s.blit(t, t.get_rect(center=(pw // 2, ph // 2)))
             row[down] = s
         img["pack"] = row
+        ax, ay, aw, ah = self.geo["aero"]
+        row = {}
+        for down in (False, True):
+            s = pygame.Surface((aw, ah), pygame.SRCALPHA)
+            pygame.draw.rect(s, (36, 96, 110, 215) if down else (23, 44, 52, 190), (0, 0, aw, ah), border_radius=ah // 3)
+            pygame.draw.rect(s, (150, 230, 220, 190), (0, 0, aw, ah), 3, border_radius=ah // 3)
+            t = ui.render_text("AERO", "display", max(10, int(ah * 0.3)), (214, 244, 240))
+            s.blit(t, t.get_rect(center=(aw // 2, ah // 2)))
+            row[down] = s
+        img["aero"] = row
         if self.alpha < 1.0:                        # translucent overlay: bake the opacity in once
             for v in img.values():
                 for s in (v.values() if isinstance(v, dict) else ()):
                     s.set_alpha(int(255 * self.alpha))
         self._img = img
 
-    def draw(self, surf):
+    def draw(self, surf, engine=None):
         if self._img is None:
             self._build()
         img = self._img
@@ -338,5 +366,8 @@ class TouchControls:
             parts.append((img[name][name in self.pressed], (bx - br - 3, by - br - 3)))
         px, py, _, _ = self.geo["pack"]
         parts.append((img["pack"]["pack" in self.pressed], (px, py)))
+        if self._aero_usable(engine):                     # the fly pill appears only once Aerolift works
+            ax, ay, _, _ = self.geo["aero"]
+            parts.append((img["aero"]["aero" in self.pressed], (ax, ay)))
         for s, pos in parts:
             surf.blit(s, pos)

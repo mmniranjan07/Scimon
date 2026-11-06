@@ -39,7 +39,13 @@ for rec in DB["species"]:
     assert sp.dex == rec["dex"] and sp.name == rec["name"], rec["id"]
     assert sp.catch_rate == rec["catch_rate"] and sp.xp_yield == rec["xp_yield"]
     assert sp.ability == rec["ability"] and list(sp.types) == list(rec["types"])
-    assert [(lv, t) for lv, t in sp.learnset] == [(m["level"], m["technique_id"]) for m in rec["learnset"]]
+    # the Phase-A depth patch deterministically appends new techniques to type-matched learnsets, so the
+    # source list must survive as an in-order subsequence (all original entries, same relative order)
+    _loaded = [(lv, t) for lv, t in sp.learnset]
+    _src = [(m["level"], m["technique_id"]) for m in rec["learnset"]]
+    _it = iter(_loaded)
+    assert all(any(x == y for y in _it) for x in _src), rec["id"]
+    assert len(_loaded) <= len(_src) + 8, rec["id"]
     assert sp.base == tuple(rec["base_stats"][k] for k in
                             ("hp", "power", "defense", "sp_power", "sp_defense", "speed", "stability"))
     _src_facts += 1

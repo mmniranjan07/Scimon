@@ -8,7 +8,8 @@ Tile legend = the overworld legend in worldmap.py, using only tiles the game alr
   s sand   W ocean (solid)   Q palm   i sprout   j beach rock   v tide pool   z sand flowers   -- beach dressing
   R bridge   I pier planks   V volcanic ground   U sea-glass decal            (walkable, see townview.draw_ground)
   X loot chest   n cinder rock   o lava pool   Z monument   C moon crystal   t tunnel beam   K garden arch
-  d mooring post   J lighthouse (2x2 footprint)                       (solid props, see townview.build_props)
+  d mooring post   J lighthouse (2x2 footprint)   * item ball   ^ waterfall (Hydroclimb shortcut)
+                                                                      (solid props, see townview.build_props)
 The ridges of the reference are `l` ledges: walk into one from the tile above and you hop over it; from the sides or below it blocks. Its stairs are `P` gaps; the leafy undergrowth is walkable lawn.
 
 Areas are joined by LINKS: stepping on a link tile fades to the target area.  validate() (run at import, like worldmap's)
@@ -90,15 +91,17 @@ ROUTE1_NPCS = [
 class Area:
     """An outdoor map.  `styled` areas (Epidimy Town, the towns in towns.py) are drawn by their own renderer and carry
     buildings with doors.  `start` is the safe fallback spot (a wipe / bad save never strands the player);
-    `encounters` says whether the area has wild tall grass; `ponds` / `jets` / `cave` feed the styled renderer."""
+    `encounters` says whether the area has wild tall grass; `ponds` / `jets` / `cave` feed the styled renderer;
+    `dark` cave places sit in near-blackness until the Lumen ability widens the light around the player."""
 
     def __init__(self, id, name, rows, signs=None, npcs=(), buildings=(), styled=False,
-                 start=None, encounters=True, ponds=(), jets=(), cave=None):
+                 start=None, encounters=True, ponds=(), jets=(), cave=None, dark=False):
         self.id, self.name, self.rows, self.signs, self.npcs = id, name, rows, signs or {}, list(npcs)
         self.buildings, self.styled = list(buildings), styled
         self.start = start
         self.encounters = encounters
         self.ponds, self.jets, self.cave = list(ponds), list(jets), cave
+        self.dark = dark
         self.w, self.h = len(rows[0]), len(rows)
 
 
@@ -153,11 +156,42 @@ ZONE_TABLE = {
     "ascent": [("plateau", "P", [(0, 0, 47, 10)]), ("highland", "P", [(0, 11, 47, 21)])],
     "mt_crescent": [("cave", "P", None)],
     "hollowgate": [("tunnel", "P", None)],
+    # the Vespera Safari Reserve: four sub-zones, one habitat each (FireRed's Safari Zone areas)
+    "safari": [("water", "s", [(2, 2, 33, 8)]), ("highland", "g", [(2, 9, 9, 22)]),
+               ("forest", "g", [(26, 9, 33, 24)]), ("meadow", "g", [(11, 9, 24, 24)])],
+}
+
+# Zone level bands for places the Sci-Database has no survey records for (the reserve's wardens set
+# their own bands: a gym-6 region, so Vespera's ceiling applies through ZONE_GYM below).
+BAND_OVERRIDES = {
+    ("safari", "meadow"): (16, 26), ("safari", "water"): (18, 28),
+    ("safari", "forest"): (20, 30), ("safari", "highland"): (22, 32),
 }
 
 _DB_BANDS = {(b["area_id"], h["id"]): (b["min_level"], b["max_level"])
              for h in _HABITATS.values() for b in h["source_area_level_bands"]}
 DEFAULT_BAND = (2, 16)
+
+
+def habitat_grid(area):
+    """Per-tile habitat ids for an outdoor area: the habitat of the zone governing each tile, or None on
+    safe ground.  A zone themes its whole rectangle (the terrain around the wild Scimon), not just the
+    encounter letters -- the map renderer tints the ground after the Scimon that live there."""
+    rows = AREA_ROWS.get(area)
+    if not rows:
+        return None
+    grid = [[None] * len(rows[0]) for _ in rows]
+    for z in ENCOUNTER_ZONES.get(area, ()):
+        if z["rects"] is None:
+            rects = [(0, 0, len(rows[0]) - 1, len(rows) - 1)]
+        else:
+            rects = z["rects"]
+        for (x0, y0, x1, y1) in rects:
+            for y in range(max(0, y0), min(len(rows), y1 + 1)):
+                for x in range(max(0, x0), min(len(rows[0]), x1 + 1)):
+                    if grid[y][x] is None:
+                        grid[y][x] = z["habitat_id"]
+    return grid
 
 
 def _build_zones():
@@ -166,7 +200,7 @@ def _build_zones():
     for area, specs in ZONE_TABLE.items():
         lst = []
         for i, (habitat, tiles, rects) in enumerate(specs):
-            band = list(_DB_BANDS.get((area, habitat), DEFAULT_BAND))
+            band = list(BAND_OVERRIDES.get((area, habitat)) or _DB_BANDS.get((area, habitat), DEFAULT_BAND))
             # extend the band minimum downward when first forms can't reach the original floor
             first_floors = [SPECIES[s].max_wild_level for f in _FAM.values()
                             if habitat in f["normal_habitats"] for s in f["chain_ids"]
@@ -198,9 +232,14 @@ ZONE_GYM = {
     "route10": 4, "route12": 4, "route13": 4, "route14": 4, "mt_crescent": 4,
     "route15": 5, "route16": 5, "route17": 5, "route18": 5,
     "route19": 5, "route20": 5, "route21": 5, "seaglass": 5, "hollowgate": 5,
+    "safari": 6,                              # the reserve prepares you for Vespera's own gym
     "ascent": 7,                                                             # postgame zone
 }
 POSTGAME_ZONES = {"ascent"}                # explicit postgame designations (ceiling 50 after the boss)
+
+# The cave places the Excavator ability can burrow out of (FireRed's Escape Rope): K_g warps the
+# player back to the mouth they came in through (the network's link arrival into the place).
+CAVE_PLACES = ("mt_crescent", "hollowgate", "ascent")
 
 from encounters import GYM_REFERENCE, POSTGAME_WILD_CAP, POSTGAME_STORY_FLAG
 
@@ -251,20 +290,113 @@ for _t in towns.TOWNS:
                         start=_t.start, ponds=_t.POND_REGIONS)
 for _k, _r in kanto.AREAS.items():
     AREAS[_k] = Area(_k, _r.name, _r.rows, _r.signs, _r.npcs, getattr(_r, "buildings", ()),
-                     start=_r.start, encounters=_r.encounters)
+                     start=_r.start, encounters=_r.encounters, dark=(_k in CAVE_PLACES))
 for _k, _v in kanto.LINKS.items():
     LINKS.setdefault(_k, {}).update(_v)
 HEALERS_EXTRA = towns.HEALERS + kanto.HEALERS
 
+# ---------------------------------------------------------------------------
+# The Vespera Safari Reserve (FireRed's Safari Zone): four fenced sub-zones over one big map -- the
+# entry meadow, the north wetland, the west ridge and the east grove -- each with its own habitat
+# table above.  You cannot walk here: the warden at Vespera's Safari Gate warps you in once the
+# session is paid for, and the south gate's LINK tiles walk you back out to the town.
+SAFARI_AREA = "safari"
+SAFARI_ARRIVAL = (17, 27)               # where the warden sets you down (never a link tile)
+SAFARI_W, SAFARI_H = 36, 30
+
+
+def _safari_rows():
+    """The reserve grid, built deterministically (no pygame, no random): a sand wetland across the
+    north, a rocky ledge ridge in the west, a bushy grove in the east, a checked meadow in the
+    middle, all inside a tree ring, with the gate road to Vespera at the south."""
+    w, h = SAFARI_W, SAFARI_H
+    g = [["G"] * w for _ in range(h)]
+
+    def put(x0, y0, x1, y1, ch):
+        for y in range(max(0, y0), min(h - 1, y1) + 1):
+            for x in range(max(0, x0), min(w - 1, x1) + 1):
+                g[y][x] = ch
+    put(0, 0, w - 1, 0, "T")            # the tree ring
+    put(0, h - 1, w - 1, h - 1, "T")
+    put(0, 0, 0, h - 1, "T")
+    put(w - 1, 0, w - 1, h - 1, "T")
+    put(2, 2, 33, 8, "s")               # the north wetland: sand, ponds, tide pools
+    put(12, 4, 17, 7, "w")
+    put(20, 3, 24, 6, "w")
+    for x, y in ((6, 7), (9, 3), (18, 5), (26, 4), (30, 7)):
+        g[y][x] = "v"
+    put(2, 9, 9, 22, "g")               # the west ridge: grass over rocks, one hop-down ledge
+    put(2, 12, 9, 12, "l")
+    for y in range(9, 23):
+        for x in range(2, 10):
+            if g[y][x] == "g" and (x * 5 + y * 11) % 13 == 0:
+                g[y][x] = "r"
+    put(11, 9, 24, 24, "G")             # the middle meadow: checked lawn and tall grass
+    for y in range(10, 25):
+        for x in range(11, 25):
+            if (x * 7 + y * 3) % 4 < 2:
+                g[y][x] = "g"
+    put(26, 9, 33, 24, "g")             # the east grove: grass, bushes, tree clumps
+    for y in range(9, 25):
+        for x in range(26, 34):
+            if (x * 13 + y * 5) % 11 == 0:
+                g[y][x] = "u"
+            elif (x * 3 + y * 17) % 19 == 0:
+                g[y][x] = "T"
+    put(10, 10, 10, 24, "f")            # the fences with their two gates
+    put(10, 15, 10, 16, "G")
+    put(25, 10, 25, 24, "f")
+    put(25, 15, 25, 16, "G")
+    put(14, 24, 14, 24, "S")            # the gate plaza: signs, the road, the item ball
+    put(21, 24, 21, 24, "S")
+    put(15, 24, 20, 28, "P")
+    put(16, 29, 19, 29, "P")
+    g[27][31] = "*"
+    return ["".join(r) for r in g]
+
+
+SAFARI_SIGNS = {
+    (14, 24): ["Signpost: The Safari Reserve.", "North: the wetland flats - Scimons wade there all day.",
+               "West: the ridge, where the ledges hop down and the rock-dwellers sunbathe.",
+               "East: the grove - quiet, shaded, full of shy undergrowth Scimons.",
+               "No battling in the reserve! Bait, rocks and Safari Modules only."],
+    (21, 24): ["Signpost: Ranger post 3.", "Please do not feed the wild Scimons outside of supervised baiting.",
+               "Lost Safari Modules are NOT replaceable."],
+}
+
+SAFARI_NPCS = [
+    wm._npc("safari-ranger", 16, 23, "#4a7a4a", "#2a4a2a", "Ranger Fern", [
+        "Ranger Fern: Welcome to the reserve, {name}!",
+        "Ranger Fern: No battles in here - your modules do the work. Bait calms them, rocks rile them.",
+        "Ranger Fern: Watch your step budget. The PA will call you home when it runs out.",
+    ]),
+]
+
+AREAS[SAFARI_AREA] = Area(SAFARI_AREA, "Safari Reserve", _safari_rows(), SAFARI_SIGNS, SAFARI_NPCS,
+                          start=SAFARI_ARRIVAL)
+LINKS[SAFARI_AREA] = {(17, 29): ("vespera", (18, 6), "down"), (18, 29): ("vespera", (18, 6), "down")}
+
 AREA_ROWS = {TOWN: wm.MAP_ROWS, **{a.id: a.rows for a in AREAS.values()}}
 
 # Outdoor loot chests (layered_room.FieldChest), area id -> [dict(tile, key, loot)].  House rule, enforced in
-# validate(): at most ONE town and ONE route hide a chest, so what they hold stays special.
+# validate(): at most ONE town, ONE route and ONE wild place hide a chest, so what they hold stays special.
 CHESTS = {
     epi.AREA_ID: [dict(tile=epi.CHEST, key="epidimy:chest",
                        loot=(("hydrocell", 1), ("nanorepair", 2)))],
     **kanto.CHESTS,
 }
+
+# FRLG-style item balls (layered_room.ItemBall): a pickup lying in the road, face it and confirm.
+ITEM_BALLS = {**kanto.ITEM_BALLS,
+              "safari": [dict(tile=(31, 27), key="safari:ball", loot=(("nanorepair", 2),))]}
+
+# The waterfall tile ('^'): solid rock-water that only the Hydroclimb ability makes walkable (a shortcut
+# column, climbable up and down once the ability is held).  '*' is the item-ball tile.  Both glyphs live
+# in the route legend; the punctuation keeps them clear of every letter the town renderer prop-maps.
+FALLS_TILE = "^"
+
+# The wild places (kanto.py's non-route areas): they may hide one chest of their own.
+PLACE_AREAS = frozenset({"mossmere", "mt_crescent", "hollowgate", "ascent", "seaglass"})
 
 
 # ---------------------------------------------------------------------------
@@ -335,7 +467,7 @@ def _reach(rows, w, h, start, solid, blocked=frozenset()):
     return seen
 
 
-ROUTE_LEGEND = "GFgPTurfhSlk" + "sW" + "Qijvz" + "RIVU" + "XnZoCtKdJ" + "BDe" + "Hw"
+ROUTE_LEGEND = "GFgPTurfhSlk" + "sW" + "Qijvz" + "RIVU" + "XnZoCtKdJ" + "BDe" + "Hw" + "^*"
 
 
 def validate():
@@ -371,26 +503,44 @@ def validate():
             if dst not in seen_areas:
                 seen_areas.add(dst)
                 stack.append(dst)
+    seen_areas.add(SAFARI_AREA)     # the reserve: entered by the warden's paid warp, left via its gate
     missing = (set(AREAS) | {TOWN}) - seen_areas
     assert not missing, f"areas unreachable from the town: {sorted(missing)}"
 
     # the town's north road must be the link tile, and the route must be fully walkable from the entrance
     assert wm.MAP_ROWS[0][21] == "P" and wm.MAP_ROWS[1][21] == "P", "town road does not reach the north exit"
 
-    # ---- per non-styled area: everything reachable, ledges never soft-lock, signs/NPCs/grass sane
+    # ---- per non-styled area: everything reachable, ledges never soft-lock, signs/NPCs/grass sane.
+    # Tiles sealed behind a waterfall column ('y') are exempt from the base pass but must be reachable
+    # -- and never a trap -- once the Hydroclimb ability makes the falls walkable.
     reach = {}
+    reach_ab = {}                                   # the with-Hydroclimb reach, where the area has falls
     for a in AREAS.values():
         if a.styled:
             continue
         arrivals = {(tx, ty) for links in LINKS.values() for (tgt, (tx, ty), _f) in links.values() if tgt == a.id}
+        if a.id == SAFARI_AREA:
+            arrivals = {SAFARI_ARRIVAL}         # the warden's warp lands here; its gate links walk out
         assert arrivals, f"{a.id}: no way in"
+        exits = set(LINKS.get(a.id, {}))
         seen = set()
         for s in arrivals:
             seen |= _reach(a.rows, a.w, a.h, s, solid)
         reach[a.id] = seen
         open_tiles = {(x, y) for y in range(a.h) for x in range(a.w) if a.rows[y][x] not in solid}
-        assert open_tiles == seen, f"{a.id} has unreachable open tiles: {sorted(open_tiles - seen)}"
-        exits = set(LINKS.get(a.id, {}))
+        gated = open_tiles - seen
+        assert not gated or any(c == FALLS_TILE for r in a.rows for c in r), \
+            f"{a.id} has unreachable open tiles (no falls to gate them): {sorted(gated)}"
+        if gated:
+            ability_solid = solid - {FALLS_TILE}
+            ability_seen = set()
+            for s in arrivals:
+                ability_seen |= _reach(a.rows, a.w, a.h, s, ability_solid)
+            reach_ab[a.id] = ability_seen
+            assert gated <= ability_seen, f"{a.id}: falls-gated tiles unreachable even with Hydroclimb: {sorted(gated)}"
+            for t in sorted(gated):
+                back = _reach(a.rows, a.w, a.h, t, ability_solid)
+                assert exits & back, f"{a.id} soft-lock (with Hydroclimb): no way back to an exit from {t}"
         assert exits <= seen, f"{a.id}: an exit is not reachable: {sorted(exits - seen)}"
         for t in sorted(seen):
             assert exits & _reach(a.rows, a.w, a.h, t, solid), f"{a.id} soft-lock: no way back to an exit from {t}"
@@ -409,12 +559,20 @@ def validate():
             if "battle" in n:
                 assert isinstance(n["battle"], tuple) and len(n["battle"]) == 2, f"{a.id} trainer {n['id']} has no battle spec"
                 assert n.get("facing") in ("up", "down", "left", "right"), f"{a.id} trainer {n['id']} has a bad facing"
-        blocked_by_npc = {(n["x"], n["y"]) for n in a.npcs}        # an NPC must never cut the route in two
+        blocked_by_npc = {(n["x"], n["y"]) for n in a.npcs
+                          if not n.get("require_stamps")}          # badge-gate guards block only below their stamp count
         assert not blocked_by_npc & exits, f"{a.id}: an NPC stands on a link tile"
         seen2 = set()
         for s in arrivals:
             seen2 |= _reach(a.rows, a.w, a.h, s, solid, blocked_by_npc)
         assert seen2 == seen - blocked_by_npc, f"an NPC blocks part of {a.id}: {sorted(seen - blocked_by_npc - seen2)}"
+        for n in a.npcs:                                           # the badge-gate guards (FireRed's Route 23):
+            if n.get("require_stamps"):
+                assert n["aside"], f"{a.id}: stamp guard {n['id']} has no aside tile"
+                ax, ay = n["aside"]
+                assert a.rows[ay][ax] not in solid, f"{a.id}: stamp guard {n['id']} cannot step aside"
+                assert any((ax + dx, ay + dy) in seen2 for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))), \
+                    f"{a.id}: stamp guard {n['id']} aside tile is cut off"
 
     # ---- healers: warp tiles must be walkable, unoccupied and never on a route (healers live in the towns)
     for h in HEALERS:
@@ -454,11 +612,12 @@ def validate():
         if "Thermal" in sp.types:
             assert WILD_HOME.get(sid) == "volcanic", f"{sid}: Thermal species outside volcanic ({WILD_HOME.get(sid)})"
 
-    # ---- chests: at most one town + one route, each on an X tile with a reachable approach
+    # ---- chests: at most one town + one route + one wild place, each on an X tile with a reachable approach
     chest_areas = {area for area, chests in CHESTS.items() if chests}
     styled_chest_areas = {a for a in chest_areas if a == TOWN or AREAS[a].styled}
     assert len(styled_chest_areas) <= 1, "at most one town may hide a chest"
-    assert len(chest_areas - styled_chest_areas) <= 1, "at most one route may hide a chest"
+    assert len(chest_areas - styled_chest_areas - PLACE_AREAS) <= 1, "at most one route may hide a chest"
+    assert len(chest_areas & PLACE_AREAS) <= 1, "at most one wild place may hide a chest"
     for area, chests in CHESTS.items():
         rows = rows_of(area)
         if area not in reach:                          # styled areas: walk from their start, like their validate()
@@ -467,7 +626,8 @@ def validate():
         for c in chests:
             cx, cy = c["tile"]
             assert rows[cy][cx] == "X", f"chest {c['key']} is not on an X tile"
-            assert any((cx + dx, cy + dy) in reach[area] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))), \
+            ok = reach[area] | reach_ab.get(area, set())
+            assert any((cx + dx, cy + dy) in ok for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))), \
                 f"chest {c['key']} cannot be reached"
             for item, _n in c["loot"]:
                 assert item in CATALOG, f"chest {c['key']} holds unknown item {item}"

@@ -44,6 +44,41 @@ def tile(name):
     return assets.scaled(f"town/{name}.png", TILE, TILE, smooth=False)
 
 
+# Terrain themes per encounter-zone habitat (routes.ENCOUNTER_ZONES): the ground takes the tint of the
+# Scimon that live there -- scorched under volcanic packs, withered lavender in ghost patches, grey-green
+# moss in caves, dry ochre on the highland, frosted gold on the plateau, sea-green by the water.
+HABITAT_THEME = {
+    "meadow":   dict(tint=None,            wash=None,       spec=("#e8c33a", "#e05a72")),
+    "forest":   dict(tint=(196, 220, 178), wash=(0, 14, 0), spec=("#7ec850", "#5aa042")),
+    "cave":     dict(tint=(184, 204, 196), wash=(2, 18, 10), spec=("#8fd0a0", "#a5e8b8")),
+    "city":     dict(tint=(222, 233, 200), wash=(8, 12, 0), spec=("#8fd05a", "#a5dc70")),
+    "ghost":    dict(tint=(192, 186, 212), wash=(34, 10, 52), spec=("#b9b9d2", "#cfcae0")),
+    "water":    dict(tint=(190, 222, 216), wash=(0, 18, 16), spec=("#7ee0d0", "#a5ecdf")),
+    "sea":      dict(tint=(174, 212, 212), wash=(0, 16, 20), spec=("#66d0c0", "#8fe0d5")),
+    "volcanic": dict(tint=(226, 200, 172), wash=(36, 10, 0), spec=("#e06838", "#f0a03a")),
+    "highland": dict(tint=(230, 218, 182), wash=(18, 10, 0), spec=("#cfc27a", "#e0d495")),
+    "plateau":  dict(tint=(230, 224, 194), wash=(20, 16, 6), spec=("#efe8c8", "#fdf8e0")),
+    "tunnel":   dict(tint=(184, 222, 220), wash=(0, 20, 20), spec=("#7ef2ff", "#a5f5ff")),
+}
+_theme_cache = {}
+
+
+def themed(name, habitat):
+    """A ground sprite tinted by the tile's habitat: multiply darkens toward the theme, the additive wash
+    carries the hue (lavender ghost ground, scorched volcanic, sea-green...).  One cached surface per pair."""
+    theme = HABITAT_THEME.get(habitat) if habitat else None
+    if not theme or not theme["tint"]:
+        return tile(name)
+    key = (name, habitat)
+    if key not in _theme_cache:
+        img = tile(name).copy()
+        img.fill(theme["tint"], special_flags=pygame.BLEND_RGB_MULT)
+        if theme["wash"]:
+            img.fill(theme["wash"], special_flags=pygame.BLEND_RGB_ADD)
+        _theme_cache[key] = img
+    return _theme_cache[key]
+
+
 def tile_n(name, w, h):
     """A sprite stretched over w x h tiles (the 32x32 / 48x48 tide pools are exactly 2x2 / 3x3 tiles at x3)."""
     return assets.scaled(f"town/{name}.png", w * TILE, h * TILE, smooth=False)
@@ -56,9 +91,9 @@ def _at(rows, x, y):
     return "T"
 
 
-def _lawn(s, x, y, flowers=False):
+def _lawn(s, x, y, flowers=False, habitat=None):
     h = hash2(x, y)
-    s.blit(tile(f"{'gflower' if flowers else 'grass'}_{int(h * 4) % 4}"), (x * TILE, y * TILE))
+    s.blit(themed(f"{'gflower' if flowers else 'grass'}_{int(h * 4) % 4}", habitat), (x * TILE, y * TILE))
 
 
 def _crop_kind(x, y):
@@ -66,22 +101,31 @@ def _crop_kind(x, y):
     return kinds[((x * 2 + y) // 2) % len(kinds)]
 
 
-def draw_ground(s, rows, draw_old_tile):
+def draw_ground(s, rows, draw_old_tile, habitats=None):
+    """Bakes the ground once.  `habitats` (a per-tile habitat-id grid from routes.habitat_grid) themes the
+    terrain after the wild Scimon that live there: the grass underfoot takes the habitat's tint, tall-grass
+    tufts are recoloured with a habitat speck (embers, glow, frost...) and volcanic ash replaces the sand."""
     h_, w_ = len(rows), len(rows[0])
+
+    def hab(x, y):
+        return habitats[y][x] if habitats else None
+
     for y in range(h_):
         for x in range(w_):
             t = rows[y][x]
             sx, sy = x * TILE, y * TILE
+            hb = hab(x, y)
+            theme = HABITAT_THEME.get(hb) if hb else None
             if t in "sWQijvzU":
                 # the beach and ocean: original tile code; beach dressing (Q i j v z) and sea glass (U) stand on sand
-                draw_old_tile(s, "W" if t == "W" else "s", sx, sy, x, y, rows)
+                draw_old_tile(s, "W" if t == "W" else "s", sx, sy, x, y, rows, habitat=hb)
                 if t == "z":
                     s.blit(tile(f"beach_flowers_{int(hash2(x + 5, y + 9) * 6) % 6}"), (sx, sy))
                 elif t == "U":
                     s.blit(tile(f"seaglass_{int(hash2(x + 3, y + 7) * 3) % 3}"), (sx, sy))
                 continue
             if t in "RI":                       # bridges and piers: water shows around the planks
-                draw_old_tile(s, "W", sx, sy, x, y, rows)
+                draw_old_tile(s, "W", sx, sy, x, y, rows, habitat=hb)
                 if t == "I":
                     s.blit(tile("pier_plank"), (sx, sy))
                 else:
@@ -93,21 +137,28 @@ def draw_ground(s, rows, draw_old_tile):
             elif t == "o":
                 s.blit(tile("lava_pool_0"), (sx, sy))
             elif t == "P" or t == "D":
-                s.blit(tile(f"road_{int(hash2(x, y) * 4) % 4}"), (sx, sy))
+                s.blit(themed(f"road_{int(hash2(x, y) * 4) % 4}", hb), (sx, sy))
             elif t == "p":
                 s.blit(tile(f"plaza_{(x + y) % 2 + int(hash2(x, y) * 2) * 2}"), (sx, sy))
             elif t == "g":
-                s.blit(tile(f"tallgrass_{int(hash2(x, y) * 4) % 4}"), (sx, sy))
+                s.blit(themed(f"tallgrass_{int(hash2(x, y) * 4) % 4}", hb), (sx, sy))
+                if theme:
+                    spec = theme["spec"][0 if hash2(x, y) < 0.5 else 1]
+                    px_ = sx + (10 if hash2(x + 1, y) > 0.5 else 26)
+                    py_ = sy + (14 if hash2(x, y + 1) > 0.5 else 30)
+                    s.fill(spec, (px_, py_, 6, 6))
             elif t == "F":
-                _lawn(s, x, y, True)
+                _lawn(s, x, y, True, hb)
             elif t == "w":
                 s.blit(tile("pond_0"), (sx, sy))
             elif t in "hk":
                 s.blit(_wall_tile(x, _at(rows, x, y - 1) in "hk", _at(rows, x, y + 1) in "hk"), (sx, sy))
             elif t == "c":
                 s.blit(tile(f"crop_{_crop_kind(x, y)}_{(x + y) % 2}"), (sx, sy))
+            elif t == "^":                                   # waterfall column: the full tile-art delegate
+                draw_old_tile(s, "^", sx, sy, x, y, rows)
             else:
-                _lawn(s, x, y)
+                _lawn(s, x, y, False, hb)
             if t in "Pp":                                             # kerbs where the road meets the lawn
                 for key, dx, dy in (("n", 0, -1), ("s", 0, 1), ("w", -1, 0), ("e", 1, 0)):
                     if _at(rows, x + dx, y + dy) not in ROAD_LIKE:

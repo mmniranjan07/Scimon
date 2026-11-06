@@ -14,10 +14,12 @@ import pygame
 
 import assets
 import audio
-from data import ITEMS, MODULES, SPECIES, STATUS_INFO, TECHNIQUES, type_rgb
+from data import CATALOG, ITEMS, MODULES, SPECIES, STATUS_INFO, TECHNIQUES, type_rgb, ability_spec, effectiveness, stage_mult
 from engine import Scene, StateId
-from monsters import (Scimon, calc_damage, capture_chance, choose_enemy_move, eff_text, xp_for_level, xp_gain)
-from settings import (CREAM, EXP_BLUE, H, HP_GREEN, INK, OLIVE, OLIVE_DARK, ORANGE, STAB_BLUE, TEAL_DARK, W, hexc)
+from monsters import (Scimon, calc_damage, capture_chance, choose_enemy_move, eff_text, ev_yield, grant_evs,
+                      stage_mult, xp_for_level, xp_gain)
+from settings import (CREAM, ENERGY_GOLD, EXP_BLUE, H, HP_GREEN, INK, OLIVE, OLIVE_DARK, ORANGE, TEAL_DARK,
+                      W, hexc)
 from sprites import AttackFx, ImpactBurst, ScimonSprite, TrainerSprite
 from ui import (Button, ButtonGrid, DialogueBox, bar, hp_color, icon_chip, is_back, is_click, is_confirm, label_chip, panel,
                 render_text, status_chip, text, type_chip, wrap_text)
@@ -101,6 +103,19 @@ def intro_events(s):
 
 
 def _status_fail(mon):
+    """Pre-move status checks: returns a fail message (the move is not executed) or None.  A Suspended
+    Sci-Mon whose standby counter has run out moves normally (the wake announcement is made by
+    _execute_move before the technique)."""
+    if mon.status == "Suspended":
+        if mon.status_timer > 0:
+            mon.status_timer -= 1
+            return f"{mon.name} is in standby and can't move!"
+        return None
+    if mon.status == "Crystallized" and random.random() < 0.2:
+        mon.status, mon.status_timer = None, 0
+        return None                                       # thawed: the move proceeds
+    if mon.status == "Crystallized":
+        return f"{mon.name} is frozen solid and can't move!"
     if mon.status == "Glitched" and random.random() < 0.25:
         return f"{mon.name}'s technique destabilized!"
     if mon.status == "Electrified" and random.random() < 0.25:
@@ -108,8 +123,67 @@ def _status_fail(mon):
     return None
 
 
+def _status_immune(mon, status_id):
+    from monsters import _status_immune as _imm
+    return _imm(mon, status_id)
+
+
+def _inflict(sim, target_side, status_id, events, label):
+    """Apply a status to the combatant on `target_side`, honouring ability immunities and existing
+    statuses.  Returns True when applied."""
+    dfn = _target(sim, target_side)
+    hit = dict(hit_enemy=(target_side == "player"), hit_player=(target_side == "enemy"))
+    if dfn.status:
+        return False
+    if _status_immune(dfn, status_id):
+        events.append(BattleEvent(f"It doesn't affect {dfn.name} - {dfn.ability}!", **hit))
+        return False
+    tmr = random.randint(1, 3) if status_id == "Suspended" else 0
+    dfn.status, dfn.status_timer = status_id, tmr
+    events.append(BattleEvent(f"{label} became {status_id}!", **hit,
+                              effect=lambda s, ts=target_side, st=status_id, tmr=tmr: _set_status(s, ts, st, tmr)))
+    return True
+
+
+def _set_status(s, side, st, tmr):
+    m = _target(s, side)
+    m.status, m.status_timer = st, tmr
+
+
+def _sturdy(s, side):
+    m = _target(s, side)
+    m.hp, m.sturdy_used = 1, True
+
+
 def _target(s, side):
     return _active(s) if side == "player" else s.enemy
+
+
+def _spend_energy(sim, side, tech_id, events):
+    """Every technique drains its energy cost on use (even on a miss); Vacuum Seal on the target
+    drains double.  The spend is mirrored onto the visible battle through an effect, so it persists
+    into the next plan_turn."""
+    att = _target(sim, side)
+    dfn = _target(sim, "enemy" if side == "player" else "player")
+    d_ab = ability_spec(dfn)
+    n = 2 if (d_ab and d_ab.get("energy_pressure")) else 1
+    att.spend_energy(tech_id, n)
+    events.append(BattleEvent(effect=lambda s, sd=side, tid=tech_id, n=n: _target(s, sd).spend_energy(tid, n)))
+
+
+def _apply_stages(sim, side, changes, events, label, verb):
+    """Apply stat-stage changes to the combatant on `side`, one message per changed stat."""
+    mon = _target(sim, side)
+    names = {"power": "Power", "defense": "Defense", "sp_defense": "Sp. Defense", "speed": "Speed"}
+    for stat, delta in changes.items():
+        new = mon.set_stage(stat, mon.stage(stat) + int(delta))
+        if new == mon.stage(stat) - int(delta):     # clamp rejected the change entirely
+            events.append(BattleEvent(f"{label}'s {names[stat]} can't go {'higher' if delta > 0 else 'lower'}!"))
+            continue
+        word = "rose" if delta > 0 else "fell"
+        hit = dict(hit_enemy=(side == "player"), hit_player=(side == "enemy"))
+        events.append(BattleEvent(f"{label}'s {names[stat]} {word}!", sfx="heal" if delta > 0 else "hit", **hit,
+                                  effect=lambda s, sd=side, st=stat, v=new: setattr(_target(s, sd), "stages", {**_target(s, sd).stages, st: v})))
 
 
 def _execute_move(sim, side, tech_id, events):
@@ -120,38 +194,75 @@ def _execute_move(sim, side, tech_id, events):
     tech = TECHNIQUES[tech_id]
     label = att.name if side == "player" else enemy_label(sim)
     foe_side = "enemy" if side == "player" else "player"
+    target_side = foe_side
     hit = dict(hit_enemy=(side == "player"), hit_player=(side == "enemy"))
+    if att.status == "Suspended" and att.status_timer <= 0:     # the standby counter ran out: wake and act
+        att.status, att.status_timer = None, 0
+        events.append(BattleEvent(f"{label} powered back on!",
+                                  effect=lambda s, sd=side: _set_status(s, sd, None, 0)))
     events.append(BattleEvent(f"{label} used {tech.name}!", sfx="select", anim=(side, tech.type)))
 
     fail = _status_fail(att)
     if fail:
         events.append(BattleEvent(fail))
         return
+    _spend_energy(sim, side, tech_id, events)
+    # the Choice items (Torque Band / Logic Clip): the first technique used locks the holder into it
+    a_held = CATALOG.get(att.held_item) if att.held_item else None
+    if a_held and a_held.choice_boost and att.choice_lock is None:
+        att.choice_lock = tech_id
+        events.append(BattleEvent(f"{label} locked onto {tech.name}!",
+                                  effect=lambda s, sd=side, tid=tech_id: setattr(_target(s, sd), "choice_lock", tid)))
     if random.random() > tech.accuracy / 100:
         events.append(BattleEvent("But the technique missed!"))
         return
 
     if tech.category == "status":
-        if tech.buff_power:
-            stage = min(3, att.power_stage + 1)
-            att.power_stage = stage
-            events.append(BattleEvent(f"{label}'s Power rose!", sfx="heal",
-                                      effect=lambda s, side=side, stage=stage: setattr(_target(s, side), "power_stage", stage)))
-        elif tech.status:
+        if tech.buffs:
+            _apply_stages(sim, side, tech.buffs, events, label, "rose")
+        if tech.debuffs:
+            if dfn.status or dfn.hp <= 0:
+                pass
+            _apply_stages(sim, target_side, tech.debuffs, events, dfn.name, "fell")
+        if tech.status:
             if dfn.status:
                 events.append(BattleEvent(f"It had no effect - {dfn.name} is already affected."))
             else:
-                st = tech.status
-                dfn.status = st
-                events.append(BattleEvent(f"{dfn.name} became {st}!", **hit,
-                                          effect=lambda s, fs=foe_side, st=st: setattr(_target(s, fs), "status", st)))
+                _inflict(sim, target_side, tech.status, events, dfn.name)
         return
 
+    d_ab = ability_spec(dfn)
+    # type-absorbing abilities (Condensation / Heat Sink): no damage, heal instead
+    if d_ab and d_ab.get("absorb_type") and tech.type == d_ab["absorb_type"][0] and effectiveness(tech.type, dfn.types) > 0:
+        frac = d_ab["absorb_type"][1]
+        healed = min(dfn.max_hp, dfn.hp + max(1, int(dfn.max_hp * frac)))
+        dfn.hp = healed
+        events.append(BattleEvent(f"{dfn.name} absorbed the {tech.type} attack!", sfx="heal", **hit,
+                                  effect=lambda s, ts=target_side, hp=healed: setattr(_target(s, ts), "hp", hp)))
+        return
+    # a Thermal hit thaws a Crystallized target before it lands (FireRed's fire-thaws-ice)
+    if dfn.status == "Crystallized" and tech.type == "Thermal":
+        dfn.status, dfn.status_timer = None, 0
+        events.append(BattleEvent(f"{dfn.name} thawed out!"))
     dmg, eff, crit = calc_damage(att, dfn, tech, defending=(side == "enemy" and sim.defending))
+    before_full = dfn.hp >= dfn.max_hp
     new_hp = max(0, dfn.hp - dmg)
     dfn.hp = new_hp
     events.append(BattleEvent("A critical hit!" if crit else None, **hit, sfx="hit",
-                              effect=lambda s, fs=foe_side, hp=new_hp: setattr(_target(s, fs), "hp", hp)))
+                              effect=lambda s, ts=target_side, hp=new_hp: setattr(_target(s, ts), "hp", hp)))
+    # Sturdy Plating: a full-HP defender endures the knockout hit once per battle
+    if (new_hp <= 0 and before_full and d_ab and d_ab.get("survive") and not dfn.sturdy_used
+            and effectiveness(tech.type, dfn.types) > 0):
+        dfn.hp, dfn.sturdy_used = 1, True
+        events.append(BattleEvent(f"{dfn.name} endured the hit!", sfx="heal", **hit,
+                                  effect=lambda s, ts=target_side: _sturdy(s, ts)))
+    # the Holdfast Band (FireRed's Focus Band): a chance to endure any knockout hit at 1 HP
+    d_held = CATALOG.get(dfn.held_item) if dfn.held_item else None
+    if (new_hp <= 0 and d_held and d_held.focus and effectiveness(tech.type, dfn.types) > 0
+            and random.random() < d_held.focus):
+        dfn.hp = 1
+        events.append(BattleEvent(f"{dfn.name} braced with its {d_held.name} and endured the hit!", sfx="heal",
+                                  **hit, effect=lambda s, ts=target_side: setattr(_target(s, ts), "hp", 1)))
     t = eff_text(eff)
     if t:
         events.append(BattleEvent(t))
@@ -159,17 +270,32 @@ def _execute_move(sim, side, tech_id, events):
         healed = min(att.max_hp, att.hp + max(1, int(dmg * tech.drain)))
         att.hp = healed
         events.append(BattleEvent(f"{label} absorbed energy!", sfx="heal",
-                                  effect=lambda s, side=side, hp=healed: setattr(_target(s, side), "hp", hp)))
-    if tech.status and tech.status_chance and not dfn.status and random.random() < tech.status_chance:
-        st = tech.status
-        dfn.status = st
-        events.append(BattleEvent(f"{dfn.name} became {st}!",
-                                  effect=lambda s, fs=foe_side, st=st: setattr(_target(s, fs), "status", st)))
+                                  effect=lambda s, sd=side, hp=healed: setattr(_target(s, sd), "hp", hp)))
+    if tech.recoil and dmg > 0:
+        hurt = max(1, int(dmg * tech.recoil))
+        rec = max(0, att.hp - hurt)
+        att.hp = rec
+        events.append(BattleEvent(f"{label} is hurt by the recoil!", **dict(hit_enemy=(side == "enemy"),
+                                  hit_player=(side == "player")), sfx="hit",
+                                  effect=lambda s, sd=side, hp=rec: setattr(_target(s, sd), "hp", hp)))
+    if tech.status and tech.status_chance and random.random() < tech.status_chance:
+        _inflict(sim, target_side, tech.status, events, dfn.name)
+    if tech.debuffs and tech.debuff_chance and random.random() < tech.debuff_chance:
+        _apply_stages(sim, target_side, tech.debuffs, events, dfn.name, "fell")
+    # contact abilities on the defender (Ember Body / Static Charge / Spore Vent)
+    if d_ab and d_ab.get("contact_status") and dmg > 0 and att.status is None:
+        st, ch = d_ab["contact_status"]
+        if random.random() < ch and not _status_immune(att, st):
+            tmr = random.randint(1, 3) if st == "Suspended" else 0
+            att.status, att.status_timer = st, tmr
+            events.append(BattleEvent(f"{label} became {st} by {dfn.name}'s {dfn.ability}!",
+                                      **dict(hit_enemy=(side == "enemy"), hit_player=(side == "player")),
+                                      effect=lambda s, sd=side, st=st, tmr=tmr: _set_status(s, sd, st, tmr)))
 
 
 def _end_of_turn_status(sim, side, events):
     mon = _target(sim, side)
-    if mon.hp <= 0 or not mon.status:
+    if mon.hp <= 0:
         return
     label = mon.name if side == "player" else enemy_label(sim)
     hit = dict(hit_player=(side == "player"), hit_enemy=(side == "enemy"))
@@ -180,37 +306,71 @@ def _end_of_turn_status(sim, side, events):
                                   effect=lambda s, side=side, hp=hp: setattr(_target(s, side), "hp", hp)))
     elif mon.status == "Nanite-Infected":
         hp = max(0, mon.hp - max(1, mon.max_hp // 16))
-        stab = max(0, mon.stability - max(1, mon.max_stability // 8))
-        mon.hp, mon.stability = hp, stab
+        mon.hp = hp
 
-        def fx(s, side=side, hp=hp, stab=stab):
+        def fx(s, side=side, hp=hp):
             m = _target(s, side)
-            m.hp, m.stability = hp, stab
+            m.hp = hp
         events.append(BattleEvent(f"{label}'s systems are corrupted by nanites!", sfx="hit", effect=fx))
+    # regenerative battle abilities
+    ab = ability_spec(mon)
+    if ab and mon.hp > 0:
+        frac = ab.get("regen")
+        if frac and (not ab.get("regen_below") or mon.hp < mon.max_hp * ab["regen_below"]):
+            healed = min(mon.max_hp, mon.hp + max(1, int(mon.max_hp * frac)))
+            if healed > mon.hp:
+                mon.hp = healed
+                events.append(BattleEvent(f"{label}'s {mon.ability} restored its systems!", sfx="heal", **hit,
+                                          effect=lambda s, sd=side, hp=healed: setattr(_target(s, sd), "hp", hp)))
+        sfrac = ab.get("energy_regen")
+        if sfrac and mon.energy < mon.max_energy:
+            nrg = min(mon.max_energy, mon.energy + max(1, int(mon.max_energy * sfrac)))
+            mon.energy = nrg
+            events.append(BattleEvent(f"{label}'s {mon.ability} recharged its energy reserves!", sfx="heal", **hit,
+                                      effect=lambda s, sd=side, st=nrg: setattr(_target(s, sd), "energy", st)))
+    # the Nutrient Loop (FireRed's Leftovers): a slow end-of-turn HP restoration
+    h = CATALOG.get(mon.held_item) if mon.held_item else None
+    if h and h.regen and mon.hp > 0 and mon.hp < mon.max_hp:
+        healed = min(mon.max_hp, mon.hp + max(1, int(mon.max_hp * h.regen)))
+        mon.hp = healed
+        events.append(BattleEvent(f"{label}'s {h.name} restored a little HP!", sfx="heal", **hit,
+                                  effect=lambda s, sd=side, hp=healed: setattr(_target(s, sd), "hp", hp)))
 
 
-def _apply_xp(sim, events, scene=None):
-    mon, sp = _active(sim), SPECIES[_active(sim).species_id]
-    gain = xp_gain(sim.enemy)
-    events.append(BattleEvent(f"{mon.name} gained {gain} EXP!", sfx="xp",
-                              effect=lambda s, g=gain: setattr(_active(s), "xp", _active(s).xp + g)))
+def _by_uid(s, uid):
+    """The party Scimon with this uid (the active one when it matches) - uid survives every deepcopy, so
+    playback-time effects can target bench Scimons (Exp. Share) exactly as safely as the active one."""
+    for m in s.party:
+        if m.uid == uid:
+            return m
+    return _active(s)
+
+
+def _grant_xp(sim, mon, gain, events, scene=None):
+    """Give `gain` EXP to party member `mon` and announce level-ups / learned techniques.  Works for the
+    active Scimon and for Exp. Share holders on the bench alike (both are party members of the sim)."""
+    sp = SPECIES[mon.species_id]
+    if gain > 0:
+        events.append(BattleEvent(f"{mon.name} gained {gain} EXP!", sfx="xp",
+                                  effect=lambda s, u=mon.uid, g=gain: setattr(_by_uid(s, u), "xp",
+                                                                              _by_uid(s, u).xp + g)))
     work, level = mon.xp + gain, mon.level
     while work >= xp_for_level(level):
         work -= xp_for_level(level)
         level += 1
         events.append(BattleEvent(f"{mon.name} grew to Lv. {level}!", sfx="heal",
-                                  effect=lambda s, lv=level: _active(s).level_up_to(lv)))
+                                  effect=lambda s, u=mon.uid, lv=level: _by_uid(s, u).level_up_to(lv)))
         for lv, tech in sp.learnset:
             if lv == level:
-                def learn(s, tech=tech):
-                    m = _active(s)
+                def learn(s, tech=tech, u=mon.uid):
+                    m = _by_uid(s, u)
                     if tech not in m.moves and len(m.moves) < 4:
                         m.moves.append(tech)
                 msg = BattleEvent(f"{mon.name} learned {TECHNIQUES[tech].name}!", effect=learn)
 
-                def decide(s, tech=tech, msg=msg):
+                def decide(s, tech=tech, msg=msg, u=mon.uid):
                     # playback-time check: earlier level-ups in this same queue may have filled the moveset
-                    m = _active(s)
+                    m = _by_uid(s, u)
                     if tech in m.moves:
                         msg.text = None               # already known: no announcement
                     elif len(m.moves) >= 4:           # FireRed: ask which technique to forget
@@ -220,15 +380,63 @@ def _apply_xp(sim, events, scene=None):
                 events.append(BattleEvent(effect=decide))
                 events.append(msg)
 
-        def settle(s, w=work, lv=level):
-            _active(s).xp, _active(s).xp_to_next = w, xp_for_level(lv)
-        events.append(BattleEvent(effect=settle))
+    def settle(s, u=mon.uid, w=work, lv=level):
+        m = _by_uid(s, u)
+        m.xp, m.xp_to_next = w, xp_for_level(lv)
+    events.append(BattleEvent(effect=settle))
+
+
+def _apply_xp(sim, events, scene=None):
+    mon = _active(sim)
+    gain = xp_gain(sim.enemy)
+    held = CATALOG.get(mon.held_item) if mon.held_item else None
+    if held and held.xp_boost != 1.0:                  # the Lucky Mote
+        gain = int(gain * held.xp_boost)
+    _grant_xp(sim, mon, gain, events, scene)
+    # the Exp. Coupler (FireRed's Exp. Share): every healthy bench holder siphons half of the base gain
+    share = xp_gain(sim.enemy) // 2
+    if share > 0:
+        for m in sim.party:
+            if m is mon or m.held_item != "expshare" or m.hp <= 0:
+                continue
+            _grant_xp(sim, m, share, events, scene)
+
+
+def _apply_catch_xp(sim, events, scene=None):
+    """A successful capture still teaches the team a little (the modern catch-EXP): the active Scimon
+    banks a quarter of the defeat gain - the Lucky Mote applies as usual - and Exp. Coupler holders
+    siphon half of that.  Captures never grant effort (Gen 3 keeps EVs on faints only)."""
+    base = max(1, xp_gain(sim.enemy) // 4)
+    active = _active(sim)
+    held = CATALOG.get(active.held_item) if active.held_item else None
+    gain = int(base * held.xp_boost) if (held and held.xp_boost != 1.0) else base
+    _grant_xp(sim, active, gain, events, scene)
+    share = base // 2
+    if share > 0:
+        for m in sim.party:
+            if m is active or m.held_item != "expshare" or m.hp <= 0:
+                continue
+            _grant_xp(sim, m, share, events, scene)
+
+
+def _apply_evs(sim, events):
+    """Gen 3 effort: the fainted enemy's yield trains the active Scimon and every healthy Exp. Coupler
+    holder, under the 255-per-stat / 510-total caps.  Silent (FireRed never announces effort)."""
+    yields = ev_yield(sim.enemy.species_id)
+    if not yields:
+        return
+    active = _active(sim)
+    for m in [active] + [b for b in sim.party if b is not active and b.held_item == "expshare" and b.hp > 0]:
+        if grant_evs(m, yields):
+            after = dict(m.evs)
+            events.append(BattleEvent(effect=lambda s, u=m.uid, e=after: setattr(_by_uid(s, u), "evs", dict(e))))
 
 
 def _finalize(sim, events, scene=None):
     if sim.enemy.hp <= 0:
         events.append(BattleEvent(f"{enemy_label(sim)} was defeated!", sfx="faint"))
         _apply_xp(sim, events, scene)
+        _apply_evs(sim, events)
         nxt = next((i for i, m in enumerate(sim.enemy_party) if m.hp > 0 and i != sim.enemy_index), None)
         if nxt is not None:
             incoming = sim.enemy_party[nxt]
@@ -246,18 +454,54 @@ def _finalize(sim, events, scene=None):
                                       effect=lambda s: setattr(s, "outcome", "lose")))
 
 
+def _enemy_switch_choice(sim):
+    """Trainer AI: a beaten-up type matchup (the player holds a 1.5x+ technique) plus a bench member who
+    both resists the player and answers back -> switch into it 30% of the time.  The switch consumes the
+    enemy's turn (FireRed's trainer switch)."""
+    if not sim.trainer or sim.enemy.hp <= 0 or sim.turn <= 1:
+        return None
+    bench = [i for i, m in enumerate(sim.enemy_party) if m.hp > 0 and i != sim.enemy_index]
+    if not bench or random.random() > 0.3:
+        return None
+    dmg_eff = max((effectiveness(TECHNIQUES[m].type, sim.enemy.types) for m in sim.player.moves
+                   if TECHNIQUES[m].power > 0), default=1.0)
+    if dmg_eff < 1.5:
+        return None
+    for i in bench:
+        m = sim.enemy_party[i]
+        answer = max((effectiveness(TECHNIQUES[t].type, sim.player.types) for t in m.moves
+                      if TECHNIQUES[t].power > 0), default=1.0)
+        incoming = min((effectiveness(TECHNIQUES[t].type, m.types) for t in sim.player.moves
+                        if TECHNIQUES[t].power > 0), default=1.0)
+        if answer >= 1.0 and incoming <= 1.0:
+            return i
+    return None
+
+
 def plan_turn(battle, action, scene=None):
     """action: ("move", tech_id) | ("defend",) | ("capture", module_id) | ("item", item_id) | ("switch", idx) | ("run",)"""
     sim = copy.deepcopy(battle)
     sim.turn += 1
     sim.defending = False
     ev = []
+    ev.append(BattleEvent(effect=lambda s, t=sim.turn: setattr(s, "turn", t)))
     player = _active(sim)
     enemy_move = choose_enemy_move(sim.enemy, player)
     kind = action[0]
+    # the trainer AI may burn its turn on a tactical switch (never against a capture attempt)
+    enemy_switch = _enemy_switch_choice(sim) if (sim.trainer and kind in ("move", "defend", "item", "switch")) else None
 
     def enemy_phase(both=False):
-        _execute_move(sim, "enemy", enemy_move, ev)
+        if enemy_switch is not None:
+            out = sim.enemy
+            out.reset_stages()
+            incoming = sim.enemy_party[enemy_switch]
+            ev.append(BattleEvent(f"{sim.trainer} withdrew {out.name}!", sfx="select"))
+            ev.append(BattleEvent(f"{sim.trainer} sent out {incoming.name}!", sfx="select",
+                                  effect=lambda s, i=enemy_switch: _swap_enemy(s, i)))
+            _swap_enemy(sim, enemy_switch)
+        else:
+            _execute_move(sim, "enemy", enemy_move, ev)
         _end_of_turn_status(sim, "player", ev)
         if both:
             _end_of_turn_status(sim, "enemy", ev)
@@ -268,6 +512,15 @@ def plan_turn(battle, action, scene=None):
         # Gen I escape: F = ((A*32) / (B/4)) + 30*C (mod 256); F > 255 escapes outright,
         # else a roll of 0-255 below F escapes. A: player's current Speed (never stage-modified here);
         # B: wild Speed / 4, 0 becomes 1; C: attempts this battle, reset whenever the player attacks.
+        e_ab, p_ab = ability_spec(sim.enemy), ability_spec(player)
+        if e_ab and e_ab.get("flee_block"):
+            ev.append(BattleEvent(effect=lambda s, n=sim.run_attempts: setattr(s, "run_attempts", n)))
+            ev.append(BattleEvent(f"{sim.enemy.name}'s {sim.enemy.ability} prevents escape!"))
+            enemy_phase()
+            return ev
+        if p_ab and p_ab.get("flee_aid"):
+            ev.append(BattleEvent("Got away safely!", sfx="select", effect=lambda s: setattr(s, "outcome", "run")))
+            return ev
         b = max(1, sim.enemy.speed // 4)
         f = player.speed * 32 // b + 30 * sim.run_attempts
         ev.append(BattleEvent(effect=lambda s, n=sim.run_attempts: setattr(s, "run_attempts", n)))
@@ -292,6 +545,7 @@ def plan_turn(battle, action, scene=None):
         if success:
             ev.append(BattleEvent(f"Gotcha! {sim.enemy.name} was contained!", sfx="capture",
                                   effect=lambda s: setattr(s, "outcome", "caught")))
+            _apply_catch_xp(sim, ev, scene)          # the catch-EXP plays after the containment line
             return ev
         ev.append(BattleEvent(f"{sim.enemy.name} broke free!"))
         enemy_phase()
@@ -312,42 +566,60 @@ def plan_turn(battle, action, scene=None):
                 use(s)
                 _active(s).hp = hp
             ev.append(BattleEvent(f"You used {item.name}. {player.name} recovered!", sfx="heal", effect=fx))
-        elif item.restore_stability:
-            player.stability, player.status = player.max_stability, None
+        elif item.cure:
+            player.status = None
 
             def fx(s):
                 use(s)
                 m = _active(s)
-                m.stability, m.status = m.max_stability, None
-            ev.append(BattleEvent(f"You used {item.name}. {player.name} stabilized!", sfx="heal", effect=fx))
+                m.status = None
+            ev.append(BattleEvent(f"You used {item.name}. {player.name}'s faults were cleared!", sfx="heal", effect=fx))
+        elif item.energy_restore:
+            player.restore_energy()
+
+            def fx(s):
+                use(s)
+                _active(s).restore_energy()
+            ev.append(BattleEvent(f"You used {item.name}. {player.name}'s energy is restored!", sfx="heal", effect=fx))
         enemy_phase()
         return ev
 
     if kind == "switch":
         idx = action[1]
+        sim.party[sim.active_index].reset_stages()    # switching out resets the stat stages
+        sim.party[sim.active_index].choice_lock = None  # a Choice lock breaks on switch (FireRed)
+        old_i = sim.active_index
         ev.append(BattleEvent(f"{sim.party[idx].name}, deploy!", sfx="select",
-                              effect=lambda s, i=idx: setattr(s, "active_index", i)))
+                              effect=lambda s, i=idx, oi=old_i: (setattr(s.party[oi], "choice_lock", None),
+                                                                 setattr(s, "active_index", i))))
         sim.active_index = idx
         enemy_phase(both=True)
         return ev
 
     if kind == "defend":
         sim.defending = True
-        rec = max(1, player.max_stability // 6)
-        player.stability = min(player.max_stability, player.stability + rec)
+        rec = max(1, player.max_energy // 4)
+        player.energy = min(player.max_energy, player.energy + rec)
 
         def fx(s, rec=rec):
             s.defending = True
             m = _active(s)
-            m.stability = min(m.max_stability, m.stability + rec)
-        ev.append(BattleEvent(f"{player.name} braced and reinforced its systems!", sfx="select", effect=fx))
+            m.energy = min(m.max_energy, m.energy + rec)
+        ev.append(BattleEvent(f"{player.name} braced (damage halved) and recharged its reserves!", sfx="select",
+                              effect=fx))
         enemy_phase(both=True)
         return ev
 
     tech = action[1]
+    # safety net for the Choice items: a locked Scimon may only play its locked technique (the fight menu
+    # already disables the rest); Struggle (all PP spent) always stays legal
+    p_held = CATALOG.get(player.held_item) if player.held_item else None
+    if (p_held and p_held.choice_boost and player.choice_lock and tech != "struggle"
+            and player.choice_lock in player.moves):
+        tech = player.choice_lock
     sim.run_attempts = 0          # attacking resets the escape counter (C = 0 next time)
     ev.append(BattleEvent(effect=lambda s: setattr(s, "run_attempts", 0)))
-    if player.speed >= sim.enemy.speed:
+    if player.speed * stage_mult(player.stage("speed")) >= sim.enemy.speed * stage_mult(sim.enemy.stage("speed")):
         _execute_move(sim, "player", tech, ev)
         if sim.enemy.hp > 0:
             _execute_move(sim, "enemy", enemy_move, ev)
@@ -403,7 +675,7 @@ class BattleScene(Scene):
         self.burst = ImpactBurst()
         self.shown = {"p": self.bs.player.hp / self.bs.player.max_hp, "e": 1.0}
         self.shown_xp = self.bs.player.xp / max(1, self.bs.player.xp_to_next)
-        self.shown_stab = {"p": 1.0, "e": 1.0}
+        self.shown_energy = {"p": self.bs.player.energy / max(1, self.bs.player.max_energy), "e": 1.0}
         self.player_uid = None
         self.enemy_token = self.bs.enemy_token
         self._make_sprites(appear=True)
@@ -428,6 +700,7 @@ class BattleScene(Scene):
         self.player_uid = p.uid
         self.shown["p"] = p.hp / p.max_hp
         self.shown_xp = p.xp / max(1, p.xp_to_next)
+        self.shown_energy["p"] = p.energy / max(1, p.max_energy)
 
     def on_enter(self):
         self._play(intro_events(self.bs))
@@ -455,7 +728,7 @@ class BattleScene(Scene):
             self.enemy_token = self.bs.enemy_token
             self.enemy_sprite = ScimonSprite(self.bs.enemy.species_id, (ENEMY_MID[0], ENEMY_MID[1] - 8), (250, 220),
                                              appear=True)
-            self.shown["e"], self.shown_stab["e"] = 1.0, 1.0
+            self.shown["e"], self.shown_energy["e"] = 1.0, 1.0
         if self.bs.enemy.hp <= 0 or self.bs.outcome == "caught":
             self.enemy_sprite.faint()
         if self.bs.player.hp <= 0:
@@ -500,6 +773,9 @@ class BattleScene(Scene):
             return
         self._finishing = True
         s = self.bs
+        for m in s.party:                      # Sturdy is a once-per-battle passive: never leak into the save
+            m.sturdy_used = False
+            m.choice_lock = None               # the Choice lock breaks when the battle ends
         credits = trainer_credits(s, s.outcome, self.engine.state.credits)   # trainer prize / loss, 0 for wild
         result = {"outcome": s.outcome, "party": s.party, "bag": s.bag, "modules": s.modules,
                   "caught": s.enemy if s.outcome == "caught" else None, "credits": credits}
@@ -529,12 +805,21 @@ class BattleScene(Scene):
                                    enabled=ok, accent=accent, tag=tag, icon=BUTTON_ICONS.get(tag)))
         elif menu == "fight":
             cols = 2
-            bw, bh = (area.w - 12) // 2, 54
-            for i, mid in enumerate(s.player.moves):
-                t = TECHNIQUES[mid]
-                btns.append(Button(t.name, (area.x + (i % 2) * (bw + 12), area.y + 4 + (i // 2) * (bh + 8), bw, bh),
-                                   tag=mid, sub=t.type.upper(), color=type_rgb(t.type)))
-            btns.append(Button("BACK", (area.x, area.bottom - 40, 120, 34), tag="back"))
+            bw, bh = (area.w - 12) // 2, 44
+            locked = s.player.choice_lock      # a Choice item locks the moveset down to one technique
+            if s.player.has_energy():
+                for i, mid in enumerate(s.player.moves):
+                    t = TECHNIQUES[mid]
+                    ok = s.player.can_pay(mid) and (not locked or mid == locked)
+                    sub = (f"{t.type.upper()}  {t.energy} EN" if ok else
+                           "NO ENERGY" if not s.player.can_pay(mid) else "LOCKED")
+                    btns.append(Button(t.name, (area.x + (i % 2) * (bw + 12), area.y + 4 + (i // 2) * (bh + 8), bw, bh),
+                                       tag=mid, sub=sub, color=type_rgb(t.type), enabled=ok))
+            else:
+                t = TECHNIQUES["struggle"]
+                btns.append(Button("STRUGGLE", (area.x + (bw + 12) // 2, area.y + 4, bw, bh),
+                                   tag="struggle", sub="OUT OF ENERGY", color=type_rgb(t.type)))
+            btns.append(Button("BACK", (area.x, area.bottom - 36, 120, 32), tag="back"))
         elif menu in ("capture", "item", "switch"):
             cols = 1
             rows = []
@@ -576,7 +861,7 @@ class BattleScene(Scene):
             else:
                 self._open({"fight": "fight", "capture": "capture", "item": "item", "switch": "switch"}[b.tag])
         elif m == "fight":
-            self._act(("move", b.tag))
+            self._act(("move", "struggle" if b.tag == "struggle" else b.tag))
         elif m == "capture":
             self._act(("capture", b.tag))
         elif m == "item":
@@ -644,8 +929,8 @@ class BattleScene(Scene):
         p, en = self.bs.player, self.bs.enemy
         self.shown["p"] = ease(self.shown["p"], p.hp / p.max_hp)
         self.shown["e"] = ease(self.shown["e"], en.hp / en.max_hp)
-        self.shown_stab["p"] = ease(self.shown_stab["p"], p.stability / p.max_stability)
-        self.shown_stab["e"] = ease(self.shown_stab["e"], en.stability / en.max_stability)
+        self.shown_energy["p"] = ease(self.shown_energy["p"], p.energy / max(1, p.max_energy))
+        self.shown_energy["e"] = ease(self.shown_energy["e"], en.energy / max(1, en.max_energy))
         self.shown_xp = ease(self.shown_xp, p.xp / max(1, p.xp_to_next))
         if self.end_timer is not None and self.msg.waiting and not self.waiting:
             self.end_timer -= dt
@@ -666,11 +951,18 @@ class BattleScene(Scene):
         pygame.draw.ellipse(sh, (20, 40, 20, 40), sh.get_rect().inflate(-w // 3, -h // 3))
         surf.blit(sh, sh.get_rect(center=center))
 
-    def _info_panel(self, surf, rect, mon, shown, shown_stab, enemy):
+    def _info_panel(self, surf, rect, mon, shown, shown_energy, enemy):
         panel(surf, rect, "panel")
         x, y = rect.x + 18, rect.y + 12
         text(surf, mon.name, (x, y), "display", 16, INK)
         text(surf, f"Lv{mon.level}", (rect.right - 18, y), "display", 16, INK, anchor="topright")
+        stg = {k: v for k, v in mon.stages.items() if v}            # stat-stage chips beside the level
+        if stg:
+            letters = {"power": "P", "defense": "D", "sp_defense": "S", "speed": "Sp"}
+            chip = "  ".join(f"{letters[k]}{'+' if v > 0 else ''}{v}" for k, v in stg.items())
+            col = (110, 220, 130) if all(v > 0 for v in stg.values()) else (240, 170, 90) \
+                if all(v < 0 for v in stg.values()) else (230, 210, 120)
+            text(surf, chip, (rect.right - 18, y + 24), "display", 8, col, anchor="topright")
         sx = status_chip(surf, mon.status, x, y + 26) if mon.status else x
         by = y + 28 + (0 if not mon.status else 0)
         bx = rect.x + 18
@@ -682,12 +974,13 @@ class BattleScene(Scene):
         if not enemy:
             text(surf, f"{mon.hp}/{mon.max_hp}", (rect.right - 18, by - 2), "body", 24, INK, anchor="topright")
             by += 20
-        icon_chip(surf, "baricon5", (bx, by - 8), TEAL_DARK)
-        bar(surf, (bx + 44, by - 3, rect.w - 36 - 44 - 4, 9), shown_stab, STAB_BLUE)
+        icon_chip(surf, "baricon4", (bx, by - 8), ENERGY_GOLD)
+        bar(surf, (bx + 44, by - 3, rect.w - 36 - 44 - 4, 9), shown_energy, ENERGY_GOLD)
         if not enemy:
-            by += 27
+            by += 24
             icon_chip(surf, "baricon3", (bx, by - 8), (240, 192, 32))
             bar(surf, (bx + 44, by - 3, rect.w - 36 - 44 - 4, 9), min(1.0, self.shown_xp), EXP_BLUE, segmented=True)
+        text(surf, mon.ability, (rect.right - 14, rect.bottom - 8), "display", 8, (150, 158, 152), anchor="bottomright")
 
     def draw(self, surf):
         surf.fill(TEAL_DARK)                     # control strip backdrop (nothing ghosts through the glass)
@@ -702,11 +995,11 @@ class BattleScene(Scene):
             f.draw(surf)
         self.burst.draw(surf)
         e, p = self.bs.enemy, self.bs.player
-        eh = 100 + (22 if e.status else 0)
-        self._info_panel(surf, pygame.Rect(30, 28, 380, eh), e, self.shown["e"], self.shown_stab["e"], True)
-        ph = 142 + (22 if p.status else 0)
+        eh = 100 + (22 if e.status else 0)      # HP + energy bars
+        self._info_panel(surf, pygame.Rect(30, 28, 380, eh), e, self.shown["e"], self.shown_energy["e"], True)
+        ph = 142 + (22 if p.status else 0)      # HP + energy + XP bars
         self._info_panel(surf, pygame.Rect(W - 30 - 400, SCENE_H - ph - 28, 400, ph), p, self.shown["p"],
-                         self.shown_stab["p"], False)
+                         self.shown_energy["p"], False)
         sfx = render_text("SFX OFF" if audio.muted else "SFX ON", "display", 8, INK)
         panel(surf, (W - 112, 10, 100, 26), "button", blur=False, shadow=False)
         surf.blit(sfx, sfx.get_rect(center=(W - 62, 23)))
@@ -720,11 +1013,13 @@ class BattleScene(Scene):
         panel(surf, left, "message")
         s = self.bs
         if self.menu == "fight" and self.grid.current and self.grid.current.tag != "back":
-            t = TECHNIQUES[self.grid.current.tag]
-            info = t.desc if t.category == "status" else f"PWR {t.power}  -  ACC {t.accuracy}"
+            mid = self.grid.current.tag
+            t = TECHNIQUES[mid]
+            info = t.desc if t.category == "status" else \
+                f"PWR {t.power}  -  ACC {t.accuracy}  -  ENERGY COST {t.energy}"
             text(surf, t.category.upper(), (left.x + 24, left.y + 18), "display", 8, (200, 235, 225))
-            text(surf, info if t.category != "status" else "STATUS", (left.x + 24, left.y + 40), "body", 34,
-                 (248, 246, 230))
+            text(surf, "STATUS" if t.category == "status" else info, (left.x + 24, left.y + 40),
+                 "body", 34 if t.category == "status" else 24, (248, 246, 230))
             for k, ln in enumerate(wrap_text(t.desc, "body", 26, left.w - 48)[:3]):
                 text(surf, ln, (left.x + 24, left.y + 76 + k * 24), "body", 26, (210, 232, 224))
         else:
@@ -736,3 +1031,84 @@ class BattleScene(Scene):
             if self.menu == "item" and not self.grid.buttons[:-1]:
                 text(surf, "Your bag is empty.", (left.x + 24, left.y + 98), "body", 28, (255, 214, 170))
         self.grid.draw(surf, size=16 if self.menu in ("main",) else 16)
+
+
+# =========================================================================== the Safari Reserve battle
+class SafariBattleScene(BattleScene):
+    """FireRed's safari battle: you never fight.  BALL throws one of the session's Safari Modules,
+    BAIT calms the Scimon (harder to catch, slower to flee), ROCK riles it (easier to catch, faster
+    to flee), and after every action the Scimon reacts and may flee.  The math is FireRed's,
+    verbatim, in safari.py; the session's module count is spent and saved on the game state."""
+
+    def __init__(self, battle, on_end, session, bg=1):
+        super().__init__(battle, on_end, allow_capture=False, allow_run=False, bg=bg)
+        import safari
+        self.safari = safari
+        self.session = session                        # st.safari: {"balls": n, "steps": n} (mutated live)
+        self.field = safari.SafariField.for_species(SPECIES[self.bs.enemy.species_id])
+
+    def on_enter(self):
+        self._play([BattleEvent(f"A wild {self.bs.enemy.name} appeared!", sfx="select")])
+
+    # ---- the safari menu -----------------------------------------------------------------------
+    def _open(self, menu):
+        if menu != "main":
+            return super()._open(menu)
+        self.menu = "main"
+        area = pygame.Rect(CTRL.x + 460, CTRL.y, CTRL.w - 460, CTRL.h)
+        bw, bh = (area.w - 12) // 2, (area.h - 16) // 3
+        spec = [("BALL", "sball", self.session["balls"] > 0, True), ("BAIT", "sbait", True, False),
+                ("ROCK", "srock", True, False), ("RUN", "srun", True, False)]
+        btns = [Button(lab, (area.x + (i % 2) * (bw + 12), area.y + 4 + (i // 2) * (bh + 4), bw, bh),
+                       enabled=ok, accent=accent, tag=tag, icon=BUTTON_ICONS.get(tag))
+                for i, (lab, tag, ok, accent) in enumerate(spec)]
+        self.grid = ButtonGrid(btns, cols=2, allow_back=False)
+        self.cursor_hint = ""
+
+    def _activate(self, b):
+        audio.play("select")
+        if b.tag == "sball":
+            self._throw_ball()
+        elif b.tag == "sbait":
+            self.safari.throw_bait(self.field)
+            self._play([BattleEvent("You threw bait!")] + self._watch_and_flee())
+        elif b.tag == "srock":
+            self.safari.throw_rock(self.field)
+            self._play([BattleEvent("You threw a rock!")] + self._watch_and_flee())
+        else:
+            self._play([BattleEvent("You slipped away.", sfx="faint"),
+                        BattleEvent(effect=lambda s: setattr(s, "outcome", "run"))])
+
+    def _throw_ball(self):
+        s = self.bs
+        self.session["balls"] = max(0, self.session["balls"] - 1)
+        caught, shakes = self.safari.roll_catch(self.field, s.enemy)
+        left = f" ({self.session['balls']} left)"
+        if caught:
+            self._play([BattleEvent(f"You threw a Safari Module!{left}", sfx="select"),
+                        BattleEvent("Wobble... wobble... wobble... CLICK!", sfx="capture"),
+                        BattleEvent(f"Gotcha! {s.enemy.name} was caught!"),
+                        BattleEvent(effect=lambda st: setattr(st, "outcome", "caught"))])
+            return
+        evs = [BattleEvent(f"You threw a Safari Module!{left}", sfx="select"),
+               BattleEvent(f"Wobble... x{max(1, shakes)} - it broke free!")]
+        if not self.session["balls"]:
+            evs.append(BattleEvent("You are out of Safari Modules!"))
+        self._play(evs + self._watch_and_flee())
+
+    def _watch_and_flee(self):
+        """After every player action: the flee roll first (FireRed's AI script runs on the post-action
+        counters), then the mon's reaction while the bait/rock counters tick down."""
+        s, f = self.bs, self.field
+        if self.safari.roll_flee(f):
+            return [BattleEvent(f"Wild {s.enemy.name} fled!", sfx="faint"),
+                    BattleEvent(effect=lambda st: setattr(st, "outcome", "run"))]
+        reaction = self.safari.watch(f, SPECIES[s.enemy.species_id])
+        text = {"watching": f"Wild {s.enemy.name} is watching carefully!",
+                "eating": f"Wild {s.enemy.name} is eating!",
+                "angry": f"Wild {s.enemy.name} is angry!"}[reaction]
+        return [BattleEvent(text)]
+
+    def draw(self, surf):
+        super().draw(surf)
+        label_chip(surf, f"MODULES {self.session['balls']}", (W - 170, 24), (42, 103, 99))

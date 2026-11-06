@@ -1,4 +1,4 @@
-"""Modal scenes: the Pack (party + bag), the shop counter, the Sci-Database terminal and the type guide.
+"""Modal scenes: the Pack (party + bag), the shop counter, the Sci-Database terminal and the help guide.
 
 All of them are translucent overlays (`opaque = False`) pushed on top of the overworld, driven purely by
 events and update(dt) -- opening one never pauses or blocks the engine loop."""
@@ -8,11 +8,12 @@ import pygame
 
 import assets
 import audio
+import daycare
 from data import (CATALOG, ITEM_CATEGORIES, MODULES, PASSES, SHOP_PRICES, STATUS_INFO, TECHNIQUES, item_def,
                   sell_price, type_rgb, hexc, STRONG, TYPE_COLORS, WEAK)
 from engine import Scene, StateId
 from monsters import PARTY_LIMIT
-from settings import CREAM, H, INK, ORANGE, TEAL_DARK, W
+from settings import CREAM, ENERGY_GOLD, H, INK, ORANGE, TEAL_DARK, W
 from sprites import LOOKS, character_frame
 from state import BOX_SIZE, BOX_COUNT, GYM_STAMPS, playtime_str
 from ui import (Button, ButtonGrid, bar, dim, draw_button, hp_color, is_back, is_click, is_confirm, label_chip,
@@ -35,6 +36,26 @@ def _item_chip(surf, d, rect):
         surf.blit(img, img.get_rect(center=rect.center))
         return
     surf.blit(ic, ic.get_rect(center=rect.center))
+
+
+# the EV/IV read-out (Gen 3's hidden stats, shown FireRed-QoL style): short stat codes shared with the
+# stat rows above, effort only listing trained stats
+_TRAIN_ORDER = ("hp", "power", "defense", "sp_power", "sp_defense", "speed")
+_TRAIN_SHORT = {"hp": "HP", "power": "Pow", "defense": "Def", "sp_power": "SpP", "sp_defense": "SpD",
+                "speed": "Spd"}
+
+
+def training_lines(mon):
+    """(effort line, IV line) for the detail panels: effort lists only trained stats, IVs are the raw
+    0-31 talents in the fixed HP Pow Def SpP SpD Spd Stb order."""
+    evs = {k: int(v) for k, v in (mon.evs or {}).items() if int(v)}
+    if evs:
+        ev_line = "Effort  " + "  ".join(f"{_TRAIN_SHORT[s]}+{evs[s]}" for s in _TRAIN_ORDER if s in evs)
+    else:
+        ev_line = "Effort untrained - defeat wild Scimons to train."
+    ivs = mon.ivs or {}
+    iv_line = "IVs  " + "  ".join(f"{_TRAIN_SHORT[s]} {int(ivs.get(s, 0))}" for s in _TRAIN_ORDER)
+    return ev_line, iv_line
 
 
 # =========================================================================== the Pack
@@ -86,6 +107,10 @@ class InventoryScene(Scene):
     # ---- commands -----------------------------------------------------------------------
     def begin_target(self, item_id):
         d = item_def(item_id)
+        if d and d.repel_steps:                 # world-facing items (Repel Fields) apply with no Sci-Mon target
+            ok, msg = self.engine.state.use_field_item(item_id)
+            self.say(msg, ok)
+            return
         if d and d.category in ("consumable", "held", "disc"):
             self.pending, self.tab, self.idx = item_id, "party", 0
 
@@ -105,8 +130,34 @@ class InventoryScene(Scene):
             ok, msg = st.teach_move(self.pending, mon.uid)
         else:
             ok, msg = st.use_item(self.pending, mon.uid)
+            if ok and d.level_up:
+                self._queue_evolutions()        # a Grow Cell can push a Scimon over its evolution level
         self.say(msg, ok)
         self.pending = None
+
+    def _queue_evolutions(self):
+        """Every pending evolution in the party, queued as FireRed-style cutscenes exactly like the
+        overworld does after a battle (learn-move prompts play after their cutscene)."""
+        from data import EVOLUTIONS
+        from monsters import check_evolutions
+        st = self.engine.state
+        pending = []
+        for m in st.party:
+            sid = m.species_id
+            while sid in EVOLUTIONS and m.level >= EVOLUTIONS[sid][1]:
+                nxt = EVOLUTIONS[sid][0]
+                pending.append((sid, nxt))
+                sid = nxt
+        if not pending:
+            return
+        results = check_evolutions(st.party)
+        from scenes import EvolutionScene, LearnMoveScene
+        for _mon, _old, _new, missed in reversed(results):
+            for tech in reversed(missed):
+                self.engine.push(LearnMoveScene(_mon, tech))   # beneath the cutscenes, like the overworld
+        for (old_id, new_id), (mon, old, new, _missed) in reversed(list(zip(pending, results))):
+            st.mark_seen(new_id)
+            self.engine.push(EvolutionScene(old_id, new_id, [f"Congratulations! Your {old} evolved into {new}!"]))
 
     def cancel_forget(self):
         self.forgetting, self.forget_idx = None, 0
@@ -144,6 +195,11 @@ class InventoryScene(Scene):
         if kind == "mon" and v:
             ok, msg = self.engine.state.take_held(v.uid)
             self.say(msg, ok)
+
+    def open_nickname(self):
+        kind, v = self.active()
+        if kind == "mon" and v and v in self.engine.state.party:
+            self.engine.push(NicknameScene(v))
 
     def reorder(self, delta):
         kind, v = self.active()
@@ -208,6 +264,9 @@ class InventoryScene(Scene):
             if k == pygame.K_t:
                 self.take()
                 return
+            if k == pygame.K_n and self.tab == "party":
+                self.open_nickname()
+                return
             if k == pygame.K_u:
                 self.reorder(-1)
                 return
@@ -247,7 +306,8 @@ class InventoryScene(Scene):
                 {"close": lambda: self.engine.pop(self), "party": lambda: self.set_tab("party"),
                  "bag": lambda: self.set_tab("bag"), "profile": lambda: self.set_tab("profile"),
                  "use": self.activate, "discard": self.discard,
-                 "take": self.take, "up": lambda: self.reorder(-1), "down": lambda: self.reorder(1),
+                 "take": self.take, "nickname": self.open_nickname,
+                 "up": lambda: self.reorder(-1), "down": lambda: self.reorder(1),
                  "cancel": lambda: setattr(self, "pending", None)}.get(name, lambda: None)()
                 if name.startswith("cat:"):
                     self.cat, self.idx = name[4:], 0
@@ -510,8 +570,6 @@ class InventoryScene(Scene):
         text(surf, f"HP {mon.hp}/{mon.max_hp}", (x, ly), "ui_b", 13, INK)
         bar(surf, (x, ly + 22, rect.w - 32, 10), mon.hp / mon.max_hp, hp_color(mon.hp / mon.max_hp))
         ly += 40
-        text(surf, f"Stability {mon.stability}/{mon.max_stability}", (x, ly), "ui", 13, (70, 74, 70))
-        ly += 22
         if mon.status:
             text(surf, f"{mon.status} - {STATUS_INFO[mon.status][2]}", (x, ly), "ui", 13, hexc(STATUS_INFO[mon.status][1]))
             ly += 20
@@ -519,6 +577,18 @@ class InventoryScene(Scene):
                                          ("SpD", mon.sp_defense), ("Spd", mon.speed))):
             text(surf, f"{lab} {val}", (x + (k % 2) * 130, ly + (k // 2) * 20), "ui", 13, (70, 74, 70))
         ly += 64
+        ev_line, iv_line = training_lines(mon)
+
+        def fit_size(line, cap=12):
+            # the training read-out shrinks to fit the panel instead of clipping (7 stats get wide)
+            size = cap
+            while size > 9 and assets.font("ui", size).size(line)[0] > rect.w - 32:
+                size -= 1
+            return size
+        text(surf, ev_line, (x, ly), "ui", fit_size(ev_line), (110, 116, 110))
+        ly += 18
+        text(surf, iv_line, (x, ly), "ui", fit_size(iv_line), (150, 158, 152))
+        ly += 20
         held = item_def(mon.held_item) if mon.held_item else None
         text(surf, f"Holding: {held.name if held else 'nothing'}", (x, ly), "ui", 13, INK)
         by = rect.bottom - 14
@@ -535,6 +605,11 @@ class InventoryScene(Scene):
             b = Button("Take held item", (x, by - 34, rect.w - 32, 34))
             draw_button(surf, b, size=13, kind="ui")
             self._buttons["take"] = b.rect
+            by -= 42
+        if in_party:
+            b = Button("Nickname (N)", (x, by - 34, rect.w - 32, 34))
+            draw_button(surf, b, size=13, kind="ui")
+            self._buttons["nickname"] = b.rect
             by -= 42
         if self.pending:
             b = Button(f"Give to {mon.name}", (x, by - 34, rect.w - 32, 34), accent=True)
@@ -908,8 +983,8 @@ class DatabaseScene(Scene):
         ratio = mon.hp / mon.max_hp
         text(surf, f"HP {mon.hp}/{mon.max_hp}", (x, top.y + 24), "body", 22, INK)
         bar(surf, (x, top.y + 43, area.right - x - 12, 8), ratio, hp_color(ratio))
-        text(surf, f"Stability {mon.stability}/{mon.max_stability}", (x, top.y + 54), "body", 22, INK)
-        bar(surf, (x, top.y + 73, area.right - x - 12, 8), mon.stability / max(1, mon.max_stability), (91, 143, 214))
+        text(surf, f"Energy {mon.energy}/{mon.max_energy}", (x, top.y + 54), "body", 22, INK)
+        bar(surf, (x, top.y + 73, area.right - x - 12, 8), mon.energy / max(1, mon.max_energy), ENERGY_GOLD)
         held = item_def(mon.held_item) if mon.held_item else None
         line = f"{mon.status} - {STATUS_INFO[mon.status][2]}" if mon.status else f"Holding: {held.name if held else 'nothing'}"
         text(surf, line, (x, top.y + 84), "body", 22, hexc(STATUS_INFO[mon.status][1]) if mon.status else (70, 74, 70))
@@ -952,6 +1027,11 @@ class DatabaseScene(Scene):
         for ln in wrap_text(sp.desc, "body", 22, area.w - 28)[:4]:
             text(surf, ln, (area.x + 14, ly), "body", 22, (70, 74, 70))
             ly += 19
+        # the selected individual's training summary (the Pack's Sci-Mon panel carries the full read-out)
+        ev_total = sum(int(v) for v in (mon.evs or {}).values())
+        iv_total = sum(int(v) for v in (mon.ivs or {}).values())
+        text(surf, f"Effort {ev_total}/510  -  IVs {iv_total}/217", (area.x + 14, ly + 2), "ui", 12,
+             (150, 158, 152))
         text(surf, _verdict(sp), (area.centerx, area.bottom - 14), "display", 8, ORANGE, anchor="midbottom")
 
     def _draw_hexagon(self, surf, c, rad, sp):
@@ -984,16 +1064,66 @@ class DatabaseScene(Scene):
                 text(surf, val, (x, y + 7), "display", 8, ORANGE, anchor=anc)
 
 
-# =========================================================================== type & disc guide
+# =========================================================================== the guide (types + controls)
+# every key in the game and what it does (None marks a section header); split across two columns at a
+# section boundary so the table fits without scrolling
+CONTROLS_LEFT = [
+    (None, "OVERWORLD"),
+    ("Arrows / WASD", "walk; navigate every menu"),
+    ("Enter / Space / Z", "confirm, talk, advance text"),
+    ("Esc / X / Backspace", "back, close menus"),
+    ("I / Tab", "open the Pack"),
+    ("H", "open this guide"),
+    ("B hold / Shift", "run (x1.6 speed)"),
+    ("B tap", "Cycle Rig on / off (outdoors)"),
+    ("F", "Aerolift - fast-travel to rest points"),
+    ("G", "Excavator - burrow out of caves"),
+    ("Water + Enter", "cast the fishing rod"),
+    ("M", "mute / unmute SFX"),
+    ("F3 / F11", "hitbox overlay / fullscreen"),
+    (None, "PACK"),
+    ("Tab", "Sci-Mon / Bag / Profile tab"),
+    ("Q / E", "bag category"),
+    ("Enter", "use / give / teach on selected"),
+    ("T", "take held item"),
+    ("N", "nickname a party Sci-Mon"),
+    ("U / J", "reorder party up / down"),
+    ("Del / R", "discard one of the item"),
+]
+CONTROLS_RIGHT = [
+    (None, "SCI-DATABASE"),
+    ("Arrows", "move between party and box"),
+    ("Enter", "store / take"),
+    ("Q / E", "change box"),
+    ("F", "flip the front / back view"),
+    ("D", "Sci-Dex catalog (all forms)"),
+    (None, "BATTLE"),
+    ("Enter", "advance messages, confirm"),
+    ("Arrows", "choose action / technique"),
+    ("Esc", "back to the previous menu"),
+    (None, "DIALOGUE"),
+    ("Enter / click", "advance (first press finishes)"),
+    ("Choice rows", "arrows + Enter to pick"),
+    (None, "TOUCH & MOUSE"),
+    ("Mouse", "every menu: hover + click"),
+    ("Touch", "D-pad + A / B / PACK buttons"),
+    ("Rotate", "the layout follows orientation"),
+]
+
+
 class HelpScene(Scene):
-    """Field guide: every Scimon type with its strong / weak matchups, plus the discs, capture modules
-    and held cells that are tuned for each type."""
+    """The in-game guide, three tabs: TYPES (every Scimon type with its strong / weak matchups + quick
+    tips), GEAR (move discs, capture modules, held gear, field abilities and the road rules) and
+    CONTROLS (every key and its purpose)."""
     state_id = StateId.HELP
     opaque = False
     COLS = 3
+    TABS = ("types", "gear", "controls")
+    TAB_LABELS = {"types": "TYPES", "gear": "GEAR", "controls": "CONTROLS"}
 
     def __init__(self):
         self.t, self.idx = 0.0, 0
+        self.tab = "types"
         self.types = list(TYPE_COLORS)
         self.rect = pygame.Rect(20, 16, W - 40, H - 32)
         cw = max(assets.font("display", 8).size(t.upper())[0] for t in self.types) + 30
@@ -1001,8 +1131,10 @@ class HelpScene(Scene):
                                 self.COLS * cw + (self.COLS - 1) * 10, 6 * 36 + 5 * 10)
         self.detail = pygame.Rect(self.grid.right + 16, self.grid.y, self.rect.right - 24 - (self.grid.right + 16),
                                   self.grid.h)
-        self.gear = pygame.Rect(self.rect.x + 24, self.grid.bottom + 14, self.rect.w - 48,
+        self.tips = pygame.Rect(self.rect.x + 24, self.grid.bottom + 14, self.rect.w - 48,
                                 self.rect.bottom - 52 - (self.grid.bottom + 14))
+        self.gear = pygame.Rect(self.rect.x + 24, self.rect.y + 64, self.rect.w - 48,
+                                self.rect.bottom - 52 - (self.rect.y + 64))
         self.chip_rects, self._buttons = [], {}
 
     # ---- events -------------------------------------------------------------------------
@@ -1010,24 +1142,35 @@ class HelpScene(Scene):
         if is_back(e):
             self.engine.pop(self)
             return
-        d = nav_dir(e)
-        if d:
-            i = self.idx + (d[0] if d[0] else d[1] * self.COLS)
-            if d[0] and i // self.COLS != self.idx // self.COLS:
-                i = self.idx
-            if 0 <= i < len(self.types):
-                self.idx = i
-                audio.play("move")
+        if e.type == pygame.KEYDOWN and e.key == pygame.K_TAB:
+            self.tab = self.TABS[(self.TABS.index(self.tab) + 1) % len(self.TABS)]
+            audio.play("select")
             return
-        if is_click(e):
-            if any(r.collidepoint(e.pos) for r in self._buttons.values()):
-                self.engine.pop(self)
-                return
-            for i, r in self.chip_rects:
-                if r.collidepoint(e.pos):
+        if self.tab == "types":
+            d = nav_dir(e)
+            if d:
+                i = self.idx + (d[0] if d[0] else d[1] * self.COLS)
+                if d[0] and i // self.COLS != self.idx // self.COLS:
+                    i = self.idx
+                if 0 <= i < len(self.types):
                     self.idx = i
                     audio.play("move")
+                return
+        if is_click(e):
+            for name, r in self._buttons.items():
+                if r.collidepoint(e.pos):
+                    if name == "close":
+                        self.engine.pop(self)
+                    elif name.startswith("tab:"):
+                        self.tab = name[4:]
+                        audio.play("select")
                     return
+            if self.tab == "types":
+                for i, r in self.chip_rects:
+                    if r.collidepoint(e.pos):
+                        self.idx = i
+                        audio.play("move")
+                        return
 
     def update(self, dt):
         self.t += dt
@@ -1077,10 +1220,21 @@ class HelpScene(Scene):
             y = self._chips(surf, lst, x, y + 18, self.detail.right - 16) + 6
 
     def _draw_gear(self, surf):
+        """The GEAR tab: move discs, capture modules, held gear, the field abilities and the road rules,
+        laid out to fit the full-height panel (the TYPES tab's quick tips carry the training summary)."""
         panel(surf, self.gear, "inner", shadow=False)
         ch = assets.font("display", 8).get_height() + 8       # chip height, for mid-row alignment
-        x, y = self.gear.x + 16, self.gear.y + 12
-        text(surf, "MOVE DISCS - A GYM LEADER'S SIGNATURE TECHNIQUE:", (x, y), "ui_b", 12, TEAL_DARK)
+        x, y = self.gear.x + 16, self.gear.y + 10
+        w = self.gear.w - 32
+
+        def para(s, dy=17):
+            nonlocal y
+            for ln in wrap_text(s, "ui", 13, w):
+                text(surf, ln, (x, y), "ui", 13, (110, 116, 110))
+                y += dy
+
+        text(surf, "MOVE DISCS - A GYM LEADER'S SIGNATURE TECHNIQUE (TEACHES ONCE, ON A COMPATIBLE TYPE):",
+             (x, y), "ui_b", 12, TEAL_DARK)
         y += 20
         for d in [c for c in CATALOG.values() if c.category == "disc"]:
             tech = TECHNIQUES[d.move]
@@ -1088,13 +1242,12 @@ class HelpScene(Scene):
             if ic:
                 surf.blit(ic, (x, y - 8))
             x2 = text(surf, f"{d.name}: {tech.name} ({tech.type} {tech.power} POW) - give it to a",
-                      (x + (ic.get_width() + 8 if ic else 0), y), "ui", 14, INK, anchor="midleft").right + 8
+                      (x + (ic.get_width() + 8 if ic else 0), y), "ui", 13, INK, anchor="midleft").right + 6
             for ct in d.compat_types:
                 x2 = label_chip(surf, ct.upper(), (x2, y - ch // 2), hexc(TYPE_COLORS[ct]), 8).right + 6
-            y += 28
-        y += 8
-        text(surf, "CAPTURE MODULES - THROW IN BATTLE TO CATCH; A MATCHED TYPE IS 1.7x MORE LIKELY TO STICK:",
-             (x, y), "ui_b", 12, TEAL_DARK)
+            y += 23
+        y += 4
+        text(surf, "CAPTURE MODULES - THROWN IN BATTLE; A MATCHED TYPE STICKS 1.7x OFTEN:", (x, y), "ui_b", 12, TEAL_DARK)
         y += 20
         x2 = x
         for m in MODULES.values():
@@ -1102,13 +1255,13 @@ class HelpScene(Scene):
             ic = assets.item_icon(m.id, 1)
             if ic:
                 surf.blit(ic, (x2, y - 8))
-            x2 = text(surf, name + ":", (x2 + (ic.get_width() + 6 if ic else 0), y), "ui", 14, INK,
+            x2 = text(surf, name + ":", (x2 + (ic.get_width() + 6 if ic else 0), y), "ui", 13, INK,
                       anchor="midleft").right + 6
             if m.match_type:
                 x2 = label_chip(surf, m.match_type.upper(), (x2, y - ch // 2), hexc(TYPE_COLORS[m.match_type]), 8).right + 14
             else:
-                x2 = text(surf, "any type", (x2, y), "ui", 14, (110, 116, 110), anchor="midleft").right + 14
-        y += 28
+                x2 = text(surf, "any type", (x2, y), "ui", 13, (110, 116, 110), anchor="midleft").right + 14
+        y += 26
         text(surf, "HELD CELLS - THE HOLDER'S TECHNIQUES OF THAT TYPE GET +20%:", (x, y), "ui_b", 12, TEAL_DARK)
         y += 20
         x2 = x
@@ -1116,22 +1269,259 @@ class HelpScene(Scene):
             ic = assets.item_icon(d.id, 1)
             if ic:
                 surf.blit(ic, (x2, y - 8))
-            x2 = text(surf, d.name + ":", (x2 + (ic.get_width() + 6 if ic else 0), y), "ui", 14, INK,
+            x2 = text(surf, d.name + ":", (x2 + (ic.get_width() + 6 if ic else 0), y), "ui", 13, INK,
                       anchor="midleft").right + 6
             x2 = label_chip(surf, d.power_boost[0].upper(), (x2, y - ch // 2), hexc(TYPE_COLORS[d.power_boost[0]]), 8).right + 14
+        y += 24
+        text(surf, "BATTLE GEAR (HELD) - ALL STOCKED AT THE VERDANCE GRAND MART:", (x, y), "ui_b", 12, TEAL_DARK)
+        y += 18
+        para("Nutrient Loop heals a little each turn; Holdfast Band may endure a knockout at 1 HP; Torque Band "
+             "and Logic Clip boost one move category by 50% but lock the first technique used.")
+        para("Reticle Lens doubles the critical chance; Lucky Mote adds 50% EXP (catch-EXP too); Exp Coupler "
+             "lets healthy bench holders siphon half of the active Scimon's EXP.")
+        y += 6
+        text(surf, "FIELD ABILITIES - F: AEROLIFT (FAST-TRAVEL) - G: EXCAVATOR (LEAVE CAVES) - "
+                   "FACE WATER + CONFIRM: FISH", (x, y), "ui_b", 12, TEAL_DARK)
+        y += 18
+        para("Each ability needs its module plus a party Sci-Mon of the right type. Hold B / Shift to run; B "
+             "mounts the Cycle Rig (Wade, after a stamp); Repel Fields keep wilds away 100 / 200 steps; "
+             "nanite-afflicted Scimons lose HP as you walk.")
+        para("The Vs. Scanner (Club Scout Pella, Emberport) recharges over 100 steps, then any beaten trainer - "
+             "gym rings included - accepts a rematch. Nickname a party Sci-Mon from the Pack (N).")
 
     def draw(self, surf):
         dim(surf, 175)
         panel(surf, self.rect, "panel")
         r = self.rect
-        text(surf, "TYPE & DISC GUIDE", (r.x + 28, r.y + 22), "ui_b", 18, INK)
-        text(surf, "Tap a type to see its matchups", (r.centerx, r.y + 30), "ui", 13, (110, 116, 110),
-             anchor="center")
+        self._buttons = {}
+        text(surf, "GUIDE", (r.x + 28, r.y + 22), "ui_b", 18, INK)
+        for i, key in enumerate(self.TABS):
+            b = Button(self.TAB_LABELS[key], (r.x + 150 + i * 160, r.y + 14, 150, 36))
+            draw_button(surf, b, selected=self.tab == key, size=13, kind="ui")
+            self._buttons["tab:" + key] = b.rect
         close = Button("X", (r.right - 70, r.y + 14, 48, 36))
         draw_button(surf, close, size=15, kind="ui_b")
-        self._buttons = {"close": close.rect}
-        self._draw_grid(surf)
-        self._draw_detail(surf)
-        self._draw_gear(surf)
-        text(surf, "Tip: weaken a wild Scimon before throwing a module.  D: Sci-Dex catalog (all forms).",
-             (r.x + 28, r.bottom - 30), "ui", 13, (110, 116, 110))
+        self._buttons["close"] = close.rect
+        if self.tab == "types":
+            self._draw_grid(surf)
+            self._draw_detail(surf)
+            self._draw_tips(surf)
+            text(surf, "Tap a type for its matchups.  Tab: next page.",
+                 (r.x + 28, r.bottom - 30), "ui", 13, (110, 116, 110))
+        elif self.tab == "gear":
+            self._draw_gear(surf)
+            text(surf, "Tab: next page.",
+                 (r.x + 28, r.bottom - 30), "ui", 13, (110, 116, 110))
+        else:
+            self._draw_controls(surf)
+            text(surf, "Tab: back to the types.  Every menu also answers to the mouse - touch "
+                       "devices get an on-screen D-pad plus A / B / PACK.",
+                 (r.x + 28, r.bottom - 30), "ui", 13, (110, 116, 110))
+
+    def _draw_tips(self, surf):
+        """The types tab's quick tips: the short rules a new researcher needs most."""
+        panel(surf, self.tips, "inner", shadow=False)
+        x, y = self.tips.x + 16, self.tips.y + 12
+        text(surf, "QUICK TIPS", (x, y), "ui_b", 12, TEAL_DARK)
+        y += 24
+        tips = (
+            "Weaken a wild Scimon (a status fault helps) before throwing a capture module.",
+            "Catch-EXP: a successful capture pays the active Scimon a quarter of the defeat EXP.",
+            "Effort (EVs) comes from defeats - caps 255 per stat / 510 total; serums train a stat up to 100. IVs are born talent.",
+            "The Vs. Scanner recharges over 100 steps, then any beaten trainer - gym rings included - accepts a rematch.",
+        )
+        for tip in tips:
+            text(surf, tip, (x, y), "ui", 13, (70, 74, 70))
+            y += 21
+
+    def _draw_controls(self, surf):
+        """Every key in the game and what it does: two columns of keycap chips with their purposes."""
+        area = pygame.Rect(self.rect.x + 28, self.rect.y + 64, self.rect.w - 56, self.rect.bottom - self.rect.y - 104)
+        col_w = (area.w - 28) // 2
+        row_h = 21
+
+        def row(x, y, key_label, purpose):
+            if key_label is None:                       # section header
+                text(surf, purpose, (x, y), "ui_b", 11, TEAL_DARK)
+                pygame.draw.line(surf, (255, 255, 255, 110), (x, y + 16), (x + col_w - 24, y + 16))
+                return row_h + 8
+            kw = assets.font("ui_b", 12).size(key_label)[0] + 16
+            chip = pygame.Rect(x, y, kw, 19)
+            panel(surf, chip, "button", blur=False, shadow=False)
+            text(surf, key_label, (chip.centerx, chip.centery), "ui_b", 12, INK, anchor="center")
+            text(surf, purpose, (x + 180, y + 2), "ui", 12, (110, 116, 110))
+            return row_h
+
+        for ci, rows in enumerate((CONTROLS_LEFT, CONTROLS_RIGHT)):
+            x = area.x + ci * (col_w + 28)
+            y = area.y + 2
+            for key_label, purpose in rows:
+                y += row(x, y, key_label, purpose)
+
+
+# =========================================================================== nickname prompt
+class NicknameScene(Scene):
+    """FireRed's nickname prompt, from the Pack's Sci-Mon tab: type a new name (empty restores the
+    species' own name).  The change lives on the Scimon, so saves and the dex treat it like any other
+    nickname (monsters.evolve already preserves it)."""
+    state_id = StateId.INVENTORY
+    opaque = False
+
+    def __init__(self, mon):
+        self.mon = mon
+        self.name = mon.name
+        self.t = 0.0
+        self.rect = pygame.Rect(0, 0, 520, 240)
+        self.rect.center = (W // 2, H // 2 - 30)
+
+    def confirm(self):
+        self.mon.name = (self.name.strip() or self.mon.species.name)[:12]
+        audio.play("select")
+        self.engine.pop(self)
+        self.engine.toast.show(f"Its name is now {self.mon.name}!", 2.0)
+
+    def handle_event(self, e):
+        if e.type == pygame.KEYDOWN:
+            uni = getattr(e, "unicode", "")
+            if e.key in (pygame.K_ESCAPE, pygame.K_x):
+                self.engine.pop(self)
+            elif e.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                self.confirm()
+            elif e.key == pygame.K_BACKSPACE:
+                self.name = self.name[:-1]
+            elif uni and (uni.isalnum() or uni in " -_'") and len(self.name) < 12:
+                self.name += uni
+            return
+        if is_click(e):
+            for name, r in self._buttons.items():
+                if r.collidepoint(e.pos):
+                    if name == "save":
+                        self.confirm()
+                    else:
+                        self.engine.pop(self)
+                    return
+
+    def update(self, dt):
+        self.t += dt
+
+    def draw(self, surf):
+        dim(surf, 150)
+        panel(surf, self.rect, "panel")
+        self._buttons = {}
+        _icon(surf, self.mon.species_id, (self.rect.centerx, self.rect.y + 64), 60)
+        text(surf, f"Nickname {self.mon.species.name}?", (self.rect.centerx, self.rect.y + 104),
+             "ui_b", 15, INK, anchor="midtop")
+        box = pygame.Rect(self.rect.centerx - 170, self.rect.y + 126, 340, 40)
+        panel(surf, box, "inner", blur=False, shadow=False)
+        caret = "|" if int(self.t * 2.4) % 2 == 0 else ""
+        text(surf, (self.name or "") + caret, (box.centerx, box.centery), "body", 24, INK, anchor="center")
+        ok = Button("SAVE", pygame.Rect(self.rect.centerx - 190, self.rect.bottom - 60, 170, 40), accent=True)
+        cancel = Button("CANCEL", pygame.Rect(self.rect.centerx + 20, self.rect.bottom - 60, 170, 40))
+        draw_button(surf, ok, size=14, kind="ui_b")
+        draw_button(surf, cancel, size=14, kind="ui")
+        self._buttons["save"], self._buttons["cancel"] = ok.rect, cancel.rect
+        text(surf, "Type a name - Enter saves; an empty name restores the species name",
+             (self.rect.centerx, self.rect.bottom - 66), "ui", 12, (90, 94, 90), anchor="midbottom")
+
+
+# =========================================================================== the Day-Care (Route 5)
+class DaycareScene(Scene):
+    """Keeper Sorrel's counter: deposit a party Scimon (it banks every step you walk as EXP), take a
+    deposited one back (100 credits + 100 per level gained, FireRed's formula), or accept the egg a
+    compatible pair has left behind."""
+    state_id = StateId.DAYCARE
+    opaque = False
+
+    def __init__(self):
+        self.rect = pygame.Rect(110, 40, W - 220, H - 80)
+        self.msg, self.msg_t, self._msg_ok = "Leave two Scimons with me - they grow while you walk!", 3.5, True
+        self.t = 0.0
+        self.grid = ButtonGrid([], cols=1)
+
+    def say(self, msg, ok=True):
+        self.msg, self.msg_t, self._msg_ok = msg, 2.8 if ok else 2.2, ok
+
+    def _rebuild(self):
+        st = self.engine.state
+        r = self.rect
+        col_w = (r.w - 96) // 2
+        lx, rx = r.x + 24, r.x + r.w // 2 + 24
+        btns = []
+        for i, mon in enumerate(st.party):
+            if mon.is_egg:
+                btns.append(Button(f"Egg  ({mon.hatch_left} steps to hatch)", (lx, r.y + 78 + i * 44, col_w, 38),
+                                   enabled=False, tag=f"egg{i}", right="EGG"))
+            else:
+                btns.append(Button(f"Deposit {mon.name}", (lx, r.y + 78 + i * 44, col_w, 38), tag=f"p{mon.uid}",
+                                   sub=f"Lv{mon.level}  HP {mon.hp}/{mon.max_hp}"))
+        for i, slot in enumerate(st.daycare):
+            cost, gained = daycare.withdraw_cost(slot)
+            btns.append(Button(f"Withdraw {slot['mon'].name}", (rx, r.y + 78 + i * 44, col_w, 38), tag=f"d{i}",
+                               accent=True, sub=f"Lv{slot['mon'].level}  {slot['steps']} steps banked",
+                               right=f"\u00a2{cost}"))
+        if st.daycare_egg:
+            btns.append(Button("Take the Egg!", (rx, r.y + 78 + 2 * 44, col_w, 38), accent=True, tag="egg"))
+        btns.append(Button("LEAVE", (r.right - 128, r.bottom - 52, 104, 36), tag="back"))
+        self.grid.set_buttons(btns)
+
+    def on_enter(self):
+        self._rebuild()
+
+    def handle_event(self, e):
+        if is_back(e):
+            self.engine.pop(self)
+            return
+        res = self.grid.handle(e)
+        if not res:
+            return
+        kind, b = res
+        if kind == "back":
+            self.engine.pop(self)
+            return
+        if kind != "activate":
+            return
+        st = self.engine.state
+        audio.play("select")
+        if b.tag.startswith("p"):
+            ok, msg = daycare.deposit(st, b.tag[1:])
+            self.say(msg, ok)
+        elif b.tag.startswith("d"):
+            ok, msg = daycare.withdraw(st, int(b.tag[1:]))
+            self.say(msg, ok)
+        elif b.tag == "egg":
+            ok, msg = daycare.take_egg(st)
+            self.say(msg, ok)
+        audio.play("buy" if ok else "deny")
+        self._rebuild()
+
+    def update(self, dt):
+        self.t += dt
+        self.msg_t = max(0.0, self.msg_t - dt)
+        self.grid.update(dt)
+
+    def draw(self, surf):
+        dim(surf, 150)
+        r = self.rect
+        panel(surf, r, "panel")
+        text(surf, "DAY-CARE", (r.x + 28, r.y + 22), "ui_b", 18, INK)
+        text(surf, f"\u00a2 {self.engine.state.credits}", (r.right - 28, r.y + 24), "ui_b", 15, INK, anchor="topright")
+        col_w = (r.w - 96) // 2
+        lx, rx = r.x + 24, r.x + r.w // 2 + 24
+        text(surf, "YOUR PARTY  (deposit)", (lx, r.y + 62), "ui_b", 13, (90, 94, 90))
+        text(surf, "IN CARE  (withdraw)", (rx, r.y + 62), "ui_b", 13, (90, 94, 90))
+        if len(self.engine.state.daycare) == 2:
+            a, b = (s["mon"] for s in self.engine.state.daycare)
+            text(surf, f"{daycare.compat_text(a, b)}  ({daycare.compat_score(a, b)})", (rx, r.y + 182), "ui", 12,
+                 (90, 94, 90))
+        elif self.engine.state.daycare:
+            text(surf, "One more Scimon and this pair might leave an Egg!", (rx, r.y + 182), "ui", 12, (90, 94, 90))
+        text(surf, "Deposited Scimons bank every step you walk as experience.",
+             (r.x + 28, r.bottom - 34), "ui", 12, (90, 94, 90))
+        text(surf, "Withdrawal costs 100 credits + 100 per level gained.",
+             (r.x + 28, r.bottom - 16), "ui", 12, (90, 94, 90))
+        if self.msg_t > 0:
+            col = ORANGE if not getattr(self, "_msg_ok", True) else CREAM
+            text(surf, self.msg, (r.centerx, r.bottom - 56), "ui", 13, col, anchor="midbottom")
+        from ui import draw_button
+        for b in self.grid.buttons:
+            draw_button(surf, b, size=13, kind="ui_b" if b.accent else "ui")

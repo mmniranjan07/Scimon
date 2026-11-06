@@ -20,7 +20,13 @@ import pygame
 
 import assets
 import tileset
-from data import ITEMS
+from data import ITEMS, item_def
+
+
+def _item_label(item):
+    """A loot item's display name (the full catalogue, not just the heal items of ITEMS)."""
+    d = item_def(item)
+    return d.name if d else item
 from settings import TILE, VOID
 from sprites import CreatureSprite
 from tileset_map import info
@@ -197,8 +203,7 @@ class Chest(AnimatedProp):
         self.animator.play("opening", restart=True)
         state.add_item(item, n)
         _opened(state).add(self.key)
-        name = ITEMS[item].name if item in ITEMS else item
-        return ["You open the supply case.", f"Found {name} x{n}!"]
+        return ["You open the supply case.", f"Found {_item_label(item)} x{n}!"]
 
 
 class FieldChest(Chest):
@@ -217,8 +222,7 @@ class FieldChest(Chest):
         lines = ["You open the supply case."]
         for item, n in self.loot:
             state.add_item(item, n)
-            name = ITEMS[item].name if item in ITEMS else item
-            lines.append(f"Found {name} x{n}!")
+            lines.append(f"Found {_item_label(item)} x{n}!")
         _opened(state).add(self.key)
         return lines
 
@@ -231,6 +235,75 @@ def field_chest(tile, key, loot):
     x = tx * TILE + (TILE - w) // 2
     bottom = (ty + 1) * TILE
     return FieldChest(asset, x, bottom - h, bottom, (tx, ty), key, loot)
+
+
+_ball_image = None
+
+
+def _item_ball_image():
+    """The supply-ball sprite (a pickup lying in the road, FireRed's item ball): one cached surface."""
+    global _ball_image
+    if _ball_image is None:
+        s = pygame.Surface((20, 18), pygame.SRCALPHA)
+        pygame.draw.ellipse(s, (10, 22, 18, 70), (3, 14, 14, 4))          # contact shadow
+        pygame.draw.circle(s, (240, 244, 248), (10, 9), 8)                # bottom half
+        pygame.draw.rect(s, (240, 244, 248), (2, 9, 16, 8))
+        pygame.draw.circle(s, (42, 150, 140), (10, 9), 8)                 # teal top half
+        pygame.draw.rect(s, (42, 150, 140), (2, 1, 16, 9))
+        pygame.draw.rect(s, (20, 30, 34), (2, 8, 16, 3))                  # seam band
+        pygame.draw.circle(s, (240, 244, 248), (10, 9), 3)
+        pygame.draw.circle(s, (20, 30, 34), (10, 9), 3, 1)
+        pygame.draw.circle(s, (214, 244, 240), (7, 6), 2)                 # sheen
+        _ball_image = s
+    return _ball_image
+
+
+class ItemBall:
+    """An item ball lying in the road (routes.ITEM_BALLS): face it and confirm to pick its loot up.
+    Unlike a chest it vanishes once taken (the ground keeps only a scuff) and the pickup is remembered
+    in GameState.opened_chests under `key`, like every other once-only loot."""
+
+    def __init__(self, x, y, sort_y, tile, key, loot):
+        self.x, self.y, self.sort_y, self.tile, self.key = x, y, sort_y, tile, key
+        self.loot = tuple(loot)
+        self.taken = False
+
+    @property
+    def image(self):
+        return _empty_image() if self.taken else _item_ball_image()
+
+    def sync(self, state):
+        self.taken = self.key in _opened(state)
+
+    def interact(self, state):
+        if self.taken:
+            return ["Something was picked up here. The ground is scuffed where it sat."]
+        self.taken = True
+        _opened(state).add(self.key)
+        lines = ["You picked up the supply ball."]
+        for item, n in self.loot:
+            state.add_item(item, n)
+            lines.append(f"Found {_item_label(item)} x{n}!")
+        return lines
+
+
+_empty = None
+
+
+def _empty_image():
+    global _empty
+    if _empty is None:
+        _empty = pygame.Surface((1, 1), pygame.SRCALPHA)
+    return _empty
+
+
+def item_ball(tile, key, loot):
+    """An outdoor item-ball prop on `tile`, bottom-anchored like every other prop (built by TileMap.route)."""
+    tx, ty = tile
+    img = _item_ball_image()
+    x = tx * TILE + (TILE - img.get_width()) // 2
+    bottom = (ty + 1) * TILE
+    return ItemBall(x, bottom - img.get_height() - 4, bottom, (tx, ty), key, loot)
 
 
 _radial_cache = {}

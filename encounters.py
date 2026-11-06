@@ -29,13 +29,20 @@ LEVEL_CAP = ENCOUNTER_POLICY["level_cap"]
 GYM_REFERENCE = {
     1: {"ace": 14, "gap": 4, "ceiling": 10, "leader": "Fern", "gym": "Green Gym",
         "team": [("petalug", 12), ("florabot", 14)]},
-    2: {"ace": 21, "gap": 5, "ceiling": 16},
-    3: {"ace": 24, "gap": 6, "ceiling": 18},
-    4: {"ace": 29, "gap": 7, "ceiling": 22},
-    5: {"ace": 43, "gap": 10, "ceiling": 33},
-    6: {"ace": 43, "gap": 10, "ceiling": 33},
-    7: {"ace": 47, "gap": 12, "ceiling": 35},
-    8: {"ace": 50, "gap": 15, "ceiling": 35},
+    2: {"ace": 21, "gap": 5, "ceiling": 16, "leader": "Leader Bastian", "gym": "Stonreach Gym",
+        "team": [("pebblon", 18), ("boulderon-final", 21)]},
+    3: {"ace": 24, "gap": 6, "ceiling": 18, "leader": "Leader Nerissa", "gym": "Tidebrook Gym",
+        "team": [("tidefin", 21), ("tidefin-final", 24)]},
+    4: {"ace": 29, "gap": 7, "ceiling": 22, "leader": "Lt. Volta", "gym": "Emberport Gym",
+        "team": [("voltling", 24), ("joulebot", 27), ("joulebot-final", 29)]},
+    5: {"ace": 43, "gap": 10, "ceiling": 33, "leader": "Leader Sylva", "gym": "Verdance Gym",
+        "team": [("thistledrone", 38), ("thistledrone-final", 43), ("bloomxell-final", 43)]},
+    6: {"ace": 43, "gap": 10, "ceiling": 33, "leader": "Warden Vexa", "gym": "Vespera Gym",
+        "team": [("catalyxt", 37), ("vapomite", 39), ("sludgebot", 41), ("sludgebot-final", 43)]},
+    7: {"ace": 47, "gap": 12, "ceiling": 35, "leader": "Leader Cerebra", "gym": "Aurum Gym",
+        "team": [("entanglit", 41), ("phaseling", 43), ("phaseling-final", 47)]},
+    8: {"ace": 50, "gap": 15, "ceiling": 35, "leader": "Prof. Calder", "gym": "Cinderfall Gym",
+        "team": [("scorchit", 43), ("flarebit", 45), ("ashling", 47), ("scorchit-final", 50)]},
 }
 POSTGAME_WILD_CAP = 50
 POSTGAME_STORY_FLAG = "boss_beaten"

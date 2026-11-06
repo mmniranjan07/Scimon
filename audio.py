@@ -70,6 +70,11 @@ def _build():
         "evolve_beep_hi": [(784, 0.06, "square", 0.0, 0.05), (1175, 0.07, "square", 0.06, 0.05)],
         "evolve": [(523, 0.1, "square", 0.0, 0.05), (659, 0.1, "square", 0.1, 0.05), (784, 0.1, "square", 0.2, 0.05),
                    (1047, 0.34, "square", 0.3, 0.06), (1319, 0.4, "square", 0.4, 0.055)],
+        # the Game Corner: a reel tick, a small payout chime and the jackpot fanfare
+        "reel": [(880, 0.025, "square", 0.0, 0.02)],
+        "win": [(659, 0.07, "square", 0.0, 0.04), (880, 0.07, "square", 0.06, 0.04), (1047, 0.1, "square", 0.12, 0.05)],
+        "jackpot": [(523, 0.09, "square", 0.0, 0.05), (659, 0.09, "square", 0.09, 0.05), (784, 0.09, "square", 0.18, 0.05),
+                    (1047, 0.3, "square", 0.27, 0.06), (784, 0.12, "square", 0.57, 0.05), (1047, 0.42, "square", 0.69, 0.06)],
     }
     for name, notes in spec.items():
         _sounds[name] = _blip(notes)

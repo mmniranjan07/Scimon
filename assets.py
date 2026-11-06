@@ -153,7 +153,9 @@ def mon_anim(species_id, kind, max_w, max_h, max_k=4):
 
 
 def ui_icon(name, scale=2):
-    """MPW UI icon (assets/mpw/ui/<name>.png) scaled by an integer factor with nearest neighbour."""
+    """MPW UI icon (assets/mpw/ui/<name>.png) scaled by an integer factor with nearest neighbour; None when absent."""
+    if not has(f"mpw/ui/{name}.png"):
+        return None
     img = image(f"mpw/ui/{name}.png")
     return scaled(f"mpw/ui/{name}.png", img.get_width() * scale, img.get_height() * scale, smooth=False)
 

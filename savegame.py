@@ -6,6 +6,7 @@ Nothing here can crash the game: every failure just means "no save"."""
 import dataclasses
 import json
 import os
+import random
 import sys
 
 KEY = "scimon_save_v1"
@@ -61,6 +62,13 @@ def serialize(st):
         "abilities": sorted(str(k) for k in getattr(st, "abilities", ())),
         "snatched": dataclasses.asdict(st.snatched) if getattr(st, "snatched", None) else None,
         "playtime": round(float(getattr(st, "playtime", 0.0)), 1),
+        "repel_steps": int(getattr(st, "repel_steps", 0)),
+        "vs_charge": int(getattr(st, "vs_charge", 0)),
+        "coins": int(getattr(st, "coins", 0)),
+        "daycare": [{"mon": dataclasses.asdict(s["mon"]), "steps": int(s["steps"])}
+                    for s in getattr(st, "daycare", ()) if s.get("mon")],
+        "daycare_egg": getattr(st, "daycare_egg", None),
+        "safari": dict(getattr(st, "safari", None) or {}),
         "location": getattr(st, "location", None) if isinstance(getattr(st, "location", None), dict) else {},
         "name": getattr(st, "name", "Robin"), "look": getattr(st, "look", None),
     }, sort_keys=True)
@@ -92,13 +100,33 @@ def load(st):
     from monsters import Scimon
     from state import stamp_by_id
 
-    def fix_name(m):
+    def fix_name(m, raw=None):
         # display-name migration: saves written before the named-sprite patch stored the species'
         # default name on the creature.  Rename it ONLY when it still equals that species' previous
         # canonical name -- anything else is a player nickname and stays untouched.
         prev = PREVIOUS_NAMES.get(m.species_id)
         if prev and m.name == prev:
             m.name = SPECIES[m.species_id].name
+        # EV/IV migration: saves from before the effort system kept vitamin gains as a flat `bonus`
+        # (5 stat points per serum).  Fold the bonus into effort at 2 EV per point, capped like the
+        # serums themselves, then retire the field.  Creatures that predate IVs are born their talent
+        # now (random 0-31), and the recalc keeps the HP ratio so nobody heals or loses HP on load.
+        from data import IV_STATS, IV_MAX, VITAMIN_EV_CAP
+        if getattr(m, "bonus", None):
+            for stat, pts in m.bonus.items():
+                if stat in IV_STATS:
+                    m.evs[stat] = max(int(m.evs.get(stat, 0)), min(VITAMIN_EV_CAP, int(pts) * 2))
+            m.bonus = {}
+            m.recalc_stats(keep_hp_ratio=True)
+        if not getattr(m, "ivs", None):
+            m.ivs = {s: random.randint(0, IV_MAX) for s in IV_STATS}
+            m.recalc_stats(keep_hp_ratio=True)
+        # PP -> energy migration: saves from before the energy system stored per-move `move_pp`
+        # (no `energy`), and the transitional build saved `energy` without `max_energy`; either way
+        # the reserves are rebuilt from the stat formula and come back full.
+        if raw is not None and ("energy" not in raw or "max_energy" not in raw):
+            m.recalc_stats(keep_hp_ratio=True)
+            m.energy = m.max_energy
         return m
 
     try:
@@ -111,7 +139,7 @@ def load(st):
             out = []
             for r in rows:
                 if r["species_id"] in SPECIES:
-                    out.append(fix_name(Scimon(**{k: v for k, v in r.items() if k in fields})))
+                    out.append(fix_name(Scimon(**{k: v for k, v in r.items() if k in fields}), r))
             return out
         st.reset()
         st.party, st.storage = mons(d["party"]), mons(d["storage"])
@@ -132,12 +160,26 @@ def load(st):
         st.stamps = {s for s in d.get("stamps", []) if stamp_by_id(s)}
         st.story = set(d.get("story", []))
         st.abilities = set(d.get("abilities", []))
+        from abilities import sync_from_items
+        sync_from_items(st)          # migration: module items in old saves re-derive their field abilities
         sn = d.get("snatched")
-        st.snatched = fix_name(Scimon(**{k: v for k, v in sn.items() if k in fields})) \
+        st.snatched = fix_name(Scimon(**{k: v for k, v in sn.items() if k in fields}), sn) \
             if sn and sn.get("species_id") in SPECIES else None
         if st.snatched:
             st.seen.add(st.snatched.species_id)
         st.playtime = float(d.get("playtime", 0.0) or 0.0)
+        st.repel_steps = max(0, int(d.get("repel_steps", 0) or 0))
+        st.vs_charge = max(0, int(d.get("vs_charge", 0) or 0))
+        st.coins = max(0, int(d.get("coins", 0) or 0))
+        st.daycare = [{"mon": fix_name(Scimon(**{k: v for k, v in s["mon"].items() if k in fields}), s["mon"]),
+                       "steps": max(0, int(s.get("steps", 0) or 0))}
+                      for s in d.get("daycare", ()) if s.get("mon", {}).get("species_id") in SPECIES][:2]
+        egg = d.get("daycare_egg")
+        st.daycare_egg = egg if egg in SPECIES else None
+        saf = d.get("safari")
+        st.safari = {"balls": max(0, int(saf.get("balls", 0) or 0)),
+                     "steps": max(0, int(saf.get("steps", 0) or 0))} \
+            if isinstance(saf, dict) and saf.get("balls", 0) > 0 and saf.get("steps", 0) > 0 else None
         loc = d.get("location")
         st.location = loc if isinstance(loc, dict) else {}
         st.name = str(d.get("name") or "Robin")[:12]
